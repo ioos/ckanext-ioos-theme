@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # URL for the primary database, in the format expected by sqlalchemy (required
 # unless linked to a container called 'db')
@@ -7,6 +7,8 @@
 : ${SOLR_URL:=}
 # Email to which errors should be sent (optional, default: none)
 : ${ERROR_EMAIL:=}
+# Redis URL
+: ${REDIS_URL:=}
 
 set -eu
 
@@ -18,6 +20,10 @@ abort () {
 }
 
 write_config () {
+  local hostinfo=$(echo $REDIS_URL | cut -f3 -d/)
+  local redis_host=$(echo $hostinfo | cut -f1 -d:)
+  local redis_port=$(echo $hostinfo | cut -f2 -d:)
+  local redis_db=$(echo $REDIS_URL | cut -f4 -d/)
   "$CKAN_HOME"/bin/paster make-config ckan "$CONFIG"
 
   "$CKAN_HOME"/bin/paster --plugin=ckan config-tool "$CONFIG" -e \
@@ -27,11 +33,20 @@ write_config () {
       "email_to = disabled@example.com" \
       "error_email_from = ckan@$(hostname -f)" \
       "ckan.site_url = http://192.168.0.6" \
-      "ckan.plugins = stats text_view image_view recline_view spatial_metadata spatial_query"
+      "ckan.plugins = stats text_view image_view recline_view spatial_metadata spatial_query harvest ckan_harvester"
+
+  sed -i -e "s/\[loggers\]/\n## Message Queue\n\nckan.harvest.mq.type = redis\nckan.harvest.mq.hostname = ${redis_host}\nckan.harvest.mq.port = ${redis_port}\nckan.harvest.mq.redis_db = ${redis_db}\n\n## Spatial\n\nckan.spatial.validator.profiles = iso19139ngdc\n[loggers]/" "$CONFIG"
 
   if [ -n "$ERROR_EMAIL" ]; then
     sed -i -e "s&^#email_to.*&email_to = ${ERROR_EMAIL}&" "$CONFIG"
   fi
+}
+
+link_redis_url() {
+    local host=$REDIS_PORT_6379_TCP_ADDR
+    local port=$REDIS_PORT_6379_TCP_PORT
+    local db=5
+    echo "redis://${host}:${port}/${db}"
 }
 
 link_postgres_url () {
@@ -59,6 +74,11 @@ if [ ! -e "$CONFIG" ]; then
   if [ -z "$SOLR_URL" ]; then
     if ! SOLR_URL=$(link_solr_url); then
       abort "no SOLR_URL specified and linked container called 'solr' was not found"
+    fi
+  fi
+  if [ -z "$REDIS_URL" ]; then
+    if ! REDIS_URL=$(link_redis_url); then
+      abort "no REDIS_URL specified and linked container called 'redis' was not found"
     fi
   fi
   write_config
