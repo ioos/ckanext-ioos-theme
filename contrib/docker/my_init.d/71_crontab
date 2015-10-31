@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+set -x
+
+echo "*/2 * * * * root $CKAN_HOME/bin/paster --plugin=ckanext-harvest harvester -c $CKAN_CONFIG/ckan.ini run" >> /etc/crontab
+echo "*/2 * * * * root echo \"CRON WORKS\" >> /cronworks" >> /etc/crontab

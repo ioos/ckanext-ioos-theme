@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if [ -z "$CKAN_ADMIN" ]; then
+    CKAN_ADMIN=admin
+fi
+
+if [ -z "$CKAN_ADMIN_PASSWORD" ]; then
+    CKAN_ADMIN_PASSWORD=ckan
+fi
+
+if [ -z "$CKAN_ADMIN_EMAIL" ]; then
+    CKAN_ADMIN_EMAIL=admin@localhost
+fi
+
+
+"$CKAN_HOME"/bin/paster --plugin=ckan user -c "$CKAN_CONFIG/ckan.ini" add $CKAN_ADMIN "password=$CKAN_ADMIN_PASSWORD" "email=$CKAN_ADMIN_EMAIL"
+"$CKAN_HOME"/bin/paster --plugin=ckan sysadmin -c "$CKAN_CONFIG/ckan.ini" add $CKAN_ADMIN
+

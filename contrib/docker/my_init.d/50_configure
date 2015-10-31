@@ -33,7 +33,7 @@ write_config () {
       "email_to = disabled@example.com" \
       "error_email_from = ckan@$(hostname -f)" \
       "ckan.site_url = http://192.168.0.6" \
-      "ckan.plugins = stats text_view image_view recline_view spatial_metadata spatial_query harvest ckan_harvester"
+      "ckan.plugins = stats text_view image_view recline_view spatial_metadata spatial_query harvest ckan_harvester csw_harvester waf_harvester"
 
   sed -i -e "s/\[loggers\]/\n## Message Queue\n\nckan.harvest.mq.type = redis\nckan.harvest.mq.hostname = ${redis_host}\nckan.harvest.mq.port = ${redis_port}\nckan.harvest.mq.redis_db = ${redis_db}\n\n## Spatial\n\nckan.spatial.validator.profiles = iso19139ngdc\n[loggers]/" "$CONFIG"
 
