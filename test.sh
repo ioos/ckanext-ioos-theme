@@ -1,6 +1,5 @@
 #!/bin/bash
-export DATABASE_URL=postgresql://ckan:ckan@192.168.99.100/ckan
-export CKAN_INIT=false
+export CKAN_INIT=true
 
 if [[ -n $1 ]]; then 
     LAUNCHOPTS=$1
@@ -12,11 +11,11 @@ echo "Launching container with $LAUNCHOPTS"
 
 docker build -t lukecampbell/docker-ioos-catalog . && \
 docker run -i -t --name "docker-ioos-catalog-test" \
-    -e DATABASE_URL=$DATABASE_URL \
     -e CKAN_INIT=$CKAN_INIT \
     -e CKAN_DEBUG=$CKAN_DEBUG \
     --link solr:solr \
     --link redis:redis \
+    --link postgis:db \
     -p 80:80 \
     lukecampbell/docker-ioos-catalog \
     $LAUNCHOPTS

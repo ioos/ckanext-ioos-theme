@@ -31,6 +31,8 @@ write_config () {
       "sqlalchemy.url = ${DATABASE_URL}" \
       "solr_url = ${SOLR_URL}" \
       "ckan.storage_path = /var/lib/ckan" \
+      "ckan.site_title = IOOS Catalog" \
+      "ckan.site_logo = /ioos_logo.png" \
       "email_to = disabled@example.com" \
       "error_email_from = ckan@$(hostname -f)" \
       "ckan.site_url = http://192.168.0.6" \
@@ -51,9 +53,9 @@ link_redis_url() {
 }
 
 link_postgres_url () {
-  local user=$DB_ENV_POSTGRESQL_USER
-  local pass=$DB_ENV_POSTGRESQL_PASS
-  local db=$DB_ENV_POSTGRESQL_DB
+  local user=$DB_ENV_POSTGRES_USER
+  local pass=$DB_ENV_POSTGRES_PASS
+  local db=$DB_ENV_POSTGRES_DB
   local host=$DB_PORT_5432_TCP_ADDR
   local port=$DB_PORT_5432_TCP_PORT
   echo "postgresql://${user}:${pass}@${host}:${port}/${db}"
