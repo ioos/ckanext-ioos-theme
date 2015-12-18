@@ -1,0 +1,23 @@
+{# 
+pkg - A package object that the resources belong to.
+
+Example:
+
+  {% snippet "package/snippets/meta_description.html", pkg=pkg %}
+
+#}
+
+{% set resources = pkg.resources or [] %}
+
+<table class="table table-condensed table-bordered">
+  <tbody>
+    <tr>
+      <td width="30%">
+        Publisher
+      </td>
+      <td width="70%">
+
+      </td>
+    </tr>
+  </tbody>
+</table>

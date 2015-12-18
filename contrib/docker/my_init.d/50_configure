@@ -10,8 +10,9 @@
 # Redis URL
 : ${REDIS_URL:=}
 : ${CKAN_DEBUG:=}
+: ${CKAN_SERVER_NAME:=}
 
-set -eu
+set -eux
 
 CONFIG="${CKAN_CONFIG}/ckan.ini"
 
@@ -35,7 +36,7 @@ write_config () {
       "ckan.site_logo = /ioos_logo.png" \
       "email_to = disabled@example.com" \
       "error_email_from = ckan@$(hostname -f)" \
-      "ckan.site_url = http://192.168.0.6" \
+      "ckan.site_url = ${CKAN_SERVER_NAME}" \
       "ckan.plugins = stats text_view image_view recline_view spatial_metadata spatial_query harvest ckan_harvester csw_harvester waf_harvester ioos_theme"
 
   sed -i -e "s/\[loggers\]/\n## Message Queue\n\nckan.harvest.mq.type = redis\nckan.harvest.mq.hostname = ${redis_host}\nckan.harvest.mq.port = ${redis_port}\nckan.harvest.mq.redis_db = ${redis_db}\n\n## Spatial\n\nckan.spatial.validator.profiles = iso19139ngdc\n[loggers]/" "$CONFIG"
@@ -43,6 +44,7 @@ write_config () {
   if [ -n "$ERROR_EMAIL" ]; then
     sed -i -e "s&^#email_to.*&email_to = ${ERROR_EMAIL}&" "$CONFIG"
   fi
+  #sed -i -e "s&WSGIScriptAlias /&WSGIScriptAlias ${prefix}&" /etc/apache2/sites-available/ckan_default.conf
 }
 
 link_redis_url() {
@@ -83,6 +85,9 @@ if [ ! -e "$CONFIG" ]; then
     if ! REDIS_URL=$(link_redis_url); then
       abort "no REDIS_URL specified and linked container called 'redis' was not found"
     fi
+  fi
+  if [ -z "$CKAN_SERVER_NAME" ]; then
+      CKAN_SERVER_NAME=http://$(hostname -f)/
   fi
   write_config
 fi
