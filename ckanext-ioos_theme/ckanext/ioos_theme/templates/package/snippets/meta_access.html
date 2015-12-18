@@ -1,0 +1,53 @@
+{# 
+pkg - A package object that the resources belong to.
+
+Example:
+
+  {% snippet "package/snippets/meta_access.html", pkg=pkg, resources=pkg.resources %}
+
+#}
+
+{% set resources = pkg.resources or [] %}
+
+<table class="table table-condesnsed table-bordered">
+  <tbody>
+    <tr>
+      <td width="30%">
+        Online Access
+      </td>
+      <td width="70%">
+        {% snippet "package/snippets/access/links.html", pkg=pkg, resources=resources %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Distribution Service Type
+      </td>
+      <td>
+        {% for extra in pkg.extras %}
+        {% if extra['key'] == 'spatial-data-service-type' %}
+        {{ extra['value'] }}
+        {% endif %}
+        {% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Distributor
+      </td>
+      <td>
+        {{ h.ioos_theme_get_responsible_party(pkg) }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Dataset Point of Contact
+      </td>
+      <td>
+        {% for party in h.ioos_theme_get_point_of_contact(pkg) %}
+        <p>{{party}}</p>
+        {% endfor %}
+      </td>
+    </tr>
+  </tbody>
+</table>
