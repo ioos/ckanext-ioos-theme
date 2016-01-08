@@ -11,13 +11,64 @@ Example:
 
 <table class="table table-condensed table-bordered">
   <tbody>
+    {% for responsible_party in h.ioos_theme_get_responsible_organization(pkg) %}
+    {% set role = responsible_party['role'] %}
+    {% if role %}
     <tr>
       <td width="30%">
+        {% if role == 'pointOfContact' %}
+        Point of Contact
+        {% elif role == "publisher" %}
         Publisher
+        {% elif role == "resourceProvider" %}
+        Resource Provider
+        {% elif role == "custodian" %}
+        Custodian
+        {% elif role == "owner" %}
+        Owner
+        {% elif role == "sponsor" %}
+        Sponsor
+        {% elif role == "user" %}
+        User
+        {% elif role == "distributor" %}
+        Distributor
+        {% elif role == "originator" %}
+        Originator
+        {% elif role == "principalInvestigator" %}
+        Principal Investigator
+        {% elif role == "processor" %}
+        Processor
+        {% elif role == "author" %}
+        Author
+        {% elif role == "coAuthor" %}
+        Co-author
+        {% elif role == "collaborator" %}
+        Collaborator
+        {% elif role == "editor" %}
+        Editor
+        {% elif role == "mediator" %}
+        Mediator
+        {% elif role == "rightsHolder" %}
+        Rights Holder
+        {% elif role == "contributor" %}
+        Contributor
+        {% elif role == "funder" %}
+        Funder
+        {% elif role == "stakeholder" %}
+        Stakeholder
+        {% endif %}
       </td>
       <td width="70%">
-
+        {% if responsible_party['organisation-name'] and responsible_party['individual-name'] %}
+        {{responsible_party['individual-name']}} at {{responsible_party['organisation-name']}}
+        {% elif responsible_party['organisation-name'] %}
+        {{ responsible_party['organisation-name'] }}
+        {% elif responsible_party['individual-name'] %}
+        {{ responsible_party['individual-name'] }}
+        {% endif %}
       </td>
     </tr>
+    {% endif %}
+    {% endfor %}
   </tbody>
 </table>
