@@ -16,6 +16,12 @@ def get_responsible_party(pkg):
         if 'name' in party:
             return party['name']
 
+def get_publisher(pkg):
+    publishers = next((extra['value'] for extra in pkg['extras'] if extra['key'] == 'publisher' ))
+    if publishers:
+        return json.loads(publishers)
+    return []
+
 def get_point_of_contact(pkg):
     responsible_party = get_party(pkg)
     pocs = []
@@ -23,6 +29,10 @@ def get_point_of_contact(pkg):
         if 'pointOfContact' in party['roles']:
             pocs.append(party['name'])
     return pocs
+
+def get_responsible_organization(pkg):
+    responsible_organization = next((extra['value'] for extra in pkg['extras'] if extra['key'] == 'responsible-organisation'))
+    return json.loads(responsible_organization)
 
 class Ioos_ThemePlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
@@ -38,5 +48,7 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
     def get_helpers(self):
         return {
             "ioos_theme_get_responsible_party" : get_responsible_party,
-            "ioos_theme_get_point_of_contact" : get_point_of_contact
+            "ioos_theme_get_point_of_contact" : get_point_of_contact,
+            "ioos_theme_get_publisher" : get_publisher,
+            "ioos_theme_get_responsible_organization" : get_responsible_organization
         }

@@ -80,6 +80,7 @@ setup(
     entry_points='''
         [ckan.plugins]
         ioos_theme=ckanext.ioos_theme.plugin:Ioos_ThemePlugin
+        ioos_waf=ckanext.ioos_theme.harvesters.ioos_waf:IOOSWAFHarvester
 	[babel.extractors]
 	ckan = ckan.lib.extract:extract_ckan
     ''',
