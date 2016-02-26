@@ -22,3 +22,6 @@ docker run -i -t --name "docker-ioos-catalog-test" \
     lukecampbell/docker-ioos-catalog \
     $LAUNCHOPTS
 docker rm docker-ioos-catalog-test
+
+# ./test.sh /bin/bash
+# /sbin/my_init > /var/log/my_init.log 2>&1 &
