@@ -2,9 +2,20 @@
 set -eu
 : ${CKAN_INIT:=}
 
+export PGPASSWORD=$DB_ENV_POSTGRES_PASS
+
+RESULT=`psql -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER postgres -c 'SELECT datname FROM pg_database' | grep ckan | wc -l`
+if [[ ${RESULT} != 1 ]]; then 
+    echo "Creating CKAN Databases on PostGIS"
+    createdb -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER -O $DB_ENV_POSTGRES_USER ckan -E utf-8 -T template_postgis
+    createdb -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER -O $DB_ENV_POSTGRES_USER pycsw -E utf-8 -T template_postgis
+fi
+
+psql -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER -l
+
+
 if [[ -n "$CKAN_INIT"  && "$CKAN_INIT" == "true" ]]; then
     "$CKAN_HOME"/bin/paster --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"
     "$CKAN_HOME"/bin/paster --plugin=ckanext-spatial spatial initdb -c "${CKAN_CONFIG}/ckan.ini"
     "$CKAN_HOME"/bin/paster --plugin=ckanext-harvest harvester initdb -c "${CKAN_CONFIG}/ckan.ini"
 fi
-
