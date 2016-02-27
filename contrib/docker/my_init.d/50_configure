@@ -9,6 +9,8 @@
 : ${ERROR_EMAIL:=}
 # Redis URL
 : ${REDIS_URL:=}
+# DB URL for the PyCSW Database
+: ${PYCSW_DB_URL:=}
 : ${CKAN_DEBUG:=}
 : ${CKAN_SERVER_NAME:=}
 
@@ -19,6 +21,11 @@ CONFIG="${CKAN_CONFIG}/ckan.ini"
 abort () {
   echo "$@" >&2
   exit 1
+}
+
+update_pycsw_config () {
+    echo "Updating PyCSW Config"
+    sed -i -e "s&POSTGRES_CONN_STRING&${PYCSW_DB_URL}&" "${CKAN_HOME}/src/pycsw/default.cfg"
 }
 
 write_config () {
@@ -45,6 +52,7 @@ write_config () {
     sed -i -e "s&^#email_to.*&email_to = ${ERROR_EMAIL}&" "$CONFIG"
   fi
   #sed -i -e "s&WSGIScriptAlias /&WSGIScriptAlias ${prefix}&" /etc/apache2/sites-available/ckan_default.conf
+  update_pycsw_config
 }
 
 link_redis_url() {
@@ -63,6 +71,15 @@ link_postgres_url () {
   echo "postgresql://${user}:${pass}@${host}:${port}/${db}"
 }
 
+link_pycsw_db_url () {
+  local user=$DB_ENV_POSTGRES_USER
+  local pass=$DB_ENV_POSTGRES_PASS
+  local db=$DB_ENV_POSTGRES_DB
+  local host=$DB_PORT_5432_TCP_ADDR
+  local port=$DB_PORT_5432_TCP_PORT
+  echo "postgresql://${user}:${pass}@${host}:${port}/pycsw"
+}
+
 link_solr_url () {
   local host=$SOLR_PORT_8983_TCP_ADDR
   local port=$SOLR_PORT_8983_TCP_PORT
@@ -74,6 +91,11 @@ if [ ! -e "$CONFIG" ]; then
   if [ -z "$DATABASE_URL" ]; then
     if ! DATABASE_URL=$(link_postgres_url); then
       abort "no DATABASE_URL specified and linked container called 'db' was not found"
+    fi
+  fi
+  if [ -z "$PYCSW_DB_URL" ]; then
+    if ! PYCSW_DB_URL=$(link_pycsw_db_url); then
+      abort "no PYCSW_DB_URL specified and linked container called 'db' was not found"
     fi
   fi
   if [ -z "$SOLR_URL" ]; then

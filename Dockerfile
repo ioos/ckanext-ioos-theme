@@ -22,6 +22,17 @@ ENV CKAN_INIT="true"
 
 
 # Add my custom configuration file
+ADD ./contrib/config/pycsw/default.cfg $CKAN_HOME/src/pycsw/default.cfg
+ADD ./contrib/config/pycsw/pycsw.wsgi $CKAN_CONFIG/pycsw.wsgi
+
+ADD ./contrib/docker/apache.conf /etc/apache2/sites-available/ckan_default.conf
+RUN echo "Listen 8080\nListen 8081" > /etc/apache2/ports.conf
+RUN a2ensite ckan_default
+RUN a2dissite 000-default
+
+# Configure nginx
+ADD ./contrib/docker/nginx.conf /etc/nginx/nginx.conf
+
 ADD ./contrib/docker/my_init.d /etc/my_init.d
 ADD ./contrib/supervisor/conf.d /etc/supervisor/conf.d
 

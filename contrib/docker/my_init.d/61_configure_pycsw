@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -eux
+
+ln -s /usr/lib/ckan/default/src/pycsw/default.cfg /etc/ckan/default/pycsw.cfg
+
+export PGPASSWORD=$DB_ENV_POSTGRES_PASS
+
+RESULT=`psql -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER pycsw -c 'SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name;' | grep records | wc -l`
+if [[ ${RESULT} != 1 ]]; then
+    echo "Setting up PyCSW for the first time"
+    pushd /usr/lib/ckan/default/src/ckanext-spatial
+    $CKAN_HOME/bin/paster ckan-pycsw setup -p /etc/ckan/default/pycsw.cfg
+    popd
+fi
