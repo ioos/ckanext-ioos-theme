@@ -1,4 +1,5 @@
 #!/bin/sh
 set -eux
 
-echo "*/2 * * * * root $CKAN_HOME/bin/paster --plugin=ckanext-harvest harvester -c $CKAN_CONFIG/ckan.ini run" >> /etc/crontab
+echo "*/2 * * * * root $CKAN_HOME/bin/paster --plugin=ckanext-harvest harvester -c $CKAN_CONFIG/ckan.ini run > /dev/null 2>&1" >> /etc/crontab
+echo "0 * * * * root /usr/lib/ckan/default/bin/paster --plugin=ckanext-spatial ckan-pycsw load -p /etc/ckan/default/pycsw.cfg > /dev/null 2>&1" >> /etc/crontab
