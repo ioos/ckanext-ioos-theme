@@ -2,20 +2,42 @@
 set -eu
 : ${CKAN_INIT:=}
 
-export PGPASSWORD=$DB_ENV_POSTGRES_PASS
+export PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD
+fail_counter=0
 
-RESULT=`psql -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER postgres -c 'SELECT datname FROM pg_database' | grep ckan | wc -l`
-if [[ ${RESULT} != 1 ]]; then 
-    echo "Creating CKAN Databases on PostGIS"
-    createdb -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER -O $DB_ENV_POSTGRES_USER ckan -E utf-8 -T template_postgis
-    createdb -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER -O $DB_ENV_POSTGRES_USER pycsw -E utf-8 -T template_postgis
-fi
+run_psql="psql -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER postgres -qAt -c"
+run_psql_ckan=${run_psql/postgres/ckan}
 
-psql -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER -l
+while true; do
 
+    if [[ $fail_counter -gt 10 ]]; then
+        >&2 echo 'Exceed max retries' && exit 1
+    fi
 
-if [[ -n "$CKAN_INIT"  && "$CKAN_INIT" == "true" ]]; then
-    "$CKAN_HOME"/bin/paster --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"
-    "$CKAN_HOME"/bin/paster --plugin=ckanext-spatial spatial initdb -c "${CKAN_CONFIG}/ckan.ini"
-    "$CKAN_HOME"/bin/paster --plugin=ckanext-harvest harvester initdb -c "${CKAN_CONFIG}/ckan.ini"
+    if ! pg_isready -h $DB_PORT_5432_TCP_ADDR -d ckan; then
+        fail_counter=$((fail_counter+1))
+        sleep 20
+    else
+        postgis_stat=$($run_psql_ckan "SELECT 1 FROM pg_extension where extname = 'postgis'")
+
+        # probably not strictly necessary since PostGIS should come bundled
+        # when databases are create
+        if [[ "$postgis_stat" = '1' ]]; then
+            break
+        else
+            echo "PostGIS not installed"
+            fail_counter=$((fail_counter+1))
+            sleep 20
+        fi
+    fi
+done
+
+# pycsw database should not exist, create it.  If it does, just silently
+# continue
+createdb -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER -O $DB_ENV_POSTGRES_USER pycsw -E utf-8 -T template_postgis || /bin/true
+
+if [[ "$CKAN_INIT" = "true" ]]; then
+    "$CKAN_HOME/bin/paster" --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"
+    "$CKAN_HOME/bin/paster" --plugin=ckanext-spatial spatial initdb -c "${CKAN_CONFIG}/ckan.ini"
+    "$CKAN_HOME/bin/paster" --plugin=ckanext-harvest harvester initdb -c "${CKAN_CONFIG}/ckan.ini"
 fi

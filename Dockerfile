@@ -1,3 +1,5 @@
+# main ckan repo does not use versioning and could break, use Luke's version 
+# which freezes version
 FROM lukecampbell/ckan
 
 # Install git
@@ -5,13 +7,17 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -q -y git libgeos-dev libxml2-dev libxslt1-dev supervisor postgresql-client
 
 # Install the CKAN Spatial extension
-RUN $CKAN_HOME/bin/pip install -e git+https://github.com/lukecampbell/ckanext-spatial.git@deploy#egg=ckanext-spatial
+# CKAN spatial extension has no tagged Git releases currently, so freeze the
+# version at a known good commit to prevent breakage from later versions
+RUN $CKAN_HOME/bin/pip install -e git+https://github.com/ckan/ckanext-spatial.git@#egg=ckanext-spatial
 RUN $CKAN_HOME/bin/pip install -r $CKAN_HOME/src/ckanext-spatial/pip-requirements.txt
 
-RUN $CKAN_HOME/bin/pip install -e git+https://github.com/lukecampbell/ckanext-harvest.git@master#egg=ckanext-harvest
+# must use this commit or similar as tagged versions cause "Add harvests" page
+# to display no fields
+RUN $CKAN_HOME/bin/pip install -e git+https://github.com/ckan/ckanext-harvest.git@7f506913f8e789#egg=ckanext-harvest
 RUN $CKAN_HOME/bin/pip install -r $CKAN_HOME/src/ckanext-harvest/pip-requirements.txt
 
-RUN $CKAN_HOME/bin/pip install -e git+https://github.com/lukecampbell/pycsw.git@ckan#egg=pycsw
+RUN $CKAN_HOME/bin/pip install -e git+https://github.com/geopython/pycsw.git@1.10.4#egg=pycsw
 RUN $CKAN_HOME/bin/pip install -r $CKAN_HOME/src/pycsw/requirements.txt
 
 ADD ./ckanext-ioos_theme $CKAN_HOME/src/ckanext-ioos_theme
