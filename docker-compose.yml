@@ -1,0 +1,40 @@
+# should we add hostname to dockerfile
+
+solr:
+  image: lukecampbell/docker-ckan-solr
+  container_name: solr
+  # use ports ranges as string
+  # See https://docs.docker.com/compose/compose-file/#ports
+  ports:
+    - "8983:8983"
+
+postgis:
+  image: mdillon/postgis
+  container_name: postgis
+  ports:
+    - "5432:5432"
+  # Override these in a production environment
+  environment:
+    - POSTGRES_USER=ckanadmin
+    - POSTGRES_PASSWORD=ckanadmin
+    - POSTGRES_DB=ckan
+
+redis:
+  image: redis:3.0.7-alpine
+  container_name: redis
+  ports:
+    - "6379:6379" 
+
+ioos-catalog:
+  build: .
+  container_name: docker-ioos-catalog-test
+  hostname: catalog-dev.asa.rocks
+  links:
+    - redis
+    - postgis:db
+    - solr
+  environment:
+    - CKAN_INIT=true
+    - CKAN_SERVER_NAME=http://catalog-dev.asa.rocks/catalog/
+  ports:
+    - "80:80"
