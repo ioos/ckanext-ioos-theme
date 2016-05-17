@@ -9,7 +9,7 @@ solr:
     - "8983:8983"
 
 postgis:
-  image: mdillon/postgis
+  image: mdillon/postgis:9.3
   container_name: postgis
   ports:
     - "5432:5432"
