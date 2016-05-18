@@ -1,0 +1,18 @@
+{% set intro = g.site_intro_text %}
+
+<div class="module-content box">
+  <header>
+    {% if intro %}
+      {{ h.render_markdown(intro) }}
+      {% else %}
+      <h1 class="page-heading">{{ _("Welcome to the IOOS Catalog") }}</h1>
+      <p>
+        {#  TODO: Add a meaningful info blurb here  #}
+        {% trans %}This is a nice introductory paragraph about CKAN or the site
+          in general. We don't have any copy to go here yet but soon we will
+        {% endtrans %}
+      </p>
+    {% endif %}
+    </header>
+</div>
+
