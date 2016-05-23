@@ -2,7 +2,9 @@
 
 set -eux
 
-ln -s /usr/lib/ckan/default/src/pycsw/default.cfg /etc/ckan/default/pycsw.cfg
+if [ ! -L /etc/ckan/default/pycsw.cfg ]; then
+    ln -s /usr/lib/ckan/default/src/pycsw/default.cfg /etc/ckan/default/pycsw.cfg
+fi
 
 export PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD
 
