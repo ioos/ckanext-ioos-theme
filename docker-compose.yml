@@ -23,14 +23,12 @@ redis:
 
 ioos-catalog:
   build: .
-  container_name: docker-ioos-catalog-test
-  hostname: catalog-dev.asa.rocks
+  container_name: ioos-catalog
   links:
     - redis
     - postgis:db
     - solr
   environment:
     - CKAN_INIT=true
-    - CKAN_SERVER_NAME=http://catalog-dev.asa.rocks/catalog/
   ports:
     - "80:80"
