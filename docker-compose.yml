@@ -3,16 +3,12 @@
 solr:
   image: lukecampbell/docker-ckan-solr
   container_name: solr
-  # use ports ranges as string
-  # See https://docs.docker.com/compose/compose-file/#ports
-  ports:
-    - "8983:8983"
+  volumes:
+    - solr_core_data:/opt/solr/example/solr
 
 postgis:
   image: mdillon/postgis:9.3
   container_name: postgis
-  ports:
-    - "5432:5432"
   # Override these in a production environment
   environment:
     - POSTGRES_USER=${POSTGRES_USER}
@@ -24,8 +20,6 @@ postgis:
 redis:
   image: redis:3.0.7-alpine
   container_name: redis
-  ports:
-    - "6379:6379" 
 
 ioos-catalog:
   build: .
