@@ -2,7 +2,7 @@
 
 set -eux
 
-if [ ! -L /etc/ckan/default/pycsw.cfg ]; then
+if [ ! -e /etc/ckan/default/pycsw.cfg ]; then
     ln -s /usr/lib/ckan/default/src/pycsw/default.cfg /etc/ckan/default/pycsw.cfg
 fi
 
