@@ -46,7 +46,7 @@ write_config () {
       "ckan.site_url = ${CKAN_SERVER_NAME}" \
       "ckan.plugins = stats text_view image_view recline_view spatial_metadata spatial_query harvest ckan_harvester csw_harvester waf_harvester ioos_theme"
 
-  sed -i -e "s/\[loggers\]/\n## Message Queue\n\nckan.harvest.mq.type = redis\nckan.harvest.mq.hostname = ${redis_host}\nckan.harvest.mq.port = ${redis_port}\nckan.harvest.mq.redis_db = ${redis_db}\n\n## Spatial\n\nckan.spatial.validator.profiles = iso19139ngdc\n[loggers]/" "$CONFIG"
+  sed -i -e "s/\[loggers\]/\n## Message Queue\n\nckan.harvest.mq.type = redis\nckan.harvest.mq.hostname = ${redis_host}\nckan.harvest.mq.port = ${redis_port}\nckan.harvest.mq.redis_db = ${redis_db}\n\n## Spatial\n\nckan.spatial.validator.profiles = iso19139ngdc\nckanext.spatial.search_backend = solr\n[loggers]/" "$CONFIG"
 
   if [ -n "$ERROR_EMAIL" ]; then
     sed -i -e "s&^#email_to.*&email_to = ${ERROR_EMAIL}&" "$CONFIG"
