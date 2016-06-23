@@ -38,3 +38,6 @@ ADD ./contrib/supervisor/conf.d /etc/supervisor/conf.d
 
 # Add services
 ADD ./contrib/docker/services /etc/service
+
+# run the init script
+CMD /sbin/my_init
