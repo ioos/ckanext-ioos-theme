@@ -58,6 +58,20 @@ This setup presumes that docker is successfully installed on the host and any vi
       lukecampbell/docker-ioos-catalog
     ```
 
+# Setup with `docker-compose`
+
+Alternatively, all the components can be fetched for a single server using `docker-compose`.
+The Solr and PostgreSQL containers also have named volumes in order to persist data in between restarts.
+First, set the PostgreSQL credentials as environment variables:
+
+```
+export POSTGRES_USER=ckanadmin
+export POSTGRES_PASSWORD=mypass
+export POSTGRES_DB=ckan_db
+```
+
+Run `docker-compose up` and the containers should build.  CKAN will be exposed
+on port 80 for the host.
 
 
 # Usage
