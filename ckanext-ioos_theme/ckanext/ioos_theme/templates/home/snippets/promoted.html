@@ -4,15 +4,23 @@
   <header>
     {% if intro %}
       {{ h.render_markdown(intro) }}
-      {% else %}
+    {% else %}
       <h1 class="page-heading">{{ _("Welcome to the IOOS Catalog") }}</h1>
       <p>
-        {#  TODO: Add a meaningful info blurb here  #}
         {% trans %}This is a nice introductory paragraph about CKAN or the site
-          in general. We don't have any copy to go here yet but soon we will
+        in general. We don't have any copy to go here yet but soon we will
         {% endtrans %}
       </p>
     {% endif %}
-    </header>
-</div>
+  </header>
 
+  {% block home_image %}
+    <section class="media-overlay hidden-phone">
+      {% block home_image_content %}
+        <a class="media-image" href="#">
+          <img src="https://ioos.noaa.gov/wp-content/uploads/2016/04/deployCTD2.jpg" alt="Placeholder" width="420" height="220" />
+        </a>
+      {% endblock %}
+    </section>
+  {% endblock %}
+</div>

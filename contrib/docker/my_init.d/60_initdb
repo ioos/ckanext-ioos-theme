@@ -2,10 +2,10 @@
 set -eu
 : ${CKAN_INIT:=}
 
-export PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD
+export PGPASSWORD=$POSTGRES_PASSWORD
 fail_counter=0
 
-run_psql="psql -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER postgres -qAt -c"
+run_psql="psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER postgres -qAt -c"
 run_psql_ckan=${run_psql/postgres/ckan}
 
 while true; do
@@ -14,7 +14,7 @@ while true; do
         >&2 echo 'Exceed max retries' && exit 1
     fi
 
-    if ! pg_isready -h $DB_PORT_5432_TCP_ADDR -d ckan; then
+    if ! pg_isready -h $POSTGRES_HOST -p $POSTGRES_PORT -d ckan; then
         fail_counter=$((fail_counter+1))
         sleep 20
     else
@@ -34,7 +34,7 @@ done
 
 # pycsw database should not exist, create it.  If it does, just silently
 # continue
-createdb -h $DB_PORT_5432_TCP_ADDR -U $DB_ENV_POSTGRES_USER -O $DB_ENV_POSTGRES_USER pycsw -E utf-8 -T template_postgis || /bin/true
+createdb -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -O $POSTGRES_USER pycsw -E utf-8 -T template_postgis || /bin/true
 
 if [[ "$CKAN_INIT" = "true" ]]; then
     "$CKAN_HOME/bin/paster" --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"

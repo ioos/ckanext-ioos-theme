@@ -11,7 +11,7 @@
 : ${REDIS_URL:=}
 # DB URL for the PyCSW Database
 : ${PYCSW_DB_URL:=}
-: ${CKAN_DEBUG:=}
+: ${CKAN_DEBUG:=false}
 : ${CKAN_SERVER_NAME:=}
 
 set -eux
@@ -46,7 +46,11 @@ write_config () {
       "ckan.site_url = ${CKAN_SERVER_NAME}" \
       "ckan.plugins = stats text_view image_view recline_view spatial_metadata spatial_query harvest ckan_harvester csw_harvester waf_harvester ioos_theme"
 
-  sed -i -e "s/\[loggers\]/\n## Message Queue\n\nckan.harvest.mq.type = redis\nckan.harvest.mq.hostname = ${redis_host}\nckan.harvest.mq.port = ${redis_port}\nckan.harvest.mq.redis_db = ${redis_db}\n\n## Spatial\n\nckan.spatial.validator.profiles = iso19139ngdc\nckanext.spatial.search_backend = solr\n[loggers]/" "$CONFIG"
+  sed -i -e "s/\[loggers\]/\n## Message Queue\n\nckan.harvest.mq.type = redis\nckan.harvest.mq.hostname = ${REDIS_HOST}\nckan.harvest.mq.port = ${REDIS_PORT}\nckan.harvest.mq.redis_db = ${REDIS_DB}\n\n## Spatial\n\nckan.spatial.validator.profiles = iso19139ngdc\nckanext.spatial.search_backend = solr\n[loggers]/" "$CONFIG"
+  # Enable debug mode
+  if [ -n $CKAN_DEBUG ]; then
+      sed -i -e "s/debug = false/debug = ${CKAN_DEBUG}/" "$CONFIG"
+  fi
 
   if [ -n "$ERROR_EMAIL" ]; then
     sed -i -e "s&^#email_to.*&email_to = ${ERROR_EMAIL}&" "$CONFIG"
@@ -56,33 +60,32 @@ write_config () {
 }
 
 link_redis_url() {
-    local host=$REDIS_PORT_6379_TCP_ADDR
-    local port=$REDIS_PORT_6379_TCP_PORT
-    local db=5
+    local host=$REDIS_HOST
+    local port=$REDIS_PORT
+    local db=$REDIS_DB
     echo "redis://${host}:${port}/${db}"
 }
 
 link_postgres_url () {
-  local user=$DB_ENV_POSTGRES_USER
-  local pass=$DB_ENV_POSTGRES_PASSWORD
-  local db=$DB_ENV_POSTGRES_DB
-  local host=$DB_PORT_5432_TCP_ADDR
-  local port=$DB_PORT_5432_TCP_PORT
+  local user=$POSTGRES_USER
+  local pass=$POSTGRES_PASSWORD
+  local db=$POSTGRES_DB
+  local host=$POSTGRES_HOST
+  local port=$POSTGRES_PORT
   echo "postgresql://${user}:${pass}@${host}:${port}/${db}"
 }
 
 link_pycsw_db_url () {
-  local user=$DB_ENV_POSTGRES_USER
-  local pass=$DB_ENV_POSTGRES_PASSWORD
-  local db=$DB_ENV_POSTGRES_DB
-  local host=$DB_PORT_5432_TCP_ADDR
-  local port=$DB_PORT_5432_TCP_PORT
+  local user=$POSTGRES_USER
+  local pass=$POSTGRES_PASSWORD
+  local host=$POSTGRES_HOST
+  local port=$POSTGRES_PORT
   echo "postgresql://${user}:${pass}@${host}:${port}/pycsw"
 }
 
 link_solr_url () {
-  local host=$SOLR_PORT_8983_TCP_ADDR
-  local port=$SOLR_PORT_8983_TCP_PORT
+  local host=$SOLR_HOST
+  local port=$SOLR_PORT
   echo "http://${host}:${port}/solr/ckan"
 }
 
@@ -114,3 +117,16 @@ if [ ! -e "$CONFIG" ]; then
   write_config
 fi
 
+
+echo "CKAN_DEBUG: $CKAN_DEBUG"
+if [ "$CKAN_DEBUG" == "true" ]; then
+    cat << EOF > /etc/service/ckan/run
+#!/bin/sh
+exec 2>&1
+
+set -e
+
+exec $CKAN_HOME/bin/paster serve $CKAN_CONFIG/ckan.ini
+EOF
+
+fi

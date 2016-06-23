@@ -1,34 +1,29 @@
+version: '2'
+
 # should we add hostname to dockerfile
 
-solr:
-  image: lukecampbell/docker-ckan-solr
-  container_name: solr
-  volumes:
-    - solr_core_data:/opt/solr/example/solr
+services:
 
-postgis:
-  image: mdillon/postgis:9.3
-  container_name: postgis
-  # Override these in a production environment
-  environment:
-    - POSTGRES_USER=${POSTGRES_USER}
-    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    - POSTGRES_DB=${POSTGRES_DB}
-  volumes:
-    - pg_data:/var/lib/postgresql/data
+  solr:
+    image: lukecampbell/docker-ckan-solr
+    container_name: solr
 
-redis:
-  image: redis:3.0.7-alpine
-  container_name: redis
+  postgis:
+    image: mdillon/postgis:9.3
+    container_name: postgis
+    # Override these in a production environment
+    env_file: env
+    volumes:
+      - /var/lib/docker-volumes/postgis:/var/lib/postgresql/data
 
-ioos-catalog:
-  build: .
-  container_name: ioos-catalog
-  links:
-    - redis
-    - postgis:db
-    - solr
-  environment:
-    - CKAN_INIT=true
-  ports:
-    - "80:80"
+  redis:
+    image: redis:3.0.7-alpine
+    container_name: redis
+
+  ioos-catalog:
+    build: .
+    container_name: ioos-catalog
+    env_file: env
+    ports:
+      - "80:80"
+
