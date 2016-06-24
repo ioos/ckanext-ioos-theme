@@ -6,69 +6,57 @@ Docker image for IOOS Catalog comprising CKAN+PyCSW+Harvesting
 
 This setup presumes that docker is successfully installed on the host and any virtual machines or hosts are running.
 
-1. Get the solr image
+
+1. Create a network for our containers to run in
    ```
-   docker pull lukecampbell/docker-ckan-solr
+   docker network create catalog
    ```
 
-2. Launch solr
+
+2. Create an environment file called `env` with the container settings:
    ```
-   docker run --name "solr" -d lukecampbell/docker-ckan-solr
+   POSTGRES_USER=ckanadmin
+   POSTGRES_PASSWORD=ckanpass
+   POSTGRES_DB=ckan
+   POSTGRES_HOST=postgis
+   POSTGRES_PORT=5432
+   CKAN_INIT=true
+   REDIS_URL=redis://redis/5
+   REDIS_HOST=redis
+   REDIS_PORT=6379
+   REDIS_DB=5
+   SOLR_HOST=solr
+   SOLR_PORT=8983
+   CKAN_DEBUG=false
    ```
 
-3. Get the postgis image if you want to run PostGIS in a container.
-  
-   __Note: It's generally advised to run the database on a dedicated host for production settings__
-
+3. Launch solr as a daemon
    ```
-   docker pull lukecampbell/docker-ckan-postgis
+   docker run --net catalog --name solr -d lukecampbell/docker-ckan-solr
    ```
 
 4. Launch PostGIS
-
    ```
-   docker run --name "postgis" -p 5432:5432 -d -t -e "POSTGRES_USER=ckanadmin" -e "POSTGRES_PASS=ckanadmin" -e "POSTGRES_DB=ckan" lukecampbell/docker-postgis
-   ```
-
-5. Get the redis image
-   ```
-   docker pull redis
+   docker run --net catalog --name postgis -d --env-file env mdillon/postgis:9.3
    ```
 
-6. Launch redis
+5. Launch redis
    ```
-   docker run --name redis -d redis
-   ```
-
-7. Pull the IOOS CKAN image
-   ```
-   docker pull lukecampbell/docker-ioos-catalog
+   docker run --net catalog --name redis -d redis:3.0.7-alpine
    ```
 
-8. Launch the CKAN container
+6. Launch the CKAN container
 
     ```
-    docker run --name "ioos-catalog" \
-      -e "DATABASE_URL=postgresql://ckan:ckanpass@192.168.99.100/ckan" \
-      --link solr:solr \
-      --link redis:redis \
-      --link postgis:db \
-      -p 80:80 \
-      -d -t \
-      lukecampbell/docker-ioos-catalog
+    docker run --net catalog --name ioos-catalog -p 80:80 --env-file env -d ioos/ckanext-ioos-theme
     ```
 
 # Setup with `docker-compose`
 
 Alternatively, all the components can be fetched for a single server using `docker-compose`.
 The Solr and PostgreSQL containers also have named volumes in order to persist data in between restarts.
-First, set the PostgreSQL credentials as environment variables:
+First, set the environment variables in a file called `env`, see step 2 above.
 
-```
-export POSTGRES_USER=ckanadmin
-export POSTGRES_PASSWORD=mypass
-export POSTGRES_DB=ckan_db
-```
 
 Run `docker-compose up` and the containers should build.  CKAN will be exposed
 on port 80 for the host.
