@@ -22,12 +22,24 @@ services:
     image: redis:3.0.7-alpine
     container_name: redis
 
-  ioos-catalog:
-    image: ioos/ckanext-ioos-theme
-    container_name: ioos-catalog
+  ckan:
+    image: ioos/ckanext-ioos-theme:ckan
+    container_name: ckan
     env_file: env
     ports:
-      - "80:80"
+      - "8080:8080"
+
+  harvester:
+    image: ioos/ckanext-ioos-theme:harvester
+    container_name: harvester
+    env_file: env
+
+  pycsw:
+    image: ioos/ckanext-ioos-theme:pycsw
+    container_name: pycsw
+    env_file: env
+    ports:
+      - "8081:8080"
 
 volumes:
   solr_core_data:

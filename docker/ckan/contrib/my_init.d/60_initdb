@@ -32,9 +32,6 @@ while true; do
     fi
 done
 
-# pycsw database should not exist, create it.  If it does, just silently
-# continue
-createdb -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -O $POSTGRES_USER pycsw -E utf-8 -T template_postgis || /bin/true
 
 if [[ "$CKAN_INIT" = "true" ]]; then
     "$CKAN_HOME/bin/paster" --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -eux
+
+export PGPASSWORD=$POSTGRES_PASSWORD
+fail_counter=0
+
+while true; do
+
+    if [[ $fail_counter -gt 10 ]]; then
+        >&2 echo 'Exceed max retries' && exit 1
+    fi
+
+    if ! pg_isready -h $POSTGRES_HOST -p $POSTGRES_PORT -d postgres; then
+        fail_counter=$((fail_counter+1))
+        sleep 20
+    else
+        break
+    fi
+done
+
+# pycsw database should not exist, create it.  If it does, just silently
+# continue
+createdb -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -O $POSTGRES_USER pycsw -E utf-8 -T template_postgis || /bin/true
+
+RESULT=`psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER pycsw -c 'SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name;' | grep records | wc -l`
+if [[ ${RESULT} != 1 ]]; then
+    echo "Setting up PyCSW for the first time"
+    pushd /usr/lib/ckan/default/src/ckanext-spatial
+    $CKAN_HOME/bin/paster ckan-pycsw setup -p /etc/ckan/default/pycsw.cfg
+    popd
+fi
