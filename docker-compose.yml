@@ -7,6 +7,8 @@ services:
   solr:
     image: lukecampbell/docker-ckan-solr
     container_name: solr
+    volumes:
+      - solr_core_data:/opt/solr/example/solr
 
   postgis:
     image: mdillon/postgis:9.3
@@ -14,16 +16,25 @@ services:
     # Override these in a production environment
     env_file: env
     volumes:
-      - /var/lib/docker-volumes/postgis:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
 
   redis:
     image: redis:3.0.7-alpine
     container_name: redis
 
   ioos-catalog:
-    build: .
+    image: ioos/ckanext-ioos-theme
     container_name: ioos-catalog
     env_file: env
     ports:
       - "80:80"
+
+volumes:
+  solr_core_data:
+    external:
+      name: solr_core_data
+
+  pg_data:
+    external:
+      name: pg_data
 
