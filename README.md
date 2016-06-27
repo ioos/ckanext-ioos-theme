@@ -1,6 +1,6 @@
-# docker-ioos-catalog
+# ckanext-ioos-theme
 
-Docker image for IOOS Catalog comprising CKAN+PyCSW+Harvesting
+The IOOS CKAN Catalog
 
 # Setup
 
@@ -11,7 +11,6 @@ This setup presumes that docker is successfully installed on the host and any vi
    ```
    docker network create catalog
    ```
-
 
 2. Create an environment file called `env` with the container settings:
    ```
@@ -48,7 +47,19 @@ This setup presumes that docker is successfully installed on the host and any vi
 6. Launch the CKAN container
 
     ```
-    docker run --net catalog --name ioos-catalog -p 80:80 --env-file env -d ioos/ckanext-ioos-theme
+    docker run --net catalog --name ckan -p 8080:8080 --env-file env -d ioos/catalog-docker-ckan
+    ```
+
+7. Launch the harvester container
+
+    ```
+    docker run --net catalog --name harvester --env-file env -d ioos/catalog-docker-ckan-harvester
+    ```
+
+8. Launch the PyCSW container
+
+    ```
+    docker run --net catalog --name pycsw -p 8081:8080 --env-file env -d ioos/catalog-docker-pycsw
     ```
 
 # Setup with `docker-compose`
@@ -58,13 +69,24 @@ The Solr and PostgreSQL containers also have named volumes in order to persist d
 First, set the environment variables in a file called `env`, see step 2 above.
 
 
-Run `docker-compose up` and the containers should build.  CKAN will be exposed
-on port 80 for the host.
+1. Create a named volume for the PostGIS data
+   ```
+   docker volume create --name pg_data
+   ```
 
+2. Create a named volume for the solr data
+   ```
+   docker volume create --name solr_core_data
+   ```
+
+3. Run `docker-compose up` and the containers should build.
+
+CKAN will then be running and exposed on port 8080 for that host. PyCSW will be
+running on port 8081. Every hour PyCSW will synchronize to CKAN.
 
 # Usage
 
-Once the containers are launched you should be able to access the CKAN instance by visiting port 80
+Once the containers are launched you should be able to access the CKAN instance by visiting port 8080
 
 
 

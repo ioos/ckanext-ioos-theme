@@ -23,19 +23,19 @@ services:
     container_name: redis
 
   ckan:
-    image: ioos/ckanext-ioos-theme:ckan
+    image: ioos/catalog-docker-ckan:latest
     container_name: ckan
     env_file: env
     ports:
       - "8080:8080"
 
   harvester:
-    image: ioos/ckanext-ioos-theme:harvester
+    image: ioos/catalog-docker-ckan-harvest:latest
     container_name: harvester
     env_file: env
 
   pycsw:
-    image: ioos/ckanext-ioos-theme:pycsw
+    image: ioos/catalog-docker-pycsw:latest
     container_name: pycsw
     env_file: env
     ports:
