@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eux
+
+echo "0 * * * * root /usr/lib/ckan/default/bin/paster --plugin=ckanext-spatial ckan-pycsw load -p /etc/ckan/default/pycsw.cfg -u http://ckan:8080/ > /var/log/pycsw-harvest.log 2>&1" >> /etc/crontab
+

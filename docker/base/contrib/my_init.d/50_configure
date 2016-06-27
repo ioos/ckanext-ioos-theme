@@ -120,7 +120,7 @@ fi
 
 echo "CKAN_DEBUG: $CKAN_DEBUG"
 if [ "$CKAN_DEBUG" == "true" ]; then
-    cat << EOF > /etc/service/ckan/run
+    cat << EOF > /bin/services/ckan/run
 #!/bin/sh
 exec 2>&1
 
@@ -129,4 +129,9 @@ set -e
 exec $CKAN_HOME/bin/paster serve $CKAN_CONFIG/ckan.ini
 EOF
 
+fi
+
+# Copy pycsw configuration
+if [ ! -e /etc/ckan/default/pycsw.cfg ]; then
+    ln -s /usr/lib/ckan/default/src/pycsw/default.cfg /etc/ckan/default/pycsw.cfg
 fi

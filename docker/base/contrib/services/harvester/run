@@ -4,4 +4,3 @@ exec 2>&1
 set -e
 
 exec /usr/bin/supervisord -n
-
