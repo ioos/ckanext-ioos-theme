@@ -1,4 +1,4 @@
-# ckanext-ioos-theme
+# catalog-ckan
 
 The IOOS CKAN Catalog
 

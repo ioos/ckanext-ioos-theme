@@ -29,7 +29,7 @@
     :alt: License
 
 =============
-ckanext-ioos_theme
+catalog-ckan
 =============
 
 .. Put a description of your extension here:
