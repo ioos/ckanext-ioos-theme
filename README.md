@@ -1,4 +1,5 @@
 [![Stories in Ready](https://badge.waffle.io/ioos/catalog-ckan.png?label=ready&title=Ready)](https://waffle.io/ioos/catalog-ckan)
+[![Stories in In Progress](https://badge.waffle.io/ioos/catalog-ckan.png?label=in%20progress&title=In%20Progress)](https://waffle.io/ioos/catalog-ckan)
 # catalog-ckan
 
 The IOOS CKAN Catalog
@@ -88,6 +89,3 @@ running on port 8081. Every hour PyCSW will synchronize to CKAN.
 # Usage
 
 Once the containers are launched you should be able to access the CKAN instance by visiting port 8080
-
-
-
