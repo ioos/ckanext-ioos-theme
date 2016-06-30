@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/ioos/catalog-ckan.png?label=ready&title=Ready)](https://waffle.io/ioos/catalog-ckan)
 # catalog-ckan
 
 The IOOS CKAN Catalog
