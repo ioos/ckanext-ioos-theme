@@ -1,5 +1,5 @@
-[![Stories in Ready](https://badge.waffle.io/ioos/catalog-ckan.png?label=ready&title=Ready)](https://waffle.io/ioos/catalog-ckan)
-[![Stories in In Progress](https://badge.waffle.io/ioos/catalog-ckan.png?label=in%20progress&title=In%20Progress)](https://waffle.io/ioos/catalog-ckan)
+[![Stories in Ready](https://badge.waffle.io/ioos/catalog.png?label=ready&title=Ready)](https://waffle.io/ioos/catalog)
+[![Stories in In Progress](https://badge.waffle.io/ioos/catalog.png?label=in%20progress&title=In%20Progress)](https://waffle.io/ioos/catalog)
 # catalog-ckan
 
 The IOOS CKAN Catalog
