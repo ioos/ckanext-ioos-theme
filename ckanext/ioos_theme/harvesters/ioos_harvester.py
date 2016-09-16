@@ -23,6 +23,8 @@ class IOOSHarvester(SpatialHarvester):
             extras['responsible-organisation'] = iso_values.get('responsible-organisation', [])
         if iso_values.get('distributor-info'):
             extras['distributor-info'] = iso_values['distributor-info']
+        if iso_values.get('aggregation-info'):
+            extras['aggregation-info'] = iso_values['aggregation-info']
         extras_as_dict = []
         for key, value in extras.iteritems():
             if isinstance(value, (list, dict)):

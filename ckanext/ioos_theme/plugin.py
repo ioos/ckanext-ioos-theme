@@ -45,13 +45,21 @@ def get_responsible_organization(pkg):
 
 def get_pkg_item(pkg, key):
     pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
-    log.critical(pkg_item)
     return json.loads(pkg_item)
 
 
 def get_pkg_extra(pkg, key):
     pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
     return pkg_item
+
+
+def jsonpath(obj, path):
+    for key in path.split('.'):
+        if not isinstance(obj, dict):
+            return {}
+        obj = obj.get(key, {})
+        log.info("OBJ: %s", obj)
+    return obj
 
 
 class Ioos_ThemePlugin(plugins.SingletonPlugin):
@@ -72,5 +80,6 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
             "ioos_theme_get_publisher": get_publisher,
             "ioos_theme_get_responsible_organization": get_responsible_organization,
             "ioos_theme_get_pkg_item": get_pkg_item,
-            "ioos_theme_get_pkg_extra": get_pkg_extra
+            "ioos_theme_get_pkg_extra": get_pkg_extra,
+            "ioos_theme_jsonpath": jsonpath
         }
