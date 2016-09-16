@@ -14,6 +14,15 @@
       {{ pkg.notes }}
     </p>
   </div>
+
+  {% block package_resources %}
+    {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources %}
+  {% endblock %}
+
+  {% block package_tags %}
+    {% snippet "package/snippets/tags.html", tags=pkg.tags %}
+  {% endblock %}
+
   <ul id="dataset-meta" class="nav nav-tabs">
     <li class="active">
       <a data-toggle="tab" href="#access">Access</a>
@@ -48,5 +57,9 @@
 
   <div data-module="dataset_tabs">
   </div>
+
+  {% block package_additional_info %}
+    {% snippet "package/snippets/additional_info.html", pkg_dict=pkg %}
+  {% endblock %}
 
 {% endblock %}
