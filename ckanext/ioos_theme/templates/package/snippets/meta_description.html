@@ -7,68 +7,117 @@ Example:
 
 #}
 
-{% set resources = pkg.resources or [] %}
-
 <table class="table table-condensed table-bordered">
   <tbody>
-    {% for responsible_party in h.ioos_theme_get_responsible_organization(pkg) %}
-    {% set role = responsible_party['role'] %}
-    {% if role %}
+    {% if h.ioos_theme_get_pkg_item(pkg, "publisher-info") %}
+    {% set publisher = h.ioos_theme_get_pkg_item(pkg, "publisher-info") %}
     <tr>
       <td width="30%">
-        {% if role == 'pointOfContact' %}
-        Point of Contact
-        {% elif role == "publisher" %}
         Publisher
-        {% elif role == "resourceProvider" %}
-        Resource Provider
-        {% elif role == "custodian" %}
-        Custodian
-        {% elif role == "owner" %}
-        Owner
-        {% elif role == "sponsor" %}
-        Sponsor
-        {% elif role == "user" %}
-        User
-        {% elif role == "distributor" %}
-        Distributor
-        {% elif role == "originator" %}
-        Originator
-        {% elif role == "principalInvestigator" %}
-        Principal Investigator
-        {% elif role == "processor" %}
-        Processor
-        {% elif role == "author" %}
-        Author
-        {% elif role == "coAuthor" %}
-        Co-author
-        {% elif role == "collaborator" %}
-        Collaborator
-        {% elif role == "editor" %}
-        Editor
-        {% elif role == "mediator" %}
-        Mediator
-        {% elif role == "rightsHolder" %}
-        Rights Holder
-        {% elif role == "contributor" %}
-        Contributor
-        {% elif role == "funder" %}
-        Funder
-        {% elif role == "stakeholder" %}
-        Stakeholder
-        {% endif %}
       </td>
       <td width="70%">
-        {% if responsible_party['organisation-name'] and responsible_party['individual-name'] %}
-        {{responsible_party['individual-name']}} at {{responsible_party['organisation-name']}}
-        {% elif responsible_party['organisation-name'] %}
-        {{ responsible_party['organisation-name'] }}
-        {% elif responsible_party['individual-name'] %}
-        {{ responsible_party['individual-name'] }}
+        {% if publisher['individual-name'] %}
+          {{ publisher['individual-name'] }}<br>
+        {% endif %}
+        {% if publisher['organisation-name'] %}
+          {{ publisher['organisation-name'] }}<br>
         {% endif %}
       </td>
     </tr>
     {% endif %}
-    {% endfor %}
+    {% if h.ioos_theme_get_pkg_item(pkg, "resource-provider") %}
+    {% set resource_provider = h.ioos_theme_get_pkg_item(pkg, "resource-provider") %}
+    <tr>
+      <td width="30%">
+        Resource Provider
+      </td>
+      <td width="70%">
+        {% if resource_provider['individual-name'] %}
+          {{ resource_provider['individual-name'] }}<br>
+        {% endif %}
+        {% if resource_provider['organisation-name'] %}
+          {{ resource_provider['organisation-name'] }}<br>
+        {% endif %}
+      </td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td width="30%">
+        Date(s)
+      </td>
+      <td width="70%">
+        {% for refdate in h.ioos_theme_get_pkg_item(pkg, "dataset-reference-date") %}
+        {{ refdate.type }}:
+        {{ refdate.value }}
+        <br>
+        {% endfor %}
+      </td>
+    </tr>
+    {% if h.ioos_theme_get_pkg_item(pkg, "dataset-edition") %}
+    <tr>
+      <td width="30%">
+        Edition
+      </td>
+      <td width="70%">
+        {% for edition in h.ioos_theme_get_pkg_item(pkg, "dataset-edition") %}
+        {{ edition }}<br>
+        {% endfor %}
+      </td>
+    </tr>
+    {% endif %}
+    {% if h.ioos_theme_get_pkg_extra(pkg, "presentation-form") %}
+    {% set presentation = h.ioos_theme_get_pkg_extra(pkg, "presentation-form") %}
+    <tr>
+      <td width="30%">
+        Data Presentation Form
+      </td>
+      <td width="70%">
+        {% if presentation == "tableDigital" %}
+          Digital table - digital representation of facts or figures systematically displayed, especially in columns
+        {% elif presentation == "documentDigital" %}
+          Digital document - digital representation of a primarily textual item (can contain illustrations also)
+        {% elif presentation == "imageDigital" %}
+          Digital image
+        {% elif presentation == "modelDigital" %}
+          Digital model - multi-dimensional digital representation of a feature, process, etc.
+        {% elif presentation == "profileDigital" %}
+          Digital profile - vertical cross-section in digital form
+        {% elif presentation == "videoDigital" %}
+          Digital video - digital video recording
+        {% elif presentation == "imageHardcopy" %}
+          Hardcopy
+        {% else %}
+          {{ presentation }}
+        {% endif %}
+      </td>
+    </tr>
+    {% endif %}
+    {% if h.ioos_theme_get_pkg_extra(pkg, "progress") %}
+    {% set status = h.ioos_theme_get_pkg_extra(pkg, "progress") %}
+    <tr>
+      <td width='30%'>
+        Dataset Progress Status
+      </td>
+      <td width='70%'>
+        {% if status == "completed" %}
+          Complete<br>
+        {% elif status == "historicalArchive" %}
+          Historical Archive<br>
+        {% elif status == "obsolete" %}
+          Obsolete<br>
+        {% elif status == "onGoing" %}
+          On Going<br>
+        {% elif status == "planned" %}
+          Planned<br>
+        {% elif status == "required" %}
+          Required<br>
+        {% elif status == "underDevelopment" %}
+          Under Development<br>
+        {% else %}
+          {{status}}<br>
+        {% endif %}
+      </td>
+    </tr>
+    {% endif %}
   </tbody>
 </table>

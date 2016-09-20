@@ -18,6 +18,15 @@ class IOOSHarvester(SpatialHarvester):
         extras = {}
         if iso_values.get('publisher', None):
             extras['publisher'] = iso_values.get('publisher', [])
+        if iso_values.get('publisher-info'):
+            extras['publisher-info'] = iso_values.get('publisher-info')
+        if iso_values.get('resource-provider'):
+            extras['resource-provider'] = iso_values['resource-provider']
+        if iso_values.get('dataset-edition'):
+            extras['dataset-edition'] = iso_values['dataset-edition']
+            package_dict["version"] = iso_values['dataset-edition'][0]
+        if iso_values.get('presentation-form'):
+            extras['presentation-form'] = iso_values['presentation-form'][0]
         if iso_values.get('responsible-organisation'):
             log.info("Checking for responsible-organisation")
             extras['responsible-organisation'] = iso_values.get('responsible-organisation', [])
