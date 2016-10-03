@@ -5,6 +5,7 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import json
 import logging
+from collections import OrderedDict
 
 log = logging.getLogger(__name__)
 
@@ -47,6 +48,9 @@ def get_pkg_item(pkg, key):
     pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
     return json.loads(pkg_item)
 
+def get_pkg_ordereddict(pkg, key):
+    pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
+    return json.loads(pkg_item, object_pairs_hook=OrderedDict)
 
 def get_pkg_extra(pkg, key):
     pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
@@ -81,5 +85,6 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
             "ioos_theme_get_responsible_organization": get_responsible_organization,
             "ioos_theme_get_pkg_item": get_pkg_item,
             "ioos_theme_get_pkg_extra": get_pkg_extra,
+            "ioos_theme_get_pkg_ordereddict": get_pkg_ordereddict,
             "ioos_theme_jsonpath": jsonpath
         }

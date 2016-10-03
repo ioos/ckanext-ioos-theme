@@ -5,6 +5,9 @@ import logging
 from ckanext.spatial.harvesters.base import SpatialHarvester
 from ckanext.spatial.interfaces import ISpatialHarvester
 import json
+from itertools import groupby
+from inflection import titleize
+from collections import OrderedDict
 
 log = logging.getLogger(__name__)
 
@@ -15,13 +18,31 @@ class IOOSHarvester(SpatialHarvester):
         '''
         '''
         package_dict = SpatialHarvester.get_package_dict(self, iso_values, harvest_object)
-        extras = {}
+        simple_keys = {'publisher_info', 'resource-provider',
+                       'distributor-info', 'aggregation-info',
+                       'additional-information-source', 'purpose',
+                       # Constraints
+                       'use-constraints', 'access-constraints', 'fees',
+                       # lineage
+                       'lineage', 'lineage-process-steps'}
+        extras = {k: iso_values.get(k) for k in simple_keys if k in iso_values}
+
+        # sort keywords according to thesaurus name
+        iso_values['keywords'].sort(key=lambda x: (x['type'] == '', x['type'],
+                                                  x['thesaurus']['title'] != '',
+                                                   x['thesaurus']['title']))
+        group_sort_func = lambda x: (x['type'] == '', x['type'])
+        # group by theme keyword
+        extras['grouped_keywords'] = OrderedDict(
+                                          [(titleize(k[1] if not k[0] else
+                                               'Uncategorized') + ' Keywords',
+                                           list(g)) for k, g in
+                                           groupby(iso_values['keywords'],
+                                                   group_sort_func)]
+                                     )
+
         if iso_values.get('publisher', None):
             extras['publisher'] = iso_values.get('publisher', [])
-        if iso_values.get('publisher-info'):
-            extras['publisher-info'] = iso_values.get('publisher-info')
-        if iso_values.get('resource-provider'):
-            extras['resource-provider'] = iso_values['resource-provider']
         if iso_values.get('dataset-edition'):
             extras['dataset-edition'] = iso_values['dataset-edition']
             package_dict["version"] = iso_values['dataset-edition'][0]
@@ -30,19 +51,11 @@ class IOOSHarvester(SpatialHarvester):
         if iso_values.get('responsible-organisation'):
             log.info("Checking for responsible-organisation")
             extras['responsible-organisation'] = iso_values.get('responsible-organisation', [])
-        if iso_values.get('distributor-info'):
-            extras['distributor-info'] = iso_values['distributor-info']
-        if iso_values.get('aggregation-info'):
-            extras['aggregation-info'] = iso_values['aggregation-info']
-        extras_as_dict = []
-        for key, value in extras.iteritems():
-            if isinstance(value, (list, dict)):
-                extras_as_dict.append({'key': key, 'value': json.dumps(value)})
-            else:
-                extras_as_dict.append({'key': key, 'value': value})
 
-        package_dict['extras'] = package_dict['extras'] + extras_as_dict
+        extras_kv = [{'key': k,
+                      'value': json.dumps(v) if isinstance(v, (list, dict))
+                               else v} for k, v in extras.iteritems()]
+
+        package_dict['extras'] = package_dict['extras'] + extras_kv
 
         return package_dict
-
-

@@ -9,14 +9,40 @@ Example:
 
 <table class="table table-condesnsed table-bordered">
   <tbody>
+    {% if h.ioos_theme_get_pkg_extra(pkg, "lineage") %}
+    {% set lineage = h.ioos_theme_get_pkg_extra(pkg, "lineage") %}
     <tr>
-      <td>
-        Online Access
+      <td width="30%">
+        Lineage
       </td>
-      <td>
-        More stuff goes here
+      <td width="70%">
+        {{lineage}}        
       </td>
     </tr>
+    {% endif %}
+
+    {% if h.ioos_theme_get_pkg_item(pkg, "lineage-process-steps") %}
+    {% set lineage_steps = h.ioos_theme_get_pkg_item(pkg, "lineage-process-steps") %}
+    <tr>
+      <td width="30%">
+        Lineage Process Steps
+      </td>
+      <td width="70%">
+        <ul>
+          {% for step in lineage_steps %}
+          <li>
+          {{step['description']}}
+          <br />
+          {% if step['rationale'] %}
+          Rationale: {{step['rationale']}}
+          <br />
+          {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+    {% endif %}
   </tbody>
 </table>
 

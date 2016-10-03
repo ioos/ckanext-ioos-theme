@@ -7,7 +7,52 @@ Example:
 
 #}
 
-<p>
-  Uh, not sure what to put here 
-</p>
+<table class="table table-condensed table-bordered">
+  <tbody>
+  {% if h.ioos_theme_get_pkg_item(pkg, "use-constraints") %}
+  {% set use_constraints = h.ioos_theme_get_pkg_item(pkg, "use-constraints") %}
+    <tr>
+      <td width="30%">
+        Use Constraints
+      </td>
+      <td width="70%">
+        {% for constraint in use_constraints %}
+        {{constraint}}
+        <br />
+        {% endfor %}
+      </td>
+    </tr>
+  {% endif %} 
+
+  {% if h.ioos_theme_get_pkg_item(pkg, "access-constraints") %}
+  {% set access_constraints = h.ioos_theme_get_pkg_item(pkg, "access-constraints") %}
+    <tr>
+      <td width="30%">
+        Access Constraints
+      </td>
+      <td width="70%">
+        {% for constraint in access_constraints %}
+        {{constraint}}
+        <br />
+        {% endfor %}
+      </td>
+    </tr>
+  {% endif %} 
+
+  {% if h.ioos_theme_get_pkg_item(pkg, "fees") %}
+  {% set fees = h.ioos_theme_get_pkg_item(pkg, "fees") %}
+    <tr>
+      <td width="30%">
+        Fees
+      </td>
+      <td width="70%">
+      {% for fee in fees %}
+        {{ fee }}
+        <br />
+      {% endfor %}
+      </td>
+    </tr>
+  {% endif %}
+
+</table>
 
