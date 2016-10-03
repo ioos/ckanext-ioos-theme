@@ -7,7 +7,33 @@ Example:
 
 #}
 
-<p>
-  Uh, not sure what to put here 
-</p>
-
+<table class="table table-condensed table-bordered">
+  <tbody>
+  {# sort keywords according to thesaurus name #}
+  {% if h.ioos_theme_get_pkg_item(pkg, "grouped_keywords") %}
+  {% set keyword_dict = h.ioos_theme_get_pkg_item(pkg, "grouped_keywords") %}
+  {% for keyword_type in keyword_dict %}
+    <tr>
+      <td width="30%">
+        {{keyword_type}}
+      </td>
+      <td width="70%">
+        {% for keywords in keyword_dict[keyword_type] %}
+        {% if keywords['thesaurus']['title'] %}
+          {{ keywords['thesaurus']['title'] }}
+        {% else %}
+          Uncategorized
+        {% endif %}
+        <ul>
+          {% for k in keywords['keywords'] %}
+          <li>{{k}}</li>
+          {% endfor %} 
+        </ul>
+        <br />
+        {% endfor %}
+      </td>
+    </tr>
+  {% endfor %}
+  {% endif %} 
+  </tbody>
+</table>

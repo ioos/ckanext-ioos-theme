@@ -8,6 +8,37 @@ Example:
 
 #}
 
-<p>
-  Uh, not sure what to put here 
-</p>
+<table class="table table-condensed table-bordered">
+  <tbody>
+    {% if h.ioos_theme_get_pkg_extra(pkg, "temporal-extent-begin") and
+          h.ioos_theme_get_pkg_extra(pkg, "temporal-extent-end") %}
+    {% set tbegin = h.ioos_theme_get_pkg_extra(pkg, "temporal-extent-begin") %} 
+    {% set tend = h.ioos_theme_get_pkg_extra(pkg, "temporal-extent-end") %} 
+    <tr>
+      <td width='30%'>
+        Time Period
+      </td>
+      <td width='70%'>
+        {{tbegin}} to {{tend}}
+      </td>
+    </tr>
+    {% endif %}
+
+    {# {% if h.ioos_theme_get_pkg_extra(pkg, "bbox") %} #}
+    {# {% set bbox = h.ioos_theme_get_pkg_extra(pkg, "bbox") %} #}
+    <tr>
+      <td width='30%'>
+        Spatial Bounding Box Coordinates
+      </td>
+      <td>
+        <strong>N:</strong> {{h.ioos_theme_get_pkg_extra(pkg, "bbox-north-lat")}}°
+        <strong>S:</strong> {{h.ioos_theme_get_pkg_extra(pkg, "bbox-south-lat")}}°
+        <strong>E:</strong> {{h.ioos_theme_get_pkg_extra(pkg, "bbox-east-long")}}°
+        <strong>W:</strong> {{h.ioos_theme_get_pkg_extra(pkg, "bbox-west-long")}}°
+      </td>
+    </tr>
+
+
+
+  </tbody>
+</table>

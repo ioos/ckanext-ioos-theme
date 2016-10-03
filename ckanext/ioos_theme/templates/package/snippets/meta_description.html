@@ -92,6 +92,19 @@ Example:
       </td>
     </tr>
     {% endif %}
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "frequency-of-update") %}
+    {% set freq = h.ioos_theme_get_pkg_extra(pkg, "frequency-of-update") %}
+    <tr>
+      <td width='30%'>
+        Dataset Update Frequency
+      </td>
+      <td width='70%'>
+        {{freq}}
+      </td>
+    </tr> 
+    {% endif %}
+
     {% if h.ioos_theme_get_pkg_extra(pkg, "progress") %}
     {% set status = h.ioos_theme_get_pkg_extra(pkg, "progress") %}
     <tr>
@@ -117,7 +130,74 @@ Example:
           {{status}}<br>
         {% endif %}
       </td>
+    </tr> 
+    {% endif %}
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "progress") %}
+    {% set status = h.ioos_theme_get_pkg_extra(pkg, "progress") %}
+    <tr>
+      <td width='30%'>
+        Dataset Progress Status
+      </td>
+      <td width='70%'>
+        {% if status == "completed" %}
+          Complete<br>
+        {% elif status == "historicalArchive" %}
+          Historical Archive<br>
+        {% elif status == "obsolete" %}
+          Obsolete<br>
+        {% elif status == "onGoing" %}
+          On Going<br>
+        {% elif status == "planned" %}
+          Planned<br>
+        {% elif status == "required" %}
+          Required<br>
+        {% elif status == "underDevelopment" %}
+          Under Development<br>
+        {% else %}
+          {{status}}<br>
+        {% endif %}
+      </td>
+    </tr> 
+    {% endif %}
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "additional-information-source") %}
+    {% set supp = h.ioos_theme_get_pkg_extra(pkg, "additional-information-source") %} 
+    <tr>
+      <td width='30%'>
+        Supplemental Information
+      </td>
+      <td width='70%'>
+        {{supp}}
+      </td>
     </tr>
     {% endif %}
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "purpose") %}
+    {% set purpose = h.ioos_theme_get_pkg_extra(pkg, "purpose") %} 
+    <tr>
+      <td width='30%'>
+        Purpose
+      </td>
+      <td width='70%'>
+        {{purpose}}
+      </td>
+    </tr>
+    {% endif %} 
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "use-constraints") %}
+    <tr>
+      <td width='30%'>
+        Use Limitations
+      </td>
+      <td>
+        {% for constraint in h.ioos_theme_get_pkg_item(pkg, "use-constraints") %}
+          {{constraint}}
+          <br>
+        {% endfor %}
+      </td>
+    </tr>
+    {% endif %} 
+
   </tbody>
 </table>
