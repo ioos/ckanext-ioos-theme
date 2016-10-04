@@ -46,7 +46,9 @@ def get_responsible_organization(pkg):
 
 def get_pkg_item(pkg, key):
     pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
-    return json.loads(pkg_item)
+    if pkg_item:
+        return json.loads(pkg_item)
+    return None
 
 def get_pkg_ordereddict(pkg, key):
     pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
