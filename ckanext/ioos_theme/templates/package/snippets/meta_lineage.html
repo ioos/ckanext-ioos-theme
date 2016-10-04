@@ -9,17 +9,19 @@ Example:
 
 <table class="table table-condesnsed table-bordered">
   <tbody>
-    {% if h.ioos_theme_get_pkg_extra(pkg, "lineage") %}
     {% set lineage = h.ioos_theme_get_pkg_extra(pkg, "lineage") %}
     <tr>
       <td width="30%">
-        Lineage
+        Lineage Statement
       </td>
       <td width="70%">
-        {{lineage}}        
+        {% if lineage %}
+          {{lineage}}
+        {% else %}
+          Lineage statement not available.
+        {% endif %}
       </td>
     </tr>
-    {% endif %}
 
     {% if h.ioos_theme_get_pkg_item(pkg, "lineage-process-steps") %}
     {% set lineage_steps = h.ioos_theme_get_pkg_item(pkg, "lineage-process-steps") %}
