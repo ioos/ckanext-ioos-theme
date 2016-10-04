@@ -1,0 +1,50 @@
+{# 
+pkg - A package object that the resources belong to.
+
+Example:
+
+  {% snippet "package/snippets/meta_lineage.html", pkg=pkg, resources=pkg.resources %}
+
+#}
+
+<table class="table table-condesnsed table-bordered">
+  <tbody>
+    {% set lineage = h.ioos_theme_get_pkg_extra(pkg, "lineage") %}
+    <tr>
+      <td width="30%">
+        Lineage Statement
+      </td>
+      <td width="70%">
+        {% if lineage %}
+          {{lineage}}
+        {% else %}
+          Lineage statement not available.
+        {% endif %}
+      </td>
+    </tr>
+
+    {% if h.ioos_theme_get_pkg_item(pkg, "lineage-process-steps") %}
+    {% set lineage_steps = h.ioos_theme_get_pkg_item(pkg, "lineage-process-steps") %}
+    <tr>
+      <td width="30%">
+        Lineage Process Steps
+      </td>
+      <td width="70%">
+        <ul>
+          {% for step in lineage_steps %}
+          <li>
+          {{step['description']}}
+          <br />
+          {% if step['rationale'] %}
+          Rationale: {{step['rationale']}}
+          <br />
+          {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>
+

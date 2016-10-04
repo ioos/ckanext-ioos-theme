@@ -1,0 +1,63 @@
+{# 
+pkg - A package object that the resources belong to.
+
+Example:
+
+  {% snippet "package/snippets/meta_documentation.html", pkg=pkg %}
+
+#}
+
+{% set resources = pkg.resources or [] %}
+
+<table class="table table-condensed table-bordered">
+  <tbody>
+    <tr>
+      <td width="30%">
+        General Documentation
+      </td>
+      <td width="70%">
+        {% for distributor in h.ioos_theme_get_pkg_item(pkg, "distributor-info") %}
+          {% for doc in distributor['transfer-options'] %}
+            {% if doc['function'] == 'information' %}
+              <p>
+                <a href="{{doc['url']}}">
+                  {{doc['name']}}
+                </a>
+                <br>
+                {{doc['description']}}
+              </p>
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <td width="30%">
+        Associated Documentation
+      </td>
+      <td width="70%">
+        {% for agginfo in h.ioos_theme_get_pkg_item(pkg, "aggregation-info") %}
+        {{ agginfo['aggregate-dataset-name'] }}
+        <ul>
+          {% for party in agginfo['responsible-party'] %}
+            {% if h.ioos_theme_jsonpath(party, "contact-info.online-resource.url") %}
+              <li>
+                <a href="{{h.ioos_theme_jsonpath(party, "contact-info.online-resource.url")}}">
+                  {{ h.ioos_theme_jsonpath(party, "contact-info.online-resource.name") }}
+                </a>
+                <i>
+                  ({{ h.ioos_theme_jsonpath(party, "contact-info.online-resource.function") }})
+                </i>
+                {% if h.ioos_theme_jsonpath(party, "contact-info.online-resource.description") %}
+                <br> {{ h.ioos_theme_jsonpath(party, "contact-info.online-resource.description") }}
+                {% endif %}
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+        {% endfor %}
+      </td>
+    </tr>
+  </tbody>
+</table>
+

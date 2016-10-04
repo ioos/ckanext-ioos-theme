@@ -1,0 +1,70 @@
+{# 
+pkg - A package object that the resources belong to.
+
+Example:
+
+  {% snippet "package/snippets/meta_access.html", pkg=pkg, resources=pkg.resources %}
+
+#}
+
+{% set resources = pkg.resources or [] %}
+
+<table class="table table-condesnsed table-bordered">
+  <tbody>
+    <tr>
+      <td width="30%">
+        Online Access
+      </td>
+      <td width="70%">
+        {% snippet "package/snippets/access/links.html", pkg=pkg, resources=resources %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Distribution Formats
+      </td>
+      <td>
+        <ul>
+          {% for distributor in h.ioos_theme_get_pkg_item(pkg, "distributor-info") %}
+          <li>
+            {{ distributor['data-format']['name'] }}
+            (Version: {{ distributor['data-format']['version'] }} )
+          </li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Distributor
+      </td>
+      <td>
+        {{ h.ioos_theme_get_responsible_party(pkg) }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Dataset Point of Contact
+      </td>
+      <td>
+        {% for distributor in h.ioos_theme_get_pkg_item(pkg, "distributor-info") %}
+          {% if distributor['distributor-contact']['contact-info'] %}
+            {% set contact = distributor['distributor-contact']['contact-info'] %}
+            {% if distributor['distributor-contact']['individual-name'] %}
+              {{ distributor['distributor-contact']['individual-name'] }}<br>
+            {% endif %}
+            {% if distributor['distributor-contact']['organisation-name'] %}
+              {{ distributor['distributor-contact']['organisation-name'] }}<br>
+            {% endif %}
+            {% if contact.phone.voice %}
+              {{ contact.phone.voice }}<br>
+            {% endif %}
+            {% if contact.email %}
+              {{ contact.email }}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </td>
+    </tr>
+  </tbody>
+</table>

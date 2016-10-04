@@ -1,0 +1,203 @@
+{# 
+pkg - A package object that the resources belong to.
+
+Example:
+
+  {% snippet "package/snippets/meta_description.html", pkg=pkg %}
+
+#}
+
+<table class="table table-condensed table-bordered">
+  <tbody>
+    {% if h.ioos_theme_get_pkg_item(pkg, "publisher-info") %}
+    {% set publisher = h.ioos_theme_get_pkg_item(pkg, "publisher-info") %}
+    <tr>
+      <td width="30%">
+        Publisher
+      </td>
+      <td width="70%">
+        {% if publisher['individual-name'] %}
+          {{ publisher['individual-name'] }}<br>
+        {% endif %}
+        {% if publisher['organisation-name'] %}
+          {{ publisher['organisation-name'] }}<br>
+        {% endif %}
+      </td>
+    </tr>
+    {% endif %}
+    {% if h.ioos_theme_get_pkg_item(pkg, "resource-provider") %}
+    {% set resource_provider = h.ioos_theme_get_pkg_item(pkg, "resource-provider") %}
+    <tr>
+      <td width="30%">
+        Resource Provider
+      </td>
+      <td width="70%">
+        {% if resource_provider['individual-name'] %}
+          {{ resource_provider['individual-name'] }}<br>
+        {% endif %}
+        {% if resource_provider['organisation-name'] %}
+          {{ resource_provider['organisation-name'] }}<br>
+        {% endif %}
+      </td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td width="30%">
+        Date(s)
+      </td>
+      <td width="70%">
+        {% for refdate in h.ioos_theme_get_pkg_item(pkg, "dataset-reference-date") %}
+        {{ refdate.type }}:
+        {{ refdate.value }}
+        <br>
+        {% endfor %}
+      </td>
+    </tr>
+    {% if h.ioos_theme_get_pkg_item(pkg, "dataset-edition") %}
+    <tr>
+      <td width="30%">
+        Edition
+      </td>
+      <td width="70%">
+        {% for edition in h.ioos_theme_get_pkg_item(pkg, "dataset-edition") %}
+        {{ edition }}<br>
+        {% endfor %}
+      </td>
+    </tr>
+    {% endif %}
+    {% if h.ioos_theme_get_pkg_extra(pkg, "presentation-form") %}
+    {% set presentation = h.ioos_theme_get_pkg_extra(pkg, "presentation-form") %}
+    <tr>
+      <td width="30%">
+        Data Presentation Form
+      </td>
+      <td width="70%">
+        {% if presentation == "tableDigital" %}
+          Digital table - digital representation of facts or figures systematically displayed, especially in columns
+        {% elif presentation == "documentDigital" %}
+          Digital document - digital representation of a primarily textual item (can contain illustrations also)
+        {% elif presentation == "imageDigital" %}
+          Digital image
+        {% elif presentation == "modelDigital" %}
+          Digital model - multi-dimensional digital representation of a feature, process, etc.
+        {% elif presentation == "profileDigital" %}
+          Digital profile - vertical cross-section in digital form
+        {% elif presentation == "videoDigital" %}
+          Digital video - digital video recording
+        {% elif presentation == "imageHardcopy" %}
+          Hardcopy
+        {% else %}
+          {{ presentation }}
+        {% endif %}
+      </td>
+    </tr>
+    {% endif %}
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "frequency-of-update") %}
+    {% set freq = h.ioos_theme_get_pkg_extra(pkg, "frequency-of-update") %}
+    <tr>
+      <td width='30%'>
+        Dataset Update Frequency
+      </td>
+      <td width='70%'>
+        {{freq}}
+      </td>
+    </tr> 
+    {% endif %}
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "progress") %}
+    {% set status = h.ioos_theme_get_pkg_extra(pkg, "progress") %}
+    <tr>
+      <td width='30%'>
+        Dataset Progress Status
+      </td>
+      <td width='70%'>
+        {% if status == "completed" %}
+          Complete<br>
+        {% elif status == "historicalArchive" %}
+          Historical Archive<br>
+        {% elif status == "obsolete" %}
+          Obsolete<br>
+        {% elif status == "onGoing" %}
+          On Going<br>
+        {% elif status == "planned" %}
+          Planned<br>
+        {% elif status == "required" %}
+          Required<br>
+        {% elif status == "underDevelopment" %}
+          Under Development<br>
+        {% else %}
+          {{status}}<br>
+        {% endif %}
+      </td>
+    </tr> 
+    {% endif %}
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "progress") %}
+    {% set status = h.ioos_theme_get_pkg_extra(pkg, "progress") %}
+    <tr>
+      <td width='30%'>
+        Dataset Progress Status
+      </td>
+      <td width='70%'>
+        {% if status == "completed" %}
+          Complete<br>
+        {% elif status == "historicalArchive" %}
+          Historical Archive<br>
+        {% elif status == "obsolete" %}
+          Obsolete<br>
+        {% elif status == "onGoing" %}
+          On Going<br>
+        {% elif status == "planned" %}
+          Planned<br>
+        {% elif status == "required" %}
+          Required<br>
+        {% elif status == "underDevelopment" %}
+          Under Development<br>
+        {% else %}
+          {{status}}<br>
+        {% endif %}
+      </td>
+    </tr> 
+    {% endif %}
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "additional-information-source") %}
+    {% set supp = h.ioos_theme_get_pkg_extra(pkg, "additional-information-source") %} 
+    <tr>
+      <td width='30%'>
+        Supplemental Information
+      </td>
+      <td width='70%'>
+        {{supp}}
+      </td>
+    </tr>
+    {% endif %}
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "purpose") %}
+    {% set purpose = h.ioos_theme_get_pkg_extra(pkg, "purpose") %} 
+    <tr>
+      <td width='30%'>
+        Purpose
+      </td>
+      <td width='70%'>
+        {{purpose}}
+      </td>
+    </tr>
+    {% endif %} 
+
+    {% if h.ioos_theme_get_pkg_extra(pkg, "use-constraints") %}
+    <tr>
+      <td width='30%'>
+        Use Limitations
+      </td>
+      <td>
+        {% for constraint in h.ioos_theme_get_pkg_item(pkg, "use-constraints") %}
+          {{constraint}}
+          <br>
+        {% endfor %}
+      </td>
+    </tr>
+    {% endif %} 
+
+  </tbody>
+</table>

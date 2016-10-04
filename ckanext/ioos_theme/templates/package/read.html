@@ -1,0 +1,65 @@
+{% extends "package/read_base.html" %}
+
+{% set pkg = c.pkg_dict %}
+
+{% block primary_content_inner %}
+
+  {% resource "ioos_theme/dataset_tabs.js" %}
+  <div class="dataset-block">
+    <h2>
+      {{ pkg.title }}
+    </h2>
+    <hr>
+    <p>
+      {{ pkg.notes }}
+    </p>
+  </div>
+
+  {% block package_resources %}
+    {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources %}
+  {% endblock %}
+
+  {% block package_tags %}
+    {% snippet "package/snippets/tags.html", tags=pkg.tags %}
+  {% endblock %}
+
+  <ul id="dataset-meta" class="nav nav-tabs">
+    <li class="active">
+      <a data-toggle="tab" href="#access">Access</a>
+    </li>
+    <li><a data-toggle="tab" href="#documentation">Documentation</a></li>
+    <li><a data-toggle="tab" href="#description">Description</a></li>
+    <li><a data-toggle="tab" href="#coverage">Coverage</a></li>
+    <li><a data-toggle="tab" href="#keywords">Keywords</a></li>
+    <li><a data-toggle="tab" href="#constraints">Constraints</a></li>
+    <li><a data-toggle="tab" href="#lineage">Lineage</a></li>
+  </ul>
+
+  <div id="dataset-meta-pane" class="tab-content">
+    <div id="access" class="tab-pane fade in active">
+      {% snippet "package/snippets/meta_access.html", pkg=pkg %}
+    </div>
+    <div id="documentation" class="tab-pane fade">
+      {% snippet "package/snippets/meta_documentation.html", pkg=pkg %}
+    </div>
+    <div id="description" class="tab-pane fade">
+      {% snippet "package/snippets/meta_description.html", pkg=pkg %}
+    </div>
+    <div id="coverage" class="tab-pane fade">
+      {% snippet "package/snippets/meta_coverage.html", pkg=pkg %}
+    </div>
+    <div id="keywords" class="tab-pane fade">
+      {% snippet "package/snippets/meta_keywords.html", pkg=pkg %}
+    </div>
+    <div id="constraints" class="tab-pane fade">
+      {% snippet "package/snippets/meta_constraints.html", pkg=pkg %}
+    </div>
+    <div id="lineage" class="tab-pane fade">
+      {% snippet "package/snippets/meta_lineage.html", pkg=pkg %}
+    </div>
+  </div>
+
+  <div data-module="dataset_tabs">
+  </div>
+
+{% endblock %}
