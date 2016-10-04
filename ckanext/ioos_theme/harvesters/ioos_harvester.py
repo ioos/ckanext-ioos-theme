@@ -5,9 +5,8 @@ import logging
 from ckanext.spatial.harvesters.base import SpatialHarvester
 from ckanext.spatial.interfaces import ISpatialHarvester
 import json
-from itertools import groupby
 from inflection import titleize
-from collections import OrderedDict
+from collections import defaultdict
 
 log = logging.getLogger(__name__)
 
@@ -27,19 +26,15 @@ class IOOSHarvester(SpatialHarvester):
                        'lineage', 'lineage-process-steps'}
         extras = {k: iso_values.get(k) for k in simple_keys if k in iso_values}
 
-        # sort keywords according to thesaurus name
-        iso_values['keywords'].sort(key=lambda x: (x['type'] == '', x['type'],
-                                                  x['thesaurus']['title'] != '',
-                                                   x['thesaurus']['title']))
-        group_sort_func = lambda x: (x['type'] == '', x['type'])
-        # group by theme keyword
-        extras['grouped_keywords'] = OrderedDict(
-                                          [(titleize(k[1] if not k[0] else
-                                               'Uncategorized') + ' Keywords',
-                                           list(g)) for k, g in
-                                           groupby(iso_values['keywords'],
-                                                   group_sort_func)]
-                                     )
+        keywords = defaultdict(list)
+        for keyword in iso_values['keywords']:
+            keyword_type = keyword['type'] or 'keywords'
+            keywords[keyword_type].append(keyword)
+
+        extras['grouped_keywords'] = []
+        for keyword_type in ['theme', 'dataCenter', 'platform', 'instrument', 'place', 'project', 'dataResolution', 'stratum', 'otherRestrictions', 'keywords']:
+            if keyword_type in keywords:
+                extras['grouped_keywords'].append([titleize(keyword_type), keywords[keyword_type]])
 
         if iso_values.get('publisher', None):
             extras['publisher'] = iso_values.get('publisher', [])
