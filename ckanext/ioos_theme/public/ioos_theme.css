@@ -31,3 +31,8 @@ section.tags {
 section.browse-graphic img.browse-graphic-img {
   max-width: 400px;
 }
+
+.format-label[data-format="ISO-19139"], .format-label[data-format*="ISO-19139"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-iso-19139.png");
+}
