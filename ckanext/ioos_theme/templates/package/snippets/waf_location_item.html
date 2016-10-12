@@ -1,0 +1,34 @@
+<li class="resource-item">
+  {% block resource_item_title %}
+  <a class="heading" href="{{ waf_location }}" title="Registry Content">
+    Registry Content
+    <span class="format-label" property="dc:format" data-format="data"></span>
+  </a>
+  {% endblock %}
+  {% block resource_item_description %}
+    <p class="description">
+    The XML content as published by the IOOS Registry
+    </p>
+  {% endblock %}
+  {% block resource_item_explore %}
+  <div class="dropdown btn-group">
+    <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+      <i class="icon-share-alt"></i>
+      {{ _('Explore') }}
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      {% block resource_item_explore_links %}
+      <li>
+        <a href="{{ waf_location }}" class="resource-url-analytics" target="_blank">
+          <i class="icon-external-link"></i>
+          {{ _('View Content') }}
+        </a>
+      </li>
+      {% endblock %}
+    </ul>
+  </div>
+  {% endblock %}
+</li>
+
+
