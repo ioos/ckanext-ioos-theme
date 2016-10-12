@@ -38,6 +38,9 @@ class IOOSHarvester(SpatialHarvester):
 
         if iso_values.get('publisher', None):
             extras['publisher'] = iso_values.get('publisher', [])
+        if iso_values.get('browse-graphic', None):
+            browse_graphic = iso_values['browse-graphic'][0]['file']
+            extras['browse-graphic'] = browse_graphic
         if iso_values.get('dataset-edition'):
             extras['dataset-edition'] = iso_values['dataset-edition']
             package_dict["version"] = iso_values['dataset-edition'][0]

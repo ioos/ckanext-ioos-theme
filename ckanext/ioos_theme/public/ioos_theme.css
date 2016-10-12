@@ -27,3 +27,7 @@
 section.tags {
   padding-bottom: 20px;
 }
+
+section.browse-graphic img.browse-graphic-img {
+  max-width: 400px;
+}
