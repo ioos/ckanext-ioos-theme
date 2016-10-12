@@ -47,6 +47,17 @@ class IOOSHarvester(SpatialHarvester):
             log.info("Checking for responsible-organisation")
             extras['responsible-organisation'] = iso_values.get('responsible-organisation', [])
 
+        for item in harvest_object.extras:
+            key = item.key
+            value = item.value
+            if key == u'waf_location':
+                extras['waf_location'] = value
+                break
+        else:
+            extras['waf_location'] = None
+
+        extras['object_reference'] = harvest_object.id
+
         extras_kv = [{'key': k,
                       'value': json.dumps(v) if isinstance(v, (list, dict))
                                else v} for k, v in extras.iteritems()]
