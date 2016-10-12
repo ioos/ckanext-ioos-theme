@@ -20,15 +20,15 @@
   {% endblock %}
 
   {% block browse_graphic %}
+    {% if h.ioos_theme_get_pkg_extra(pkg, "browse-graphic") %}
+    {% set browse_graphic = h.ioos_theme_get_pkg_extra(pkg, "browse-graphic") %}
     <section class="browse-graphic">
       <h2>Graphic Preview</h2>
       <p>
-      {% if h.ioos_theme_get_pkg_extra(pkg, "browse-graphic") %}
-      {% set browse_graphic = h.ioos_theme_get_pkg_extra(pkg, "browse-graphic") %}
-      <img class="browse-graphic-img" src="{{browse_graphic}}" alt="browse graphic" />
-      {% endif %}
+        <img class="browse-graphic-img" src="{{browse_graphic}}" alt="browse graphic" />
       </p>
     </section>
+    {% endif %}
   {% endblock %}
 
   {% block package_tags %}
