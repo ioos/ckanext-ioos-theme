@@ -18,7 +18,7 @@ Example:
         </td>
         <td width="70%">
           {% for keyword_dict in keywords %}
-            {% if keyword_dict['thesaurus']['title'] %}
+            {% if keyword_dict['thesaurus'] and keyword_dict['thesaurus']['title'] %}
               {{ keyword_dict['thesaurus']['title'] }}
             {% else %}
               Uncategorized
