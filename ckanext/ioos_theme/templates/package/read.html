@@ -31,6 +31,15 @@
     {% endif %}
   {% endblock %}
 
+  {% block package_date %}
+    {% if h.ioos_theme_get_pkg_extra(pkg, "metadata-date") %}
+      <h2>Metadata Date</h2>
+      <p class="metadata-date">
+        {{ h.ioos_theme_get_pkg_extra(pkg, "metadata-date") }}
+      </p>
+    {% endif %}
+  {% endblock %}
+
   {% block package_tags %}
     <h2>Metadata Tags</h2>
     {% snippet "package/snippets/tags.html", tags=pkg.tags %}
