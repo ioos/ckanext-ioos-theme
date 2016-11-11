@@ -66,5 +66,26 @@ class IOOSHarvester(SpatialHarvester):
                                else v} for k, v in extras.iteritems()]
 
         package_dict['extras'] = package_dict['extras'] + extras_kv
+        package_dict = self.update_resources(package_dict)
 
+        return package_dict
+
+    def update_resources(self, package_dict):
+        '''
+        Returns the package dictionary with updated resources
+        '''
+        for resource in package_dict['resources']:
+            # Skip resources that already have a format, but if you find "sos"
+            # capitalize it. Also, change application/x-netcdf to netCDF
+            if resource['format'] == 'sos':
+                resource['format'] = 'SOS'
+            elif resource['format'] == 'application/x-netcdf':
+                resource['format'] = 'netCDF'
+            elif resource['format']:
+                continue
+
+            if resource['resource_locator_protocol'] == 'OPeNDAP:OPeNDAP' and 'tabledap' not in resource['url']:
+                resource['format'] = 'OPeNDAP'
+            elif resource['resource_locator_protocol'] == 'ERDDAP:tabledap':
+                resource['format'] = 'ERDDAP-TableDAP'
         return package_dict
