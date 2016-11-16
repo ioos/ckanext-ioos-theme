@@ -36,3 +36,20 @@ section.browse-graphic img.browse-graphic-img {
   background-position: 0 0;
   background-image: url("../img/icon-iso-19139.png");
 }
+
+.label[data-format=opendap], .label[data-format*=opendap] {
+  background-color: #638874;
+}
+.label[data-format=erddap-tabledap], .label[data-format*=erddap-tabledap] {
+  background-color: #638874;
+}
+.label[data-format=wms], 
+.label[data-format*=wms],
+.label[data-format=sos], 
+.label[data-format*=sos],
+.label[data-format=wcs], 
+.label[data-format*=wcs],
+.label[data-format=wfs], 
+.label[data-format*=wfs] {
+  background-color: #ADC717;
+}
