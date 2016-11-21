@@ -44,18 +44,72 @@ def get_responsible_organization(pkg):
     return json.loads(responsible_organization)
 
 
+def get_distribution_formats(pkg):
+    '''
+    Returns a list of dictionaries containing the name and version of available
+    distribution formats.
+    '''
+    retval = []
+    distributors = get_pkg_item(pkg, 'distributor-info')
+    if distributors is None:
+        return retval
+    for distributor in distributors:
+        if 'data-format' not in distributor:
+            continue
+        # I don't know how this is possible but it happens to show up as a string...
+        if not isinstance(distributor['data-format'], dict):
+            continue
+        if not distributor['data-format']:
+            continue
+        name = distributor['data-format'].get('name', None)
+        version = distributor['data-format'].get('version', None)
+        if name is None:
+            continue
+        retval.append({
+            "name": name,
+            "version": version
+        })
+
+    formats = get_pkg_item(pkg, 'distributor-formats')
+    if formats is None:
+        return retval
+    for dist_format in formats:
+        if not dist_format:
+            continue
+        name = dist_format.get('name', None)
+        version = dist_format.get('version', None)
+        if name is None:
+            continue
+        retval.append({
+            "name": name,
+            "version": version
+        })
+    return retval
+
+
 def get_pkg_item(pkg, key):
-    pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
+    try:
+        pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
+    except StopIteration:
+        return None
     if pkg_item:
         return json.loads(pkg_item)
     return None
 
+
 def get_pkg_ordereddict(pkg, key):
-    pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
+    try:
+        pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
+    except StopIteration:
+        return {}
     return json.loads(pkg_item, object_pairs_hook=OrderedDict)
 
+
 def get_pkg_extra(pkg, key):
-    pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
+    try:
+        pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
+    except StopIteration:
+        return None
     return pkg_item
 
 
@@ -83,6 +137,7 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
         return {
             "ioos_theme_get_responsible_party": get_responsible_party,
             "ioos_theme_get_point_of_contact": get_point_of_contact,
+            "ioos_theme_get_distribution_formats": get_distribution_formats,
             "ioos_theme_get_publisher": get_publisher,
             "ioos_theme_get_responsible_organization": get_responsible_organization,
             "ioos_theme_get_pkg_item": get_pkg_item,
