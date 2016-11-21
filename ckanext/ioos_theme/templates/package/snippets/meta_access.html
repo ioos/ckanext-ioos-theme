@@ -19,21 +19,26 @@ Example:
         {% snippet "package/snippets/access/links.html", pkg=pkg, resources=resources %}
       </td>
     </tr>
+    {% if h.ioos_theme_get_distribution_formats(pkg) %}
     <tr>
       <td>
         Distribution Formats
       </td>
       <td>
         <ul>
-          {% for distributor in h.ioos_theme_get_pkg_item(pkg, "distributor-info") %}
+          {% for distributor in h.ioos_theme_get_distribution_formats(pkg) %}
           <li>
-            {{ distributor['data-format']['name'] }}
-            (Version: {{ distributor['data-format']['version'] }} )
+            {{ distributor['name'] }}
+            {% if distributor['version'] %}
+              (Version: {{ distributor['version'] }} )
+            {% endif %}
           </li>
           {% endfor %}
         </ul>
       </td>
     </tr>
+    {% endif %}
+    {% if h.ioos_theme_get_responsible_party(pkg) %}
     <tr>
       <td>
         Distributor
@@ -42,6 +47,7 @@ Example:
         {{ h.ioos_theme_get_responsible_party(pkg) }}
       </td>
     </tr>
+    {% endif %}
     <tr>
       <td>
         Dataset Point of Contact

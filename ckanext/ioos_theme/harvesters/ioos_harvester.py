@@ -19,6 +19,7 @@ class IOOSHarvester(SpatialHarvester):
         package_dict = SpatialHarvester.get_package_dict(self, iso_values, harvest_object)
         simple_keys = {'publisher_info', 'resource-provider',
                        'distributor-info', 'aggregation-info',
+                       'distributor-formats',
                        'additional-information-source', 'purpose',
                        # Constraints
                        'use-constraints', 'access-constraints', 'fees',
