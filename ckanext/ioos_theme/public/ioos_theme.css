@@ -37,6 +37,18 @@ section.browse-graphic img.browse-graphic-img {
   background-image: url("../img/icon-iso-19139.png");
 }
 
+.format-label[data-format="sos"], .format-label[data-format*="sos"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-sos.png");
+  background-size: 32px 35px;
+}
+
+.format-label[data-format="dap"], .format-label[data-format*="dap"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-dap.png");
+  background-size: 32px 35px;
+}
+
 .label[data-format=opendap], .label[data-format*=opendap] {
   background-color: #638874;
 }
