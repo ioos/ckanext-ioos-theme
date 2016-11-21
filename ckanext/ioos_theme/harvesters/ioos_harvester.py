@@ -66,6 +66,7 @@ class IOOSHarvester(SpatialHarvester):
                                else v} for k, v in extras.iteritems()]
 
         package_dict['extras'] = package_dict['extras'] + extras_kv
+        package_dict['resources'] = self.filter_duplicate_resources(package_dict)
         package_dict = self.update_resources(package_dict)
 
         return package_dict
@@ -89,3 +90,20 @@ class IOOSHarvester(SpatialHarvester):
             elif resource['resource_locator_protocol'] == 'ERDDAP:tabledap':
                 resource['format'] = 'ERDDAP-TableDAP'
         return package_dict
+
+    def filter_duplicate_resources(self, package_dict):
+        '''
+        Filters out duplicate resources based on name and URL
+        '''
+
+        found = []
+        filtered = []
+        for resource in package_dict['resources']:
+            url = resource['url']
+            name = resource['name']
+            if (url, name) in found:
+                continue
+            found.append((url, name))
+            filtered.append(resource)
+        return filtered
+
