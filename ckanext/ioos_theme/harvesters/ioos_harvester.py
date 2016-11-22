@@ -68,6 +68,7 @@ class IOOSHarvester(SpatialHarvester):
 
         package_dict['extras'] = package_dict['extras'] + extras_kv
         package_dict['resources'] = self.filter_duplicate_resources(package_dict)
+        package_dict['resources'] = self.reorder_resources(package_dict)
         package_dict = self.update_resources(package_dict)
 
         return package_dict
@@ -83,8 +84,15 @@ class IOOSHarvester(SpatialHarvester):
                 resource['format'] = 'SOS'
             elif resource['format'] == 'application/x-netcdf':
                 resource['format'] = 'netCDF'
+            elif resource['format'] == 'erddap':
+                resource['format'] = 'ERDDAP'
+            elif resource['format'] == 'application/vnd.lotus-organizer':
+                resource['format'] = 'HTML'
             elif resource['format']:
                 continue
+
+            if resource['format'] == 'ERDDAP' and resource['resource_locator_protocol'] == 'OGC:WMS':
+                resource['format'] = 'WMS'
 
             if resource['resource_locator_protocol'] == 'OPeNDAP:OPeNDAP' and 'tabledap' not in resource['url']:
                 resource['format'] = 'OPeNDAP'
@@ -107,4 +115,29 @@ class IOOSHarvester(SpatialHarvester):
             found.append((url, name))
             filtered.append(resource)
         return filtered
+
+    def reorder_resources(self, package_dict):
+        '''
+        Returns a list of resources in a prioritized order favoring OGC
+        services before others.
+        '''
+        priority_services = [
+            'opendap',
+            'ogc-wcs',
+            'ogc-wms',
+            'ogc-sos',
+            'ogc-wfs',
+            'erddap',
+        ]
+        before = []
+        after = []
+        for resource in package_dict['resources']:
+            if not resource['name']:
+                after.append(resource)
+            elif resource['name'].lower() in priority_services:
+                before.append(resource)
+            else:
+                after.append(resource)
+
+        return before + after
 
