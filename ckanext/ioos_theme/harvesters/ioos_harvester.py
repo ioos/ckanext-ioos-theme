@@ -88,15 +88,17 @@ class IOOSHarvester(SpatialHarvester):
                 resource['format'] = 'ERDDAP'
             elif resource['format'] == 'application/vnd.lotus-organizer':
                 resource['format'] = 'HTML'
-            elif resource['format']:
-                continue
 
             if resource['format'] == 'ERDDAP' and resource['resource_locator_protocol'] == 'OGC:WMS':
-                resource['format'] = 'WMS'
+                resource['format'] = 'ERDDAP-WMS'
 
-            if resource['resource_locator_protocol'] == 'OPeNDAP:OPeNDAP' and 'tabledap' not in resource['url']:
-                resource['format'] = 'OPeNDAP'
-            elif resource['resource_locator_protocol'] == 'ERDDAP:tabledap':
+            if resource['resource_locator_protocol'] == 'OPeNDAP':
+                if 'tabledap' in resource['url']:
+                    resource['format'] = 'ERDDAP-TableDAP'
+                elif 'erddap' in resource['url']:
+                    resource['format'] = 'ERDDAP'
+
+            if resource['resource_locator_protocol'] == 'ERDDAP:tabledap':
                 resource['format'] = 'ERDDAP-TableDAP'
         return package_dict
 

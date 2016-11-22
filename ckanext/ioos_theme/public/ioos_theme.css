@@ -62,6 +62,48 @@ section.browse-graphic img.browse-graphic-img {
   background-size: 32px 35px;
 }
 
+.format-label[data-format="erddap-subset"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-erddap-subset.png");
+  background-size: 32px 35px;
+}
+
+.format-label[data-format="erddap-dap"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-erddap-dap.png");
+  background-size: 32px 35px;
+}
+
+.format-label[data-format="erddap-tabledap"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-erddap-dap.png");
+  background-size: 32px 35px;
+}
+
+.format-label[data-format="erddap-graph"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-erddap-graph.png");
+  background-size: 32px 35px;
+}
+
+.format-label[data-format="erddap-info"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-erddap-info.png");
+  background-size: 32px 35px;
+}
+
+.format-label[data-format="erddap-subset"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-erddap-subset.png");
+  background-size: 32px 35px;
+}
+
+.format-label[data-format="erddap-wms"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-erddap-wms.png");
+  background-size: 32px 35px;
+}
+
 .label[data-format=opendap], .label[data-format*=opendap] {
   background-color: #638874;
 }
