@@ -35,6 +35,7 @@ section.browse-graphic img.browse-graphic-img {
 .format-label[data-format="ISO-19139"], .format-label[data-format*="ISO-19139"] {
   background-position: 0 0;
   background-image: url("../img/icon-iso-19139.png");
+  background-size: 32px 35px;
 }
 
 .format-label[data-format="sos"], .format-label[data-format*="sos"] {
@@ -43,9 +44,21 @@ section.browse-graphic img.browse-graphic-img {
   background-size: 32px 35px;
 }
 
-.format-label[data-format="dap"], .format-label[data-format*="dap"] {
+.format-label[data-format="wms"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-wms.png");
+  background-size: 32px 35px;
+}
+
+.format-label[data-format="opendap"] {
   background-position: 0 0;
   background-image: url("../img/icon-dap.png");
+  background-size: 32px 35px;
+}
+
+.format-label[data-format="erddap"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-erddap.png");
   background-size: 32px 35px;
 }
 
