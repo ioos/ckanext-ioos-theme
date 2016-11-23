@@ -50,6 +50,12 @@ section.browse-graphic img.browse-graphic-img {
   background-size: 32px 35px;
 }
 
+.format-label[data-format="wfs"] {
+  background-position: 0 0;
+  background-image: url("../img/icon-wfs.png");
+  background-size: 32px 35px;
+}
+
 .format-label[data-format="wms"] {
   background-position: 0 0;
   background-image: url("../img/icon-wms.png");

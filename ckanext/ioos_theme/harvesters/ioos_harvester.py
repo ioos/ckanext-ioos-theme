@@ -84,6 +84,8 @@ class IOOSHarvester(SpatialHarvester):
                 resource['format'] = 'SOS'
             elif resource['format'] == 'application/x-netcdf':
                 resource['format'] = 'NetCDF'
+            elif resource['format'] == 'application/x-msdos-program':
+                resource['format'] = 'HTML'
             elif resource['format'] == 'erddap':
                 resource['format'] = 'ERDDAP'
             elif resource['format'] == 'application/vnd.lotus-organizer':
