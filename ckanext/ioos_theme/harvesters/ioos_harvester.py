@@ -83,20 +83,25 @@ class IOOSHarvester(SpatialHarvester):
             if resource['format'] == 'sos':
                 resource['format'] = 'SOS'
             elif resource['format'] == 'application/x-netcdf':
-                resource['format'] = 'netCDF'
+                resource['format'] = 'NetCDF'
             elif resource['format'] == 'erddap':
                 resource['format'] = 'ERDDAP'
             elif resource['format'] == 'application/vnd.lotus-organizer':
                 resource['format'] = 'HTML'
 
+            if resource['resource_locator_protocol'] == 'WWW:LINK':
+                resource['format'] = 'HTML'
+
             if resource['format'] == 'ERDDAP' and resource['resource_locator_protocol'] == 'OGC:WMS':
                 resource['format'] = 'ERDDAP-WMS'
 
-            if resource['resource_locator_protocol'] == 'OPeNDAP':
+            if resource['resource_locator_protocol'] == 'OPeNDAP:OPeNDAP':
                 if 'tabledap' in resource['url']:
                     resource['format'] = 'ERDDAP-TableDAP'
                 elif 'erddap' in resource['url']:
                     resource['format'] = 'ERDDAP'
+                else:
+                    resource['format'] = 'OPeNDAP'
 
             if resource['resource_locator_protocol'] == 'ERDDAP:tabledap':
                 resource['format'] = 'ERDDAP-TableDAP'
