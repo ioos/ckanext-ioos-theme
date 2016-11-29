@@ -132,3 +132,7 @@ section.browse-graphic img.browse-graphic-img {
 .label[data-format*=wfs] {
   background-color: #ADC717;
 }
+
+.below-search {
+  padding-top: 50px;
+}

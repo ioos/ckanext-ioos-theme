@@ -1,0 +1,18 @@
+{% extends "page.html" %}
+{% set homepage_style = '3' %}
+
+{% block subtitle %}{{ _("Welcome") }}{% endblock %}
+
+{% block maintag %}{% endblock %}
+{% block toolbar %}{% endblock %}
+
+{% block content %}
+  <div class="homepage layout-ioos">
+    <div class="container">
+      {{ self.flash() }}
+    </div>
+    {% block primary_content %}
+      {% snippet "home/layout-ioos.html" %}
+    {% endblock %}
+  </div>
+{% endblock %}
