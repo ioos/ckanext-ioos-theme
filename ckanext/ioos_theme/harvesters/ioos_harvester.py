@@ -17,14 +17,23 @@ class IOOSHarvester(SpatialHarvester):
         '''
         '''
         package_dict = SpatialHarvester.get_package_dict(self, iso_values, harvest_object)
-        simple_keys = {'publisher_info', 'resource-provider',
-                       'distributor-info', 'aggregation-info',
-                       'distributor-formats',
-                       'additional-information-source', 'purpose',
-                       # Constraints
-                       'use-constraints', 'access-constraints', 'fees',
-                       # lineage
-                       'lineage', 'lineage-process-steps'}
+        simple_keys = {
+            'publisher_info',
+            'resource-provider',
+            'distributor-info',
+            'aggregation-info',
+            'distributor-formats',
+            'additional-information-source',
+            'purpose',
+            # Constraints
+            'use-constraints',
+            'access-constraints',
+            'fees',
+            # lineage
+            'lineage',
+            'lineage-process-steps',
+            'responsible-parties'
+        }
         extras = {k: iso_values.get(k) for k in simple_keys if k in iso_values}
 
         keywords = defaultdict(list)
