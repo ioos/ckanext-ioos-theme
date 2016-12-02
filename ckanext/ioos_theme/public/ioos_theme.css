@@ -70,7 +70,7 @@ section.browse-graphic img.browse-graphic-img {
 
 .format-label[data-format="erddap"] {
   background-position: 0 0;
-  background-image: url("../img/icon-erddap.png");
+  background-image: url("../img/icon-erddap-dap.png");
   background-size: 32px 35px;
 }
 
@@ -117,20 +117,21 @@ section.browse-graphic img.browse-graphic-img {
 }
 
 .label[data-format=opendap], .label[data-format*=opendap] {
-  background-color: #638874;
+  background-color: #3976c8;
 }
-.label[data-format=erddap-tabledap], .label[data-format*=erddap-tabledap] {
-  background-color: #638874;
+.label[data-format=erddap-tabledap], .label[data-format=erddap] {
+  background-color: #128cb5;
 }
 .label[data-format=wms], 
 .label[data-format*=wms],
-.label[data-format=sos], 
-.label[data-format*=sos],
 .label[data-format=wcs], 
 .label[data-format*=wcs],
 .label[data-format=wfs], 
 .label[data-format*=wfs] {
-  background-color: #ADC717;
+  background-color: #f66d61;
+}
+.label[data-format=sos] {
+  background-color: #27c97b;
 }
 
 .below-search {
