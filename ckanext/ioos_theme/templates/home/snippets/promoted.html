@@ -7,9 +7,12 @@
     {% else %}
       <h1 class="page-heading">{{ _("Welcome to the IOOS Catalog") }}</h1>
       <p>
-        {% trans %}This is a nice introductory paragraph about CKAN or the site
-        in general. We don't have any copy to go here yet but soon we will
-        {% endtrans %}
+        The IOOS Catalog is the master inventory of IOOS DMAC 
+        <a href="https://ioos.noaa.gov/data/contribute-data/common-data-formats/">datasets</a>
+        and 
+        <a href="https://ioos.noaa.gov/data/contribute-data/data-access-services/">data access services</a>. 
+        Search for datasets through the UI, or, for advanced users, an OGC Catalog Service (CS-W) is available 
+        <a href="https://data.ioos.us/csw?service=CSW&request=GetCapabilities">here</a>.
       </p>
     {% endif %}
   </header>
