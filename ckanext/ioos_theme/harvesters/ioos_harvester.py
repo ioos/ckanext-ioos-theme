@@ -106,6 +106,9 @@ class IOOSHarvester(SpatialHarvester):
             if resource['format'] == 'ERDDAP' and resource['resource_locator_protocol'] == 'OGC:WMS':
                 resource['format'] = 'ERDDAP-WMS'
 
+            if resource['name'] == 'OPeNDAP' and resource['description'] == 'THREDDS OPeNDAP':
+                resource['format'] = 'OPeNDAP'
+
             if resource['resource_locator_protocol'] == 'OPeNDAP:OPeNDAP':
                 if 'tabledap' in resource['url']:
                     resource['format'] = 'ERDDAP-TableDAP'
