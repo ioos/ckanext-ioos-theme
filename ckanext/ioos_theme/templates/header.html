@@ -14,3 +14,14 @@
   </nav>
 {% endblock %}
 
+{% block header_logo %}
+  {% if g.site_logo %}
+    <a class="logo" href="https://ioos.noaa.gov/"><img src="{{ h.url_for_static_or_external(g.site_logo) }}" alt="{{ g.site_title }}" title="{{ g.site_title }}" /></a>
+  {% else %}
+    <h1>
+      <a href="{{ h.url('home') }}">{{ g.site_title }}</a>
+    </h1>
+    {% if g.site_description %}<h2>{{ g.site_description }}</h2>{% endif %}
+  {% endif %}
+{% endblock %}
+
