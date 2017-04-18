@@ -1,0 +1,41 @@
+{# 
+pkg - A package object that the resources belong to.
+
+Example:
+
+  {% snippet "package/snippets/access/responsible_parties.html", pkg=pkg, resources=pkg.resources %}
+
+#}
+{% for responsible_party in h.ioos_theme_get_pkg_item(pkg, "responsible-parties") %}
+<tr>
+  <td>
+    {{ h.ioos_theme_get_role_code(responsible_party.role) }}
+  </td>
+  <td>
+    {% if responsible_party['individual-name'] %}
+      {{ responsible_party['individual-name'] }}<br>
+    {% endif %}
+    {% if responsible_party['organisation-name'] %}
+      {{ responsible_party['organisation-name'] }}<br>
+    {% endif %}
+    {% if responsible_party['contact-info']['email'] %}
+    <a href="mailto:{{responsible_party['contact-info']['email']}}">
+      {{ responsible_party['contact-info']['email'] }}
+    </a><br>
+    {% endif %}
+    {% if responsible_party['contact-info']['phone'] %}
+      {{ responsible_party['contact-info']['phone'] }}<br>
+    {% endif %}
+    {% if responsible_party['contact-info']['online-resource'] %}
+    {% set link = responsible_party['contact-info']['online-resource'] %}
+      <a href="{{link.url}}">
+        {{link.name}}
+        {% if link.description %}
+         <i>({{link.description}})</i>
+         {% endif %}
+      </a>
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
+
