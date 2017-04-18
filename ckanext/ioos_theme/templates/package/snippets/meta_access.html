@@ -48,6 +48,9 @@ Example:
       </td>
     </tr>
     {% endif %}
+    {% if h.ioos_theme_get_pkg_item(pkg, "responsible-parties") %}
+    {% snippet "package/snippets/access/responsible_parties.html", pkg=pkg %}
+    {% endif %}
     <tr>
       <td>
         Dataset Point of Contact
@@ -66,7 +69,9 @@ Example:
               {{ contact.phone.voice }}<br>
             {% endif %}
             {% if contact.email %}
+            <a href="mailto:{{contact.email}}">
               {{ contact.email }}
+            </a>
             {% endif %}
           {% endif %}
         {% endfor %}

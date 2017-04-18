@@ -32,7 +32,6 @@ class IOOSHarvester(SpatialHarvester):
             # lineage
             'lineage',
             'lineage-process-steps',
-            'responsible-parties'
         }
         extras = {k: iso_values.get(k) for k in simple_keys if k in iso_values}
 
@@ -59,6 +58,8 @@ class IOOSHarvester(SpatialHarvester):
         if iso_values.get('responsible-organisation'):
             log.info("Checking for responsible-organisation")
             extras['responsible-organisation'] = iso_values.get('responsible-organisation', [])
+        if iso_values.get('responsible-parties'):
+            extras['responsible-parties'] = self.unique_responsible_parties(iso_values.get('responsible-organisation', []))
 
         for item in harvest_object.extras:
             key = item.key
@@ -81,6 +82,51 @@ class IOOSHarvester(SpatialHarvester):
         package_dict = self.update_resources(package_dict)
 
         return package_dict
+
+    def unique_responsible_parties(self, responsible_parties):
+        '''
+        Returns a modified list of responsible parties where only unique
+        entries exist. Certain fields within the record are modified for cases
+        when required tags are missing like names for URLs
+
+        :param responsible_parties: List of CI_Responsible_Party parsed records
+        '''
+        rp_index = set()
+        return_set = []
+        for party in responsible_parties:
+            try:
+                contact_info = party.get('contact-info', {}) or {}
+                online_resource = contact_info.get('online-resource', {}) or {}
+                # Sometimes records will have empty contents for the online
+                # resource, if that's the case just remove them or set the name
+                # to Unspecified
+
+                if 'name' in online_resource and online_resource['name'] == '':
+                    if 'url' in online_resource and online_resource['url'] == '':
+                        online_resource = {}
+                    else:
+                        online_resource['name'] = 'Online Resource'
+                if 'url' in online_resource and not online_resource['url'].startswith('http'):
+                    online_resource['url'] = 'http://' + online_resource['url']
+
+                hash_key = ':'.join([
+                    party['role'],
+                    party.get('individual-name', ''),
+                    party.get('organisation-name', ''),
+                    contact_info.get('email', ''),
+                    contact_info.get('phone', ''),
+                    online_resource.get('url', ''),
+                    online_resource.get('name', ''),
+                    online_resource.get('protocol', ''),
+                ])
+                index_key = hash(hash_key)
+                if index_key not in rp_index:
+                    rp_index.add(index_key)
+                    return_set.append(party)
+            except Exception:
+                continue
+
+        return return_set
 
     def update_resources(self, package_dict):
         '''

@@ -39,6 +39,38 @@ def get_point_of_contact(pkg):
     return pocs
 
 
+def get_role_code(role):
+    '''
+    Returns the Human Readable version of the role from the ISOTC211/19115 role
+    list.
+
+    :param str role: Role
+    '''
+    if role == 'resourceProvider':
+        return 'Resource Provider'
+    if role == 'custodian':
+        return 'Custodian'
+    if role == 'owner':
+        return 'Owner'
+    if role == 'user':
+        return 'User'
+    if role == 'distributor':
+        return 'Distributor'
+    if role == 'originator':
+        return 'Originator'
+    if role == 'pointOfContact':
+        return 'Point of Contact'
+    if role == 'principalInvestigator':
+        return 'Principal Investigator'
+    if role == 'processor':
+        return 'Processor'
+    if role == 'publisher':
+        return 'Publisher'
+    if role == 'author':
+        return 'Author'
+    return role
+
+
 def get_responsible_organization(pkg):
     responsible_organization = next((extra['value'] for extra in pkg['extras'] if extra['key'] == 'responsible-organisation'))
     return json.loads(responsible_organization)
@@ -63,7 +95,7 @@ def get_distribution_formats(pkg):
             continue
         name = distributor['data-format'].get('name', None)
         version = distributor['data-format'].get('version', None)
-        if name is None:
+        if not name:
             continue
         retval.append({
             "name": name,
@@ -78,7 +110,7 @@ def get_distribution_formats(pkg):
             continue
         name = dist_format.get('name', None)
         version = dist_format.get('version', None)
-        if name is None:
+        if not name:
             continue
         retval.append({
             "name": name,
@@ -143,5 +175,6 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
             "ioos_theme_get_pkg_item": get_pkg_item,
             "ioos_theme_get_pkg_extra": get_pkg_extra,
             "ioos_theme_get_pkg_ordereddict": get_pkg_ordereddict,
-            "ioos_theme_jsonpath": jsonpath
+            "ioos_theme_jsonpath": jsonpath,
+            "ioos_theme_get_role_code": get_role_code,
         }
