@@ -1,0 +1,5 @@
+{{name}} {{email}} has submitted feedback from the IOOS Catalog:
+
+{{feedback}}
+
+- IOOS Catalog

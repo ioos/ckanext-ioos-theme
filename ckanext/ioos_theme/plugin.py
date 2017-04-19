@@ -6,6 +6,7 @@ import ckan.plugins.toolkit as toolkit
 import json
 import logging
 from collections import OrderedDict
+from ckan.logic.validators import int_validator
 
 log = logging.getLogger(__name__)
 
@@ -157,6 +158,7 @@ def jsonpath(obj, path):
 class Ioos_ThemePlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.ITemplateHelpers)
+    plugins.implements(plugins.IRoutes, inherit=True)
 
     # IConfigurer
 
@@ -178,3 +180,28 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
             "ioos_theme_jsonpath": jsonpath,
             "ioos_theme_get_role_code": get_role_code,
         }
+
+    def before_map(self, map):
+
+        controller = 'ckanext.ioos_theme.controllers.feedback:FeedbackController'
+
+        map.connect('feedback', '/feedback', controller=controller, action='index')
+
+        admin_controller = 'ckanext.ioos_theme.controllers.admin:IOOSAdminController'
+
+        map.connect('ckanadmin_index', '/ckan-admin', controller=admin_controller,
+                    action='index', ckan_icon='legal')
+        map.connect('ckanadmin_config', '/ckan-admin/config', controller=admin_controller,
+                    action='config', ckan_icon='check')
+        map.connect('ckanadmin_trash', '/ckan-admin/trash', controller=admin_controller,
+                    action='trash', ckan_icon='trash')
+        map.connect('ckanadmin', '/ckan-admin/{action}', controller=admin_controller)
+
+        return map
+
+    def update_config_schema(self, schema):
+        schema.update({
+            'feedback.recipients': [unicode],
+            'smtp.port': [int_validator]
+        })
+        return schema
