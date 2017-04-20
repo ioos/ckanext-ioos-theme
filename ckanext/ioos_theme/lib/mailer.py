@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
-catalog_harvesting/notify.py
+ckanext/ioos_theme/lib/mailer.py
 
 
 Copyright (c) 2010 by danjac.
