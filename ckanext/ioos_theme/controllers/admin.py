@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+'''
+ckanext/ioos_theme/controllers/admin.py
+
+IOOS Theme Admin Controller
+'''
 from ckan.controllers.admin import AdminController
 from ckan.lib import base
 
@@ -5,7 +11,15 @@ _ = base._
 
 
 class IOOSAdminController(AdminController):
+    '''
+    This is a subclass of the original AdminController but it changes the order
+    of the configuration items and adds a new one for feedback.
+    '''
+
     def _get_config_form_items(self):
+        '''
+        Returns a modified list of the original items list
+        '''
         # Styles for use in the form.select() macro.
         styles = [{'text': 'Default', 'value': '/base/css/main.css'},
                   {'text': 'Red', 'value': '/base/css/red.css'},
