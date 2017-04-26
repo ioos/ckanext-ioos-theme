@@ -1,0 +1,52 @@
+{% extends "page.html" %}
+{% import "macros/form.html" as form %}
+
+{% block subtitle %}{{ _('Submit Feedback') }}{% endblock %}
+
+{% block breadcrumb_content %}
+{% endblock %}
+
+{% block primary_content %}
+  <article class="module">
+    <div class="module-content">
+      {% block primary_content_inner %}
+      <h1 class="page-heading">{{ _('Submit Feedback') }}</h1>
+      {% block form %}
+
+      <form id="user-register-form" class="form-horizontal" action="" method="post">
+        {{ form.errors(error_summary) }}
+        {{ form.input("name", id="field-name", label=_("Name"), placeholder=_("Your name"), value=data.name, error=errors.name, classes=["control-medium"]) }}
+        {{ form.input("email", id="field-email", label=_("Email"), type="email", placeholder=_("joe@example.com"), value=data.email, error=errors.email, classes=["control-medium"]) }}
+        {{ form.textarea("feedback", id="field-feedback", label=_("Feedback"), placeholder=_("Your comments"), value=data.feedback, error=errors.feedback, classes=["control-medium"]) }}
+
+        <div class="form-actions">
+          {% block form_actions %}
+          <button class="btn btn-primary" type="submit" name="submit">{{ _("Submit") }}</button>
+          {% endblock %}
+        </div>
+      </form>
+      
+      {% endblock %}
+      {% endblock %}
+    </div>
+  </article>
+{% endblock %}
+
+{% block secondary_content %}
+  {% block help %}
+  <section class="module module-narrow module-shallow">
+    {% block help_inner %}
+    <h2 class="module-heading">{{ _('Submitting Feedback') }}</h2>
+    <div class="module-content">
+      <p>
+      {% trans %}
+      We appreciate any feedback that you can offer. We may try to reach out to
+      you for clarifications or follow ups.
+      {% endtrans %}
+      </p>
+    </div>
+    {% endblock %}
+  </section>
+  {% endblock %}
+{% endblock %}
+

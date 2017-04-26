@@ -6,7 +6,7 @@
         {{ h.build_nav_main(
           ('search', _('Datasets')),
           ('organizations_index', _('Organizations')),
-          ('group_index', _('Groups')),
+          ('feedback', _('Feedback')),
           ('about', _('About'))
         ) }}
       {% endblock %}
@@ -24,4 +24,3 @@
     {% if g.site_description %}<h2>{{ g.site_description }}</h2>{% endif %}
   {% endif %}
 {% endblock %}
-
