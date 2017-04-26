@@ -12,10 +12,21 @@ import os
 
 
 class CswController(BaseController):
+    '''
+    The CSW Controller provides an interface between the view and the PyCSW
+    administrative functions.
+    '''
+
     def index(self):
+        '''
+        Return the admin page for CSW
+        '''
         return render('csw/admin.html')
 
     def clear(self):
+        '''
+        Clears the PyCSW database
+        '''
         config_path = config.get('ckan.ioos_theme.pycsw_config')
         if os.path.exists(config_path):
             try:
@@ -29,6 +40,9 @@ class CswController(BaseController):
         return
 
     def sync(self):
+        '''
+        Loads the PyCSW database from CKAN
+        '''
         config_path = config.get('ckan.ioos_theme.pycsw_config')
         if os.path.exists(config_path):
             try:
@@ -42,11 +56,21 @@ class CswController(BaseController):
         return
 
     def _clear_pycsw(self, config_path):
+        '''
+        Loads the PyCSW configuration and runs clear
+
+        :param str config_path: Path to the PyCSW config file
+        '''
         from bin import ckan_pycsw
         pycsw_config = ckan_pycsw._load_config(config_path)
         ckan_pycsw.clear(pycsw_config)
 
     def _sync_pycsw(self, config_path):
+        '''
+        Loads the PyCSW configuration and runs load
+
+        :param str config_path: Path to the PyCSW config file
+        '''
         from bin import ckan_pycsw
         pycsw_config = ckan_pycsw._load_config(config_path)
         ckan_url = pycsw_config.get('ckan', 'url')
