@@ -1,0 +1,35 @@
+{% extends "page.html" %}
+{% block subtitle %}{{ _('Configure CSW') }}{% endblock %}
+{% block primary_content %}
+  <article class="module">
+    <div class="module-content">
+      {% block primary_content_inner %}
+      <h1 class="page-heading">{{ _('Configure CSW') }}</h1>
+
+      {{ h.nav_named_link(_('Clear PyCSW'), 'csw_clear', icon='trash')}}
+      <br>
+      {{ h.nav_named_link(_('Synchronize PyCSW'), 'csw_sync', icon='compass')}}
+      {% endblock %}
+    </div>
+  </article>
+{% endblock %}
+
+{% block secondary_content %}
+  {% block help %}
+  <section class="module module-narrow module-shallow">
+    {% block help_inner %}
+    <h2 class="module-heading">{{ _('CSW') }}</h2>
+    <div class="module-content">
+      <p>
+      {% trans %}
+      From here administrators can clearn the current PyCSW database or
+      synchronize CKAN with PyCSW manually. This is especially useful for
+      debugging or testing.
+      {% endtrans %}
+      </p>
+    </div>
+    {% endblock %}
+  </section>
+  {% endblock %}
+{% endblock %}
+

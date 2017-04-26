@@ -213,6 +213,11 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
                     action='trash', ckan_icon='trash')
         map.connect('ckanadmin', '/ckan-admin/{action}', controller=admin_controller)
 
+        csw_controller = 'ckanext.ioos_theme.controllers.csw:CswController'
+        map.connect('csw_admin', '/admin/csw', controller=csw_controller, action='index', ckan_icon='gear')
+        map.connect('csw_clear', '/admin/csw/clear', controller=csw_controller, action='clear')
+        map.connect('csw_sync', '/admin/csw/sync', controller=csw_controller, action='sync')
+
         return map
 
     def update_config_schema(self, schema):
@@ -224,6 +229,7 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
         '''
         schema.update({
             'feedback.recipients': [unicode],
-            'smtp.port': [int_validator]
+            'smtp.port': [int_validator],
+            'ckan.ioos_theme.pycsw_config': [unicode],
         })
         return schema
