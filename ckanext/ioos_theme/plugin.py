@@ -229,7 +229,6 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
         '''
         schema.update({
             'feedback.recipients': [unicode],
-            'smtp.port': [int_validator],
-            'ckan.ioos_theme.pycsw_config': [unicode],
+            'smtp.port': [int_validator]
         })
         return schema
