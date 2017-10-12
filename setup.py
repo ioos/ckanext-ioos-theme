@@ -21,7 +21,7 @@ setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/lukecampbell/ckanext-ioos_theme',
+    url='https://github.com/ericmbernier/catalog-ckan.git',
 
     # Author details
     author='''Luke Campbell''',
