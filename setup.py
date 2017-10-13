@@ -21,7 +21,7 @@ setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/ericmbernier/catalog-ckan.git',
+    url='https://github.com/ioos/catalog-ckan',
 
     # Author details
     author='''Luke Campbell''',
