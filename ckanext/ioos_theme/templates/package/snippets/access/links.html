@@ -1,36 +1,50 @@
 {# 
-pkg - A package object that the resources belong to.
-
-Example:
-
-  {% snippet "package/snippets/access/links.html", pkg=pkg, resources=pkg.resources %}
-
-#}
-
-{% for resource in resources %}
-  <p>
-    {% if resource['resource_locator_protocol'] == 'OPeNDAP:OPeNDAP' %}
-      <a href="{{resource['url']}}">OPeNDAP</a>
-      <i>(DAP Client Access)</i>
-      <p>These data are available for access with an OPeNDAP client</p>
-    {% elif resource['resource_locator_protocol'] == 'WWW:LINK' and resource['resource_locator_function'] == 'download' %}
-      <a href="{{resource['url']}}">Download</a>
-      <p>{{resource['description']}}</p>
-    {% elif resource['resource_locator_protocol'] == 'OGC:SOS' %}
-      <a href="{{resource['url']}}">OGC:SOS</a>
-      <i>(OGC Sensor Observation Service)</i>
-      <p>These data are available for access with an SOS client</p>
-    {% elif resource['resource_locator_protocol'] == 'HTTP' and resource['resource_locator_function'] == 'download' %}
-    <a href="{{resource['url']}}">{{resource['name']}}</a>
-      <i>(download)</i>
-      <p>{{resource['description']}}</p>
-    {% elif resource['resource_locator_protocol'] == 'FTP' and resource['resource_locator_function'] == 'download' %}
-    <a href="{{resource['url']}}">{{resource['name']}}</a>
-      <i>(download)</i>
-      <p>{{resource['description']}}</p>
-    {% else %}
-    {#{{ resource['resource_locator_protocol'] }}#}
-    {% endif %}
-  </p>
-{% endfor %}
-
+  pkg - A package object that the resources belong to.
+  
+  Example:
+  
+    {% snippet "package/snippets/access/links.html", pkg=pkg, resources=pkg.resources %}
+  
+  #}
+  
+  {% for resource in resources %}
+    <p>
+      {% if resource['resource_locator_protocol'] == 'OPeNDAP:OPeNDAP' %}
+        <a href="{{resource['url']}}">OPeNDAP</a>
+        <i>(DAP Client Access)</i>
+        <p>These data are available for access with an OPeNDAP client</p>
+      {% elif resource['resource_locator_protocol'] == 'ERDDAP:griddap' or resource['resource_locator_protocol'] == 'ERDDAP:tabledap' %}
+        <a href="{{resource['url']}}">ERDDAP</a>
+        <i>(DAP Client Access)</i>
+        <p>These data are available for access with an ERDDAP client</p>
+      {% elif resource['resource_locator_protocol'] == 'WWW:LINK' and resource['resource_locator_function'] == 'download' %}
+        <a href="{{resource['url']}}">Download</a>
+        <p>{{resource['description']}}</p>
+      {% elif resource['resource_locator_protocol'] == 'OGC:SOS' %}
+        <a href="{{resource['url']}}">OGC:SOS</a>
+        <i>(OGC Sensor Observation Service)</i>
+        <p>These data are available for access with an SOS client</p>
+      {% elif resource['resource_locator_protocol'] == 'OGC:WMS' %}
+        <a href="{{resource['url']}}">OGC:WMS</a>
+        <i>(OGC Web Map Service)</i>
+        <p>These data are available for access with an OGC WMS compatible client</p>  
+      {% elif resource['resource_locator_protocol'] == 'OGC:WCS' %}
+        <a href="{{resource['url']}}">OGC:WCS</a>
+        <i>(OGC Web Coverage Service)</i>
+        <p>These data are available for access with an OGC WCS compatible client</p>
+      {% elif resource['resource_locator_protocol'] == 'OGC:WFS' %}
+        <a href="{{resource['url']}}">OGC:WFS</a>
+        <i>(OGC Web Feature Service)</i>
+        <p>These data are available for access with an OGC WFS compatible client</p>    
+      {% elif resource['resource_locator_protocol'] == 'HTTP' and resource['resource_locator_function'] == 'download' %}
+      <a href="{{resource['url']}}">{{resource['name']}}</a>
+        <i>(download)</i>
+        <p>{{resource['description']}}</p>
+      {% elif resource['resource_locator_protocol'] == 'FTP' and resource['resource_locator_function'] == 'download' %}
+      <a href="{{resource['url']}}">{{resource['name']}}</a>
+        <i>(download)</i>
+        <p>{{resource['description']}}</p>
+      {% endif %}
+    </p>
+  {% endfor %}
+  
