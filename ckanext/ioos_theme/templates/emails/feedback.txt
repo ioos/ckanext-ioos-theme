@@ -1,4 +1,4 @@
-{{name}} {{email}} has submitted feedback from the IOOS Catalog:
+{{name}} {{email}} has submitted feedback{% if dataset_id is not none %} on dataset {{dataset_id}}{% endif %} from the IOOS Catalog:
 
 {{feedback}}
 

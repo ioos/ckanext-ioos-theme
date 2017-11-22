@@ -10,7 +10,8 @@
   <article class="module">
     <div class="module-content">
       {% block primary_content_inner %}
-      <h1 class="page-heading">{{ _('Submit Feedback') }}</h1>
+      {# can't seem to get this from extra_vars #}
+      <h1 class="page-heading">{{ _('Submit Feedback')}}{% if c.ds_id is defined %} for Dataset ID {{c.ds_id}}{% endif %}</h1>
       {% block form %}
 
       <form id="user-register-form" class="form-horizontal" action="" method="post">
@@ -18,6 +19,9 @@
         {{ form.input("name", id="field-name", label=_("Name"), placeholder=_("Your name"), value=data.name, error=errors.name, classes=["control-medium"]) }}
         {{ form.input("email", id="field-email", label=_("Email"), type="email", placeholder=_("joe@example.com"), value=data.email, error=errors.email, classes=["control-medium"]) }}
         {{ form.textarea("feedback", id="field-feedback", label=_("Feedback"), placeholder=_("Your comments"), value=data.feedback, error=errors.feedback, classes=["control-medium"]) }}
+	{% if c.ds_id is defined %}
+        {{ form.hidden("dataset-id", value=c.ds_id) }}
+        {% endif %}
 
         <div class="form-actions">
           {% block form_actions %}
@@ -49,4 +53,3 @@
   </section>
   {% endblock %}
 {% endblock %}
-
