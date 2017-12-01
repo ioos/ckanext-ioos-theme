@@ -11,3 +11,7 @@ REDIS_DB=5
 SOLR_HOST=solr
 SOLR_PORT=8983
 CKAN_DEBUG=false
+GA_ID=SOME_UA
+GA_ACCOUNT=DOMAIN
+GA_USERNAME=some_ga_email@registeredgoogleaccount.com
+GA_PASSWORD=ga_account_password
