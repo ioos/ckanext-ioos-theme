@@ -1,0 +1,42 @@
+<footer class="site-footer">
+    <div class="container">
+      {% block footer_content %}
+      <div class="row">
+        <div class="footer-links">
+          {% block footer_nav %}
+            <div class="span4">
+                <h1 class="footer-title">Useful Links</h1>
+                <ul class="unstyled">
+                    {% block footer_links %}
+                      <li><a href="{{ h.url_for(controller='home', action='about') }}">{{ _('About {0}').format(g.site_title) }}</a></li>
+                      <li><a href="https://ioos.noaa.gov/">ioos.noaa.gov</a></li>
+                    {% endblock %}
+                    {% block footer_debug %}
+                        {% if g.debug %}
+                        {% include 'snippets/debug.html' %}
+                        {% endif %}
+                    {% endblock %}
+                </ul>
+            </div>
+            <div class="span4">
+                <h1 class="footer-title">Our Social Ocean</h1>
+                <ul class="unstyled">
+                    <li><a href="https://www.facebook.com/usioosgov">facebook.com/usioosgov</a></li>
+                    <li><a href="https://twitter.com/usioosgov">twitter.com/usioosgov</a></li>
+                </ul>
+            </div>
+            <div class="span4">
+                <img style="float: left;padding-right: 20px;padding-top: 5px;" src="../img/footer-img.png" alt="footer logo">
+                <p>U.S. Integrated Ocean Observing System Program</p>
+                <p>1315 East-West Highway,
+                        2nd Floor
+                        Silver Spring, MD 20910</p>
+                <a href="tel:301713-3290"> (301) 713-3290</a><br><br>
+                <a class="contact-us" href="mailto:ioos.catalog@noaa.gov" itemprop="email">Contact Us</a>
+            </div>
+            
+          {% endblock %}
+      </div>
+      {% endblock %}
+    </div>
+  </footer>
