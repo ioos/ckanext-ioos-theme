@@ -1,26 +1,38 @@
 .account-masthead {
-    background-color: #007396;
+    background-color: #ffffff;
+}
+
+body {
+  background: none !important;
 }
 
 .header-image .logo img {
-  max-height: 55px;
+  max-height: 45px;
+  margin-top: 5px;
 }
 
 .masthead { 
-  background: #ffffff;
-  color: #003087;
+  background: #003087;
+  color: #55D6F8;
 }
 
 .masthead .nav > li > a, .masthead .nav > li > a:focus, .masthead .nav > li > a:hover, .masthead .nav > .active > a, .masthead .nav > .active > a:hover, .masthead .nav > .active > a:focus {
-  color: #003087;
+  color: #55D6F8;
+  font-size: 18px;
+  text-transform: uppercase;
 }
 
 .masthead .navigation .nav-pills li a:hover, .masthead .navigation .nav-pills li.active a {
-  background-color: #D1DEE2;
+  background-color: #122b4d;
 }
 
 .site-footer {
-  background: #007396;
+  background: url(img/footer.png) !important;
+  padding: 56px 0px !important;
+  /* right: 0;
+  left: 0;
+  bottom: 0;
+  position: absolute; */
 }
 
 
@@ -136,4 +148,130 @@ section.browse-graphic img.browse-graphic-img {
 
 .below-search {
   padding-top: 50px;
+}
+
+.hero {
+  background: #ffffff !important;
+}
+
+.masthead .debug {
+  display: none !important;
+}
+
+.homepage .module-search .module-content {
+  background-color: #003087;
+}
+
+.homepage .module-search .tags {
+  background-color: #0084B6;
+}
+
+.account-masthead .account ul li a {
+  color: #003087 !important;
+}
+
+.account-masthead .account ul li {
+  border-left: 1px solid #ffffff;
+}
+
+.account-masthead .account ul li a:hover {
+  background-color: #003087 !important;
+  color: #ffffff !important;
+}
+
+.footer-title {
+  color: #ffffff;
+  padding-bottom: 2px;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: 'Roboto Slab',Times,serif!important;
+}
+
+.footer-links a {
+  color: #55D6F8;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: #ffffff;
+}
+
+.contact-us {
+  border: 1px solid #55D6F8;
+  border-radius: 0!important;
+  padding: 8px 23px!important;
+}
+
+.footer-links p {
+  color: #ffffff;
+}
+
+[role=main] {
+  background: -moz-linear-gradient(#ffffff80, #fff), url(img/glider-underwater2.jpg) !important; 
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.5), rgb(255, 255, 255)), url(img/glider-underwater2.jpg) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.homepage .links ul {
+  display: inline;
+  margin: 0px;
+}
+
+.homepage .links li {
+  display: inline;
+  padding: 0px 5px;
+  border-right: solid 1px #ccc;
+}
+
+.homepage .links li:first-child {
+  border-left: solid 1px #ccc;
+}
+
+.homepage-table {
+  font-size: 14px;
+  text-align: left;
+  margin-bottom: 35px;
+}
+
+.homepage-table td, th {
+  max-width: 110px;
+  padding-right: 23px;
+}
+
+.links-img {
+  padding: 5px 0px;
+}
+
+/* @media (min-width: 768px) {
+  .homepage [role=main] {
+      padding: 0px !important;
+  }
+} */
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+[role=main] {
+  position: initial !important;
+  padding-bottom: 0px !important;
+  min-height: 75%;
+}
+.footer,
+.push {
+  height: 276px;
+}
+
+.homepage [role="main"] {
+  padding: 20px 0;
+  padding-bottom: 20px;
+  margin-bottom: 96px;
 }
