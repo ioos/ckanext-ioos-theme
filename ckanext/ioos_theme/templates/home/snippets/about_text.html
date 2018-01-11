@@ -1,0 +1,81 @@
+{% trans %}
+<p>The IOOS Catalog (<a href="https://data.ioos.us/">https://data.ioos.us/</a>) is an open data portal containing IOOS’ portfolio of oceanographic 
+    observations and forecast products provided by IOOS’ 11 Regional Associations (RAs), functional Data Assembly 
+    Centers (DACs) such as the HF Radar DAC and Glider DAC, and IOOS’ federal partners.  The Catalog inventories 
+    all IOOS Data Management (DMAC)-compliant data access service endpoints provided by these entities in a single 
+    metadata repository, for discovery by end users.  </p>
+
+<p>The Catalog is populated by ISO 19115 metadata records that describe the observations taken and forecast model 
+    outputs produced by the RAs and DACs using DMAC-recommended standard vocabularies and data formats wherever 
+    possible (netCDF-CF [1], ACDD [2]).  The RAs and DACs publish their metadata to web accessible folders, or 
+    OGC CS-W services, and the Catalog harvests metadata from these locations on a daily basis.  Because IOOS 
+    data provider metadata is often produced in an automated fashion by software reading native data file attributes 
+    (such as CF attribution in a netCDF file, for example), a daily automated harvest of the ISO XML metadata is 
+    necessary, in order to keep frequently varying information such as dataset time coverage current.  </p>
+
+<p>The Catalog provides a searchable user graphical user interface (<a href="https://data.ioos.us/">https://data.ioos.us/</a>) 
+    for interactive data discovery by users, as well as a native API (<a href="https://data.ioos.us/api/3">https://data.ioos.us/api/3</a>)
+    and OGC CS-W (<a href="https://data.ioos.us/csw?service=CSW&request=GetCapabilities">https://data.ioos.us/csw?service=CSW&request=GetCapabilities</a>) -compatible service 
+    for machine-based access to its inventory of data products.    Downstream national IOOS 
+    products such as the IOOS Environmental Sensor Map (<a href="https://sensors.ioos.us">https://sensors.ioos.us</a>) use the Catalog 
+    inventory for real-time sensor observation services to include in its map portal.</p>
+
+<p>The IOOS Catalog is made up of three main components: 
+    <ol>
+        <li>the Data Catalog (the public user interface, based on CKAN open data catalog software)</li>
+        <li>the Harvest Registry (an internal site used by data providers to manage metadata harvest sources)</li>
+        <li>the Service Monitor (service uptime monitoring)</li>
+    </ol>
+        </p>
+
+<p>Additional information about the IOOS Catalog and components, including instructions for IOOS 
+    data providers, can be found here: <a href="https://ioos.github.io/catalog">https://ioos.github.io/catalog</a>. </p>
+
+<p>Catalog GitHub Repository: <a href="https://github.com/ioos/catalog">https://github.com/ioos/catalog</a>.  For information on project 
+    development timelines, Catalog source code, or to file an issue, please see the GitHub repo.  </p>
+<br>
+<h1 class="page-heading">Frequently Asked Questions</h1>
+
+<p><b>What are the dataset filtering options provided by the IOOS Data Catalog?</b>
+    <br>
+    The current faceted filtering options provided by the CKAN software underlying the Data 
+    Catalog are: Location (i.e. geographic bounding box), Organization (e.g. PacIOOS, GLOS, etc), 
+    Tags/keywords (e.g. sea_water_temperature, sea_water_electrical_conductivity), Formats (e.g. 
+    HTML, SOS, OPeNDAP, etc).   There is also the option to do a free text search, which will search 
+    indexed metadata fields such as dataset title, abstract, keywords, and others and provide matched datasets.  
+        </p>
+
+<p><b>How can I search for datasets by time window?</b><br>
+        This is a feature that is not presently available in the CKAN catalog software underlying the IOOS Data Catalog.  
+        The IOOS Catalog project plan calls for working to add this capability in an upcoming release.  The release 
+        milestone schedule for the Catalog project is available here: <a href="https://github.com/ioos/catalog/milestones">https://github.com/ioos/catalog/milestones</a>. 
+        </p>
+        
+<p><b>I sometimes get different search results from the CS-W service and the Data Catalog.  Why is this?</b><br>
+        The CS-W service is provided by pycsw, a Python-based OGC Catalog Service software.  It has its own internal search implementation that sometimes gives different results than CKAN’s embedded search, which is powered by the Apache Solr search indexing software.  There is a long-term plan to abstract pycsw’s search implementation to allow external pluggable search implementations (including Solr) to interoperate with pycsw but this functionality is not yet available.
+        </p>    
+
+<p><b>Can I filter search results in the Data Catalog by IOOS data provider or platform operator?</b><br>
+        No, not at this time, however this is on our road map.  With development of standardized metadata profiles to 
+        represent this information in incoming metadata from the IOOS RAs and DACs, the CKAN catalog software could be 
+        extended to provide richer filtering options including concepts such as data provider or platform operator.  
+        For more information on planned work on this, see: <a href="https://github.com/ioos/catalog/milestone/4">https://github.com/ioos/catalog/milestone/4</a>.  
+        </p>
+
+<p><b>How do I identify oceanographic forecast model output datasets in the Catalog versus oceanographic observations?</b><br>
+        At the moment, there is not a straightforward technique for this.  We hope to address this deficiency in the near future.  
+        As part of an upcoming development milestone (<a href="https://github.com/ioos/catalog/milestone/4">https://github.com/ioos/catalog/milestone/4</a>), we will be investigating 
+        enhancements to both the CKAN software as well as developing metadata conventions to better enable our data providers 
+        to tag oceanographic forecast model output in a distinctive way that could then be represented in the Data Catalog
+         interface to users.  Also, the ability to filter data by time coverage should compliment a forecast model tagging 
+         capability to search for data covering present time onward.
+        </p>
+<br>
+<p>References:
+        <br>
+        [1]. Climate and Forecast Conventions: <a href="http://cfconventions.org/">http://cfconventions.org/</a> 
+        <br>
+        [2]. Attribute Conventions for Dataset Discovery: <a href="http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery">http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery</a> 
+        </p>
+
+{% endtrans %}

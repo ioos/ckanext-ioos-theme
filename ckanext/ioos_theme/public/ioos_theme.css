@@ -29,12 +29,19 @@ body {
 .site-footer {
   background: url(img/footer.png) !important;
   padding: 56px 0px !important;
+  font-family: 'Roboto' ,sans-serif;
+  line-height: 16px;
   /* right: 0;
   left: 0;
   bottom: 0;
   position: absolute; */
 }
 
+.site-footer h1 {
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  font-family: 'Roboto Slab',Times,serif !important;
+}
 
 section.tags {
   padding-bottom: 20px;
@@ -209,9 +216,9 @@ section.browse-graphic img.browse-graphic-img {
 [role=main] {
   background: -moz-linear-gradient(#ffffff80, #fff), url(img/glider-underwater2.jpg) !important; 
   background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.5), rgb(255, 255, 255)), url(img/glider-underwater2.jpg) !important;
-  background-position: center !important;
+  background-position: top !important;
   background-repeat: no-repeat !important;
-  background-size: 100% 100% !important;
+  background-size: 100% 900px !important;
 }
 
 html, body {
@@ -273,5 +280,8 @@ html, body {
 .homepage [role="main"] {
   padding: 20px 0;
   padding-bottom: 20px;
-  margin-bottom: 96px;
+}
+
+.module:last-child {
+  margin-bottom: 75px !important;
 }
