@@ -285,3 +285,7 @@ html, body {
 .module:last-child {
   margin-bottom: 75px !important;
 }
+
+.account-masthead .account .notifications a span {
+  background-color: #c8c8c8 !important;
+}
