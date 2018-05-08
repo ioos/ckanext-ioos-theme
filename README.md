@@ -89,3 +89,12 @@ running on port 8081. Every hour PyCSW will synchronize to CKAN.
 # Usage
 
 Once the containers are launched you should be able to access the CKAN instance by visiting port 8080
+
+# Troubleshooting
+
+If you already have a container named postgis, you may need to rename it:
+```
+  postgis:
+    image: mdillon/postgis:9.3
+    container_name: postgis2
+```
