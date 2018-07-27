@@ -289,3 +289,20 @@ html, body {
 .account-masthead .account .notifications a span {
   background-color: #c8c8c8 !important;
 }
+
+#feedback{
+  border:0px solid #fff;
+  background:#660000 url('https://s3.amazonaws.com/ioos-us-gliders/wp-content/uploads/2018/05/07155250/feedback-tab-left.png') top left no-repeat;
+  width:36px;
+  height:100px;
+  position:fixed;
+  left:-3px;
+  top:40%;
+  overflow:hidden;
+  cursor:pointer;
+  z-index: 10000;
+}
+
+#feedback:hover{
+  left:-2px;
+}
