@@ -12,8 +12,8 @@
   {% endblock %}
   {% block resource_item_explore %}
   <div class="dropdown btn-group">
-    <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-      <i class="icon-share-alt"></i>
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+      <i class="fa fa-share"></i>
       {{ _('Explore') }}
       <span class="caret"></span>
     </a>
@@ -21,7 +21,7 @@
       {% block resource_item_explore_links %}
       <li>
         <a href="{{ h.url_for('harvest_object_show', id=object_reference) }}" class="resource-url-analytics" target="_blank">
-          <i class="icon-external-link"></i>
+          <i class="fa fa-external-link"></i>
           {{ _('View Content') }}
         </a>
       </li>
@@ -30,4 +30,3 @@
   </div>
   {% endblock %}
 </li>
-
