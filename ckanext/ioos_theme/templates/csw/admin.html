@@ -6,9 +6,9 @@
       {% block primary_content_inner %}
       <h1 class="page-heading">{{ _('Configure CSW') }}</h1>
 
-      {{ h.nav_named_link(_('Clear PyCSW'), 'csw_clear', icon='trash')}}
+      {{ h.nav_link(_('Clear PyCSW'), named_route='csw_clear', icon='trash')}}
       <br>
-      {{ h.nav_named_link(_('Synchronize PyCSW'), 'csw_sync', icon='compass')}}
+      {{ h.nav_link(_('Synchronize PyCSW'), named_route='csw_sync', icon='compass')}}
       {% endblock %}
     </div>
   </article>
