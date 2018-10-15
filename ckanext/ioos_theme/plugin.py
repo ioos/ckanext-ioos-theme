@@ -6,12 +6,18 @@ ckanext/ioos_theme/plugin.py
 Plugin definition for IOOS Theme
 '''
 
-import ckan.plugins as plugins
-import ckan.plugins.toolkit as toolkit
+import ckan.plugins as p
+from ckan.lib.search import SearchError
+from ckan.plugins import toolkit
 import json
 import logging
 from collections import OrderedDict
 from ckan.logic.validators import int_validator
+from ckanext.spatial.interfaces import ISpatialHarvester
+import copy
+import pendulum
+import datetime
+from six.moves import urllib
 
 log = logging.getLogger(__name__)
 
@@ -160,25 +166,91 @@ def jsonpath(obj, path):
     return obj
 
 
-class Ioos_ThemePlugin(plugins.SingletonPlugin):
+class Ioos_ThemePlugin(p.SingletonPlugin):
     '''
     Plugin definition for the IOOS Theme
     '''
-    plugins.implements(plugins.IConfigurer)
-    plugins.implements(plugins.ITemplateHelpers)
-    plugins.implements(plugins.IRoutes, inherit=True)
+    p.implements(p.IConfigurer)
+    p.implements(p.ITemplateHelpers)
+    p.implements(p.IRoutes, inherit=True)
+    p.implements(p.IPackageController, inherit=True)
+    p.implements(ISpatialHarvester, inherit=True)
 
     # IConfigurer
 
     def update_config(self, config_):
         '''
-        Extends the templates directory and adds fanstatic. 
+        Extends the templates directory and adds fanstatic.
 
         :param config_: Passed from CKAN framework
         '''
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('fanstatic', 'ioos_theme')
+
+    # IPackageController
+
+    def before_index(self, data_dict):
+        data_modified = copy.deepcopy(data_dict)
+        start_end_time = []
+        for field in ('temporal-extent-begin', 'temporal-extent-end'):
+            if field in data_dict:
+                log.debug("Found time for field {}".format(field))
+                start_end_time.append(data_dict[field])
+
+        if len(start_end_time) == 2:
+            # format to solr DateRangeField
+            data_modified["temporal_extent"] = "[{} TO {}]".format(*start_end_time)
+        elif len(start_end_time) == 1:
+            data_modified["temporal_extent"] = start_end_time[0]
+
+        log.debug(data_modified.get('temporal_extent'))
+        return data_modified
+
+    def before_search(self, search_params):
+        search_params_modified = copy.deepcopy(search_params)
+
+        def convert_date(date_val):
+            utc = pendulum.timezone("UTC")
+            if date_val is None or date_val == '*':
+                return '*'
+            else:
+                d_raw = pendulum.parsing.parse_iso8601(date_val)
+                if isinstance(d_raw, datetime.datetime):
+                    pendulum_date = utc.convert(pendulum.instance(d_raw))
+                    return pendulum_date.to_iso8601_string()
+                # if not a datetime, then it's a date
+                else:
+                    return d_raw.isoformat()
+
+
+        if 'extras' in search_params:
+            extras = search_params['extras']
+            begin_time = extras.get('ext_timerange_start')
+            end_time = extras.get('ext_timerange_end')
+        # if both begin and end time are none, no search window was provided
+        if begin_time is None and end_time is None:
+            return search_params
+        else:
+            try:
+                log.debug(begin_time)
+                convert_begin = convert_date(begin_time)
+                log.debug(convert_begin)
+                log.debug(end_time)
+                convert_end = convert_date(end_time)
+                log.debug(convert_end)
+            except pendulum.parsing.exceptions.ParserError:
+                log.exception("Error while parsing begin/end time")
+                raise SearchError("Cannot parse provided time")
+
+
+            time_query = "{} TO {}".format(convert_begin, convert_end)
+            search_params_modified['q'] = "temporal_extent:[{}]".format(time_query)
+            print(search_params_modified)
+            return search_params_modified
+
+
+    # ITemplateHelpers
 
     def get_helpers(self):
         '''
@@ -196,6 +268,8 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
             "ioos_theme_jsonpath": jsonpath,
             "ioos_theme_get_role_code": get_role_code,
         }
+
+    # IRoutes
 
     def before_map(self, map):
         '''
