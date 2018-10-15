@@ -6,12 +6,14 @@ ckanext/ioos_theme/plugin.py
 Plugin definition for IOOS Theme
 '''
 
-import ckan.plugins as plugins
-import ckan.plugins.toolkit as toolkit
+import ckan.plugins as p
+from ckan.plugins import toolkit
 import json
 import logging
 from collections import OrderedDict
 from ckan.logic.validators import int_validator
+from ckanext.spatial.interfaces import ISpatialHarvester
+import copy
 
 log = logging.getLogger(__name__)
 
@@ -160,25 +162,45 @@ def jsonpath(obj, path):
     return obj
 
 
-class Ioos_ThemePlugin(plugins.SingletonPlugin):
+class Ioos_ThemePlugin(p.SingletonPlugin):
     '''
     Plugin definition for the IOOS Theme
     '''
-    plugins.implements(plugins.IConfigurer)
-    plugins.implements(plugins.ITemplateHelpers)
-    plugins.implements(plugins.IRoutes, inherit=True)
+    p.implements(p.IConfigurer)
+    p.implements(p.ITemplateHelpers)
+    p.implements(p.IRoutes, inherit=True)
+    p.implements(p.IPackageController, inherit=True)
+    p.implements(ISpatialHarvester, inherit=True)
 
     # IConfigurer
 
     def update_config(self, config_):
         '''
-        Extends the templates directory and adds fanstatic. 
+        Extends the templates directory and adds fanstatic.
 
         :param config_: Passed from CKAN framework
         '''
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('fanstatic', 'ioos_theme')
+
+    # IPackageController
+
+    def before_index(self, data_dict):
+        data_modified = copy.deepcopy(data_dict)
+        start_end_time = []
+        for field in ('temporal-extent-begin', 'temporal-extent-end'):
+            if field in data_dict:
+                log.debug("Found time for field {}".format(field))
+                start_end_time.append(data_dict[field])
+
+        if len(start_end_time) == 2:
+            # format to solr DateRangeField
+            data_modified["temporal_extent"] = "[{} TO {}]".format(*start_end_time)
+        elif len(start_end_time) == 1:
+            data_modified["temporal_extent"] = start_end_time[0]
+
+        return data_modified
 
     def get_helpers(self):
         '''
@@ -196,6 +218,8 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
             "ioos_theme_jsonpath": jsonpath,
             "ioos_theme_get_role_code": get_role_code,
         }
+
+    # IRoutes
 
     def before_map(self, map):
         '''
