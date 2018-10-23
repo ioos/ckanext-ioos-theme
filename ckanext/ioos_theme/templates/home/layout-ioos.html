@@ -1,12 +1,12 @@
 <div role="main" class="hero">
   <div class="container below-search">
     <div class="row row2">
-      <div class="span6 col2">
+      <div class="col-md-6 column">
         {% block promoted %}
           {% snippet 'home/snippets/promoted.html' %}
         {% endblock %}
       </div>
-      <div class="span6 col1">
+      <div class="col-md-6 column">
         {% block stats %}
           {% snippet 'home/snippets/stats.html' %}
         {% endblock %}
@@ -14,20 +14,20 @@
         <div class="box links">
           <div class="inner">
             <h3>Resources</h3>
-            <table class="homepage-table">
+            <table class="homepage-table table table-responsive">
               <tr>
                 <th>Service Type<br></th>
                 <th>Service URL<br></th>
                 <th>Documentation</th>
-              </tr>
+              </tr> 
               <tr>
-                <td>OGC CS-W<br><img class="links-img" src="img/ogc.png"></td>
+                <td>OGC CS-W<br><img class="links-img img-responsive" src="img/ogc.png"></td>
                 <td><a href="https://data.ioos.us?csw">https://data.ioos.us?csw</a></td>
                 <td><a href="http://docs.pycsw.org/en/latest/csw-support.html">http://docs.pycsw.org/en/latest/csw-support.html</a></td>
               </tr>
               <tr>
                 <br>
-                <td>CKAN API<br><img class="links-img" src="img/ckan_logo.png"></td>
+                <td>CKAN API<br><img class="links-img img-responsive" src="img/ckan_logo.png"></td>
                 <td><a href="https://data.ioos.us/api/3/">https://data.ioos.us/api/3/</a></td>
                 <td><a href="http://docs.ckan.org/en/latest/api/">http://docs.ckan.org/en/latest/api/</a></td>
               </tr>
@@ -37,8 +37,10 @@
     </div>
   </div>
   <div class="container">
-    {% block search %}
-      {% snippet 'home/snippets/search.html' %}
-    {% endblock %}
+    <div class="row">
+      {% block search %}
+        {% snippet 'home/snippets/search.html' %}
+      {% endblock %}
+    </div>
   </div>
 </div>

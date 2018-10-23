@@ -4,7 +4,7 @@
       <div class="row">
         <div class="footer-links">
           {% block footer_nav %}
-            <div class="span4">
+            <div class="col-md-4">
                 <h1 class="footer-title">Useful Links</h1>
                 <ul class="unstyled">
                     {% block footer_links %}
@@ -18,7 +18,7 @@
                     {% endblock %}
                 </ul>
             </div>
-            <div class="span4">
+            <div class="col-md-4">
                 <h1 class="footer-title">Our Social Ocean</h1>
                 <ul class="unstyled">
                     <li><a href="https://www.facebook.com/usioosgov">facebook.com/usioosgov</a></li>
@@ -28,7 +28,7 @@
                     {% snippet "snippets/language_selector.html" %}
                 {% endblock %}
             </div>
-            <div class="span4">
+            <div class="col-md-4">
                 <img style="float: left;padding-right: 20px;padding-top: 5px;" src="https://data.ioos.us/img/footer-img.png" alt="footer logo">
                 <p>U.S. Integrated Ocean Observing System Program</p>
                 <p>1315 East-West Highway
