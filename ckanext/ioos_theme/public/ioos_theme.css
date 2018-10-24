@@ -1,3 +1,27 @@
+@media (min-width: 992px) {
+  .container {
+    width: 960px;
+  }
+}
+
+.container{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.masthead {
+  padding: 0;
+  min-height: 55px;
+}
+
+.masthead .navbar-collapse{
+  padding: 10px 0 0
+}
+
+.nav-tabs > li > a, .nav-pills > li > a{
+  line-height: 14px;
+}
+
 .account-masthead {
     background-color: #ffffff;
 }
@@ -24,6 +48,25 @@ body {
 
 .masthead .navigation .nav-pills li a:hover, .masthead .navigation .nav-pills li.active a {
   background-color: #122b4d;
+}
+
+.homepage .stats ul li {
+  float: left;
+  width: 33%;
+  font-weight: 300;
+}
+
+.homepage .stats ul li a strong {
+  display: block;
+  font-size: 35px;
+  line-height: 1.5;
+  font-weight: 300
+}
+
+ul.unstyled, ol.unstyled {
+  margin-left: 0;
+  padding-left: 0;
+  list-style: none;
 }
 
 .site-footer {
@@ -157,12 +200,30 @@ section.browse-graphic img.browse-graphic-img {
   padding-top: 50px;
 }
 
+.homepage .below-search .row{
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.homepage .below-search .column{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.homepage .below-search .module-content{
+  padding: 25px;
+}
+
 .hero {
   background: #ffffff !important;
 }
 
 .masthead .debug {
   display: none !important;
+}
+
+.homepage .module-search{
+  margin: 20px 0 0;
 }
 
 .homepage .module-search .module-content {
