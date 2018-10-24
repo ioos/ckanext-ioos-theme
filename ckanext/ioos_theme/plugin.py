@@ -200,6 +200,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         elif len(start_end_time) == 1:
             data_modified["temporal_extent"] = start_end_time[0]
 
+        log.debug(data_modified.get('temporal_extent'))
         return data_modified
 
     def get_helpers(self):
