@@ -14,6 +14,9 @@ from collections import OrderedDict
 from ckan.logic.validators import int_validator
 from ckanext.spatial.interfaces import ISpatialHarvester
 import copy
+import pendulum
+import datetime
+from six.moves import urllib
 
 log = logging.getLogger(__name__)
 
@@ -202,6 +205,50 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
         log.debug(data_modified.get('temporal_extent'))
         return data_modified
+
+    def before_search(self, search_params):
+        search_params_modified = copy.deepcopy(search_params)
+
+        def convert_date(date_val):
+            utc = pendulum.timezone("UTC")
+            if date_val is None or date_val == '*':
+                return '*'
+            else:
+                d_raw = pendulum.parsing.parse_iso8601(date_val)
+                if isinstance(d_raw, datetime.datetime):
+                    pendulum_date = utc.convert(pendulum.instance(d_raw))
+                    return pendulum_date.to_iso8601_string()
+                # if not a datetime, then it's a date
+                else:
+                    return d_raw.isoformat()
+
+
+        if 'extras' in search_params:
+            extras = search_params['extras']
+            begin_time = extras.get('ext_timerange_start')
+            end_time = extras.get('ext_timerange_end')
+        # if both begin and end time are none, no search window was provided
+        if begin_time is None and end_time is None:
+            return search_params
+        else:
+            try:
+                log.debug(begin_time)
+                convert_begin = convert_date(begin_time)
+                log.debug(convert_begin)
+                log.debug(end_time)
+                convert_end = convert_date(end_time)
+                log.debug(convert_end)
+            except pendulum.parsing.exceptions.ParserError:
+                log.exception("Error while parsing begin/end time")
+                return search_params
+
+            time_query = "{} TO {}".format(convert_begin, convert_end)
+            search_params_modified['q'] = "temporal_extent:[{}]".format(time_query)
+            print(search_params_modified)
+            return search_params_modified
+
+
+    # ITemplateHelpers
 
     def get_helpers(self):
         '''
