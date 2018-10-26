@@ -26,6 +26,16 @@ body {
   background-color: #122b4d;
 }
 
+label.error {
+  color: #c00;
+  font-style: italic;
+}
+
+// don't display colon after form validation errors
+label.error::after {
+  content: none;
+}
+
 .site-footer {
   background: url(img/footer.png) !important;
   padding: 56px 0px !important;

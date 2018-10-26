@@ -7,12 +7,20 @@
 
 // $(function() {
 //ckan.module('ioos_theme_daterange', function($, _) {
+function convert_date_string(date_time_str) {
+  var moment_obj =  moment(date_time_str);
+  if (moment_obj.isValid) {
+    return date_time_str;
+  } else {
+    return null; 
+  }
+}
 
 function make_daterange() {
    // converts the time range inputs to a format that can be
    // used by solr
-   var start_val = $('input[name="start_time"]').val();
-   var end_val = $('input[name="end_time"]').val();
+   var start_val = $('input#start_time').val();
+   var end_val = $('input#end_time').val();
    // TODO: add input verification on server side
 
    // TODO: moment.js verfication
@@ -22,11 +30,13 @@ function make_daterange() {
    if (!start_val && !end_val) {
      var set_val = '';
      start_val_scrub = end_val_scrub = null;
+   // TODO: differences between unset and *
+   } else if (start_val === undefined || start_val === "*") {
+     var start_val_scrub = '*';
+     var end_val_scrub = '*'; 
    } else {
-     var start_val_scrub = !start_val ? '*' : start_val;
-     var end_val_scrub = !end_val ? '*' : end_val; 
-     /* var set_val = encodeURIComponent("[" + start_val_scrub + " TO " +
-                                      end_val_scrub + "]"); */
+     var start_val_scrub = start_val;
+     var end_val_scrub = end_val;
    }
 
    $('input#ext_timerange_start').val(start_val_scrub);
@@ -38,11 +48,21 @@ ckan.module('ioos_theme_daterange', function($) {
         initialize: function() {
   var form = $(".search-form");
   $(['ext_timerange_start', 'ext_timerange_end']).each(function(index, item){
-    if ($("#ext_timerange").length === 0) {
+    var time_elem = $("#" + item);
+    if (time_elem.length === 0) {
       $('<input type="hidden" />').attr({'id': item,
                                          'name': item}).appendTo(form);
-    }
+     }
     });
+    var search_params = new URLSearchParams(location.search);
+    var param_start_time = search_params.get('ext_timerange_start');
+    if (param_start_time !== null) {
+        $('input#start_time').val(param_start_time);
+    }
+    var param_end_time = search_params.get('ext_timerange_end');
+    if (param_end_time !== null) {
+        $('input#end_time').val(param_end_time);
+    }
     make_daterange();
 
   $('a[name="datefilter"]').daterangepicker({
@@ -66,6 +86,50 @@ ckan.module('ioos_theme_daterange', function($) {
                                        //$(this).val(picker.startDate.format('YYYY-MM-DDTHH:mm') + "Z - "
                                        //            + picker.endDate.format('YYYY-MM-DDTHH:mm') + "Z")
                                    });
+  $.validator.setDefaults({
+    debug: true,
+    success: "valid"
+  }); 
+
+  $.validator.addMethod("isMomentCompatible",
+      function (value, element, params) {
+        if (value === null || value === "*") {
+          return true;
+        } else {
+          return moment(value).isValid();
+        } 
+      });
+
+  var validator = $('form[name="datetime-selection"]').validate({
+      rules: {
+         start_time: {
+             isMomentCompatible: true 
+         },
+         end_time: {
+             isMomentCompatible: true
+         }
+      },
+     messages: {
+        start_time: { isMomentCompatible: "Start time not valid" },
+        end_time: { isMomentCompatible: "End time not valid" } 
+     } 
+  });
+
+
+  /*
+  $('form[name="datetime-selection"]').validate({
+      rules: {
+          start_time: {
+            minlength: 6,
+            required: true 
+          },
+          end_time: {
+            minlength: 6,
+            required: true
+          }
+      } 
+  });
+  */
 
   // clear data selection on cancel
   $('a[name="datefilter"]').on('cancel.daterangepicker',
