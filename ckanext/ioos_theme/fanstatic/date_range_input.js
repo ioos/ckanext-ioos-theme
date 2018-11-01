@@ -17,7 +17,7 @@ function make_daterange() {
    var end_val = $('input#end_time').val();
    // TODO: add input verification on server side
 
-   var form_button = $('form[name="datetime-selection"').find('.btn');
+   var form_button = $('form[name="datetime-selection"').find('.btn.apply');
    var btn_disabled;
    if (!start_val && !end_val) {
      var set_val = '';
@@ -29,7 +29,7 @@ function make_daterange() {
    }
 
    var date_form = $('form[name="datetime-selection"]');
-   var form_btn = date_form.find('.btn');
+   var form_btn = date_form.find('.btn.apply');
    date_form.validate()
    if (date_form.valid()) {
      $('input#ext_timerange_start').val(start_val_scrub);
@@ -92,10 +92,10 @@ ckan.module('ioos_theme_daterange', function($) {
         if (this.optional(element) || value === null || value === "*") {
           return true;
         } else {
-	  // use strict ISO 8601 parsing in moment.js to avoid ambiguities
-	  var is_valid = moment(value, ['YYYY', moment.ISO_8601],
-                                true).isValid();
-          if (!is_valid) {
+         // use strict ISO 8601 parsing in moment.js to avoid ambiguities
+         var is_valid = moment(value, ['YYYY', moment.ISO_8601],
+                               true).isValid();
+         if (!is_valid) {
             var date_btn = $('form[name="datetime-selection"]').find('.btn');
             date_btn.attr('disabled', true);
           }
@@ -134,9 +134,11 @@ ckan.module('ioos_theme_daterange', function($) {
   $('input[name="end_time"]').on('change', make_daterange);
 
   // submit the updated form when the Apply button is clicked
-  $(this.el).find('.btn').click(function() { form.submit() });
-
-
+  $(this.el).find('.btn.apply').click(function() { form.submit() });
+  $('form[name="datetime-selection"]').on('reset', function() {
+                                           $('input#ext_timerange_start').remove();
+                                           $('input#ext_timerange_end').remove();
+                                          });
     }
   }
 
