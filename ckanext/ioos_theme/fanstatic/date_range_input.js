@@ -92,7 +92,9 @@ ckan.module('ioos_theme_daterange', function($) {
         if (this.optional(element) || value === null || value === "*") {
           return true;
         } else {
-          var is_valid = moment(value).isValid();
+	  // use strict ISO 8601 parsing in moment.js to avoid ambiguities
+	  var is_valid = moment(value, ['YYYY', moment.ISO_8601],
+                                true).isValid();
           if (!is_valid) {
             var date_btn = $('form[name="datetime-selection"]').find('.btn');
             date_btn.attr('disabled', true);

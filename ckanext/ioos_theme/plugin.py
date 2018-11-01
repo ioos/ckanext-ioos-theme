@@ -23,7 +23,8 @@ log = logging.getLogger(__name__)
 
 
 def get_party(pkg):
-    responsible_party = next((extra['value'] for extra in pkg['extras'] if extra['key'] == 'responsible-party'))
+    responsible_party = next((extra['value'] for extra in pkg['extras'] if
+                              extra['key'] == 'responsible-party'))
     decoded_party = json.loads(responsible_party)
     return decoded_party
 
@@ -36,7 +37,8 @@ def get_responsible_party(pkg):
 
 
 def get_publisher(pkg):
-    publishers = next((extra['value'] for extra in pkg['extras'] if extra['key'] == 'publisher'))
+    publishers = next((extra['value'] for extra in pkg['extras']
+                       if extra['key'] == 'publisher'))
     if publishers:
         return json.loads(publishers)
     return []
@@ -215,7 +217,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             if date_val is None or date_val == '*':
                 return '*'
             else:
-                d_raw = pendulum.parsing.parse_iso8601(date_val)
+                d_raw = pendulum.parsing.parse_iso8601(date_val.strip())
                 if isinstance(d_raw, datetime.datetime):
                     pendulum_date = utc.convert(pendulum.instance(d_raw))
                     return pendulum_date.to_iso8601_string()
@@ -244,9 +246,15 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                 raise SearchError("Cannot parse provided time")
 
 
-            time_query = "{} TO {}".format(convert_begin, convert_end)
-            search_params_modified['q'] = "temporal_extent:[{}]".format(time_query)
-            print(search_params_modified)
+            log.debug(search_params)
+            # fq should be defined in query params, but just in case, use .get
+            # defaulting to empty string
+            fq_contents = search_params.get('fq', '')
+            fq_modified = ("{} +temporal_extent:[{} TO {}]".format(
+                              fq_contents, convert_begin, convert_end))
+
+            search_params_modified['fq'] = fq_modified
+            log.debug(search_params_modified)
             return search_params_modified
 
 
