@@ -150,6 +150,47 @@ def get_pkg_ordereddict(pkg, key):
         return {}
     return json.loads(pkg_item, object_pairs_hook=OrderedDict)
 
+def convert_date(date_val, check_datetime=False, date_to_datetime=False):
+    """Given a * date or datetime string.  Optionally checks the type parsed
+       of the parsed value prior to being returned as a string"""
+    utc = pendulum.timezone("UTC")
+    if date_val is None or date_val == '*':
+        if check_datetime:
+            raise ValueError("Value is not datetime")
+        return '*'
+    else:
+        d_raw = pendulum.parsing.parse_iso8601(date_val.strip())
+        if (check_datetime and not isinstance(d_raw, datetime.datetime) and
+            not date_to_datetime):
+            raise ValueError("Value is not datetime")
+        if isinstance(d_raw, datetime.datetime):
+            pendulum_date = utc.convert(pendulum.instance(d_raw))
+            # need to truncate/eliminate microseconds in order to work with solr
+            if pendulum_date.microsecond == 0:
+               return pendulum_date.to_iso8601_string()
+            else:
+                log.info("Datetime has nonzero microseconds, truncating to "
+                         "zero for compatibility with Solr")
+                return pendulum_date.replace(microsecond=0).to_iso8601_string()
+        # if not a datetime, then it's a date
+        elif isinstance(d_raw, datetime.date):
+            if date_to_datetime:
+                # any more elegant way to achieve conversion to datetime?
+                dt_force = datetime.datetime.combine(d_raw,
+                                                datetime.datetime.min.time())
+                # probably don't strictly need tz argument, but doesn't hurt
+                # to be explicit
+                new_dt_str = pendulum.instance(dt_force,
+                                               tz=utc).to_iso8601_string()
+                log.info("Converted date {} to datetime {}".format(
+                            d_raw.isoformat(), new_dt_str))
+                return new_dt_str
+            else:
+               return d_raw.isoformat()
+
+        else:
+            # probably won't reach here, but not a bad idea to be defensive anyhow
+            raise ValueError("Type {} is not handled by the datetime conversion routine")
 
 def get_pkg_extra(pkg, key):
     try:
@@ -197,12 +238,29 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         start_end_time = []
         for field in ('temporal-extent-begin', 'temporal-extent-end'):
             if field in data_dict:
-                log.debug("Found time for field {}".format(field))
-                start_end_time.append(data_dict[field])
+                log.debug("Found time for field {}: {}".format(field, data_dict[field]))
+                # "now" is probably not strictly valid ISO 19139 but it occurs
+                    # fairly often
+                if data_dict.get(field, '').lower() == 'now':
+                    log.info("Converting 'now' to current date and time")
+                    utc = pendulum.timezone("UTC")
+                    parsed_val = utc.convert(pendulum.now().replace(
+                                        microsecond=0)).to_iso8601_string()
+                else:
+                    try:
+                        # TODO: Add some sane support for indeterminate dates
+                        parsed_val = convert_date(data_dict[field], True, True)
+                    except ValueError, pendulum.parsing.exceptions.ParserError:
+                        log.exception("data_dict[field] does not convert to "
+                                        "datetime, skipping storage of temporal "
+                                        "extents into Solr")
+                        return data_dict
+                start_end_time.append(parsed_val)
 
         if len(start_end_time) == 2:
             # format to solr DateRangeField
             data_modified["temporal_extent"] = "[{} TO {}]".format(*start_end_time)
+        # should this even be possible to reach?
         elif len(start_end_time) == 1:
             data_modified["temporal_extent"] = start_end_time[0]
 
@@ -212,18 +270,6 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
     def before_search(self, search_params):
         search_params_modified = copy.deepcopy(search_params)
 
-        def convert_date(date_val):
-            utc = pendulum.timezone("UTC")
-            if date_val is None or date_val == '*':
-                return '*'
-            else:
-                d_raw = pendulum.parsing.parse_iso8601(date_val.strip())
-                if isinstance(d_raw, datetime.datetime):
-                    pendulum_date = utc.convert(pendulum.instance(d_raw))
-                    return pendulum_date.to_iso8601_string()
-                # if not a datetime, then it's a date
-                else:
-                    return d_raw.isoformat()
 
 
         if 'extras' in search_params:
