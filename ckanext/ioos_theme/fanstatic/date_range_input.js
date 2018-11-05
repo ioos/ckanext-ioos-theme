@@ -96,7 +96,7 @@ ckan.module('ioos_theme_daterange', function($) {
          var is_valid = moment(value, ['YYYY', moment.ISO_8601],
                                true).isValid();
          if (!is_valid) {
-            var date_btn = $('form[name="datetime-selection"]').find('.btn');
+            var date_btn = $('form[name="datetime-selection"]').find('.btn.apply');
             date_btn.attr('disabled', true);
           }
           return is_valid;
@@ -138,6 +138,11 @@ ckan.module('ioos_theme_daterange', function($) {
   $('form[name="datetime-selection"]').on('reset', function() {
                                            $('input#ext_timerange_start').remove();
                                            $('input#ext_timerange_end').remove();
+                                           /* semi-hack to wait until reset
+                                            * event has fired by pushing
+                                            * onto the event stack */
+                                           window.setTimeout(make_daterange,
+                                                             0);
                                           });
     }
   }

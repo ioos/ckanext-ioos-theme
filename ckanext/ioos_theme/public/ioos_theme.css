@@ -69,9 +69,20 @@ ul.unstyled, ol.unstyled {
   list-style: none;
 }
 
+form[name="datetime-selection"] input {
+    margin-bottom: 4px;
+}
+
+/* use CKAN theme presets for validation errors */
+input.error {
+  color: #b94a48;
+  border-color: #ee5f5b;
+}
+
 label.error {
   color: #c00;
   font-style: italic;
+  margin-bottom: 0;
 }
 
 /* don't display colon after form validation errors */
