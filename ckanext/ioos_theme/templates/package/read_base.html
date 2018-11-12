@@ -11,7 +11,7 @@
 
 {% block content_action %}
   {# NB: link_for appears to be replaced by nav_link in newer versions of CKAN #}
-  {% link_for _('Feedback'), named_route='feedback_dataset', ds_id=pkg.name, class_='btn', icon='comment' %}
+  {% link_for _('Feedback'), named_route='feedback_package', package_name=pkg.name, class_='btn', icon='comment' %}
   {% if h.check_access('package_update', {'id':pkg.id }) %}
     {% link_for _('Manage'), controller='package', action='edit', id=pkg.name, class_='btn', icon='wrench' %}
   {% endif %}

@@ -34,14 +34,15 @@ class FeedbackController(BaseController):
         errors = errors or {}
         error_summary = error_summary or {}
         vars = {
-            'ds_id': None,
+            'package_name': None,
             'data': data,
             'errors': errors,
             'error_summary': error_summary
         }
         return render('feedback/form.html', extra_vars=vars)
 
-    def dataset_id(self, ds_id=None, data=None, errors=None, error_summary=None):
+    def feedback_package(self, package_name=None, data=None, errors=None,
+                         error_summary=None):
         '''
         Returns a render for the feedback form.
 
@@ -58,7 +59,7 @@ class FeedbackController(BaseController):
         errors = errors or {}
         error_summary = error_summary or {}
         vars = {
-            'ds_id': ds_id,
+            'package_name': package_name,
             'data': data,
             'errors': errors,
             'error_summary': error_summary
@@ -74,7 +75,7 @@ class FeedbackController(BaseController):
             'name': request.params['name'],
             'email': request.params['email'],
             'feedback': request.params['feedback'],
-            'dataset_id': request.params.get('dataset-id')
+            'package_name': request.params.get('package_name')
         }
         feedback.send_feedback(context)
         h.flash_notice(_('Thank you for your feedback'))

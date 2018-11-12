@@ -172,7 +172,7 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
 
     def update_config(self, config_):
         '''
-        Extends the templates directory and adds fanstatic. 
+        Extends the templates directory and adds fanstatic.
 
         :param config_: Passed from CKAN framework
         '''
@@ -202,7 +202,7 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
         Defines routes for feedback and overrides routes for the admin controller
         '''
         controller = 'ckanext.ioos_theme.controllers.feedback:FeedbackController'
-        map.connect('feedback_dataset', '/feedback/{ds_id}', controller=controller, action='dataset_id')
+        map.connect('feedback_package', '/feedback/{package_name}', controller=controller, action='feedback_package')
         map.connect('feedback', '/feedback', controller=controller, action='index')
 
         admin_controller = 'ckanext.ioos_theme.controllers.admin:IOOSAdminController'
