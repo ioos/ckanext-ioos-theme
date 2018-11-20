@@ -75,9 +75,13 @@ class FeedbackController(BaseController):
             'name': request.params['name'],
             'email': request.params['email'],
             'feedback': request.params['feedback'],
-            'package_name': request.params.get('package_name')
+            'package_name': request.params.get('package_name'),
+            'referrer': request.referrer
         }
         feedback.send_feedback(context)
         h.flash_notice(_('Thank you for your feedback'))
-        h.redirect_to(controller='home', action='index')
+        if context['package_name'] is None:
+            h.redirect_to(controller='home', action='index')
+        else:
+            h.redirect_to(controller='package', action='read', id=context['package_name'])
         return
