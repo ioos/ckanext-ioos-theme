@@ -12,6 +12,7 @@ import json
 import logging
 from collections import OrderedDict
 from ckan.logic.validators import int_validator
+from ckanext.spatial.interfaces import ISpatialHarvester
 
 log = logging.getLogger(__name__)
 
@@ -167,6 +168,7 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.ITemplateHelpers)
     plugins.implements(plugins.IRoutes, inherit=True)
+    plugins.implements(ISpatialHarvester, inherit=True)
 
     # IConfigurer
 
@@ -233,3 +235,21 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
             'smtp.port': [int_validator]
         })
         return schema
+
+    def get_package_dict(self, context, data_dict):
+
+        package_dict = data_dict['package_dict']
+        iso_values = data_dict['iso_values']
+
+        # ckanext-dcat uses temporal_start and temporal_end for time extents
+        # instead of temporal-extent-begin and temporal-extent-end as used by
+        # CKAN
+        time_pairs = (('temporal_start', 'temporal-extent-begin'),
+                      ('temporal_end', 'temporal-extent-end'))
+        for new_key, iso_time_field in time_pairs:
+            # recreating ckanext-spatial's logic here
+            if len(iso_values.get(iso_time_field, [])) > 0:
+                package_dict['extras'].append(
+                    {'key': new_key, 'value': iso_values[iso_time_field][0]})
+
+        return package_dict
