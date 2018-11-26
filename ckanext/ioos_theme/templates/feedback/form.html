@@ -14,11 +14,8 @@
          be simplified? #}
       <h1 class="page-heading">{{ _('Submit Feedback')}}{% if c.package_name is not none and c.package_name != '' %} for Dataset ID {{c.package_name}}{% endif %}</h1>
       {% block form %}
-
-      {% set action_loc = "" %}
-
       <form id="user-register-form" class="form-horizontal" method="post"
-          action="{{ action_loc }}">
+          action="">
         {{ form.errors(error_summary) }}
         {{ form.input("name", id="field-name", label=_("Name"), placeholder=_("Your name"), value=data.name, error=errors.name, classes=["control-medium"]) }}
         {{ form.input("email", id="field-email", label=_("Email"), type="email", placeholder=_("joe@example.com"), value=data.email, error=errors.email, classes=["control-medium"]) }}
