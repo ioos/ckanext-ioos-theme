@@ -141,8 +141,10 @@ ckan.module('ioos_theme_daterange', function($) {
                                            /* semi-hack to wait until reset
                                             * event has fired by pushing
                                             * onto the event stack */
-                                           window.setTimeout(make_daterange,
-                                                             0);
+                                           window.setTimeout(function() {
+                                                              make_daterange();
+                                                              form.submit();
+                                                             }, 0);
                                           });
     }
   }
