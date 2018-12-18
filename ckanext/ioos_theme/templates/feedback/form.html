@@ -7,6 +7,9 @@
 {% endblock %}
 
 {% block primary_content %}
+<!-- Google recaptcha api -->
+<script src='https://www.google.com/recaptcha/api.js'></script>
+
   <article class="module">
     <div class="module-content">
       {% block primary_content_inner %}
@@ -26,6 +29,7 @@
 
         <div class="form-actions">
           {% block form_actions %}
+          <div class="g-recaptcha" data-sitekey="6Lcv_YIUAAAAAEVat3AhH8JX9aEcxbrVh6uGO4-1"></div>
           <button class="btn btn-primary" type="submit" name="submit">{{ _("Submit") }}</button>
           {% endblock %}
         </div>
@@ -35,6 +39,10 @@
       {% endblock %}
     </div>
   </article>
+
+<!-- Google Captcha script -->
+<script src='/js/index.js'></script>
+
 {% endblock %}
 
 {% block secondary_content %}
