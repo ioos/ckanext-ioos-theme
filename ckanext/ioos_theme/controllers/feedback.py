@@ -26,11 +26,29 @@ class FeedbackController(BaseController):
                             will be passed to the controller
         :param dict error_summary: Summary of any validation errors
         '''
+        name = ""
+        email = ""
+        feedback = ""
         # If the HTTP request is POST
         if request.params:
-            return self._post_feedback()
+            try:
+                if request.params['g-recaptcha-response']:
+                    return self._post_feedback()
+                else:
+                    name = request.params['name']
+                    email = request.params['email']
+                    feedback = request.params['feedback']
+                    h.flash_notice(_('Must enter captcha below'))
+            except KeyError:
+                name = request.params['name']
+                email = request.params['email']
+                feedback = request.params['feedback']
+                h.flash_notice(_('Must enter captcha below'))
 
-        data = data or {}
+        data = data or {"name": "", "email": "", "feedback": ""}
+        data['name'] = name or ""
+        data['email'] = email or ""
+        data['feedback'] = feedback or ""
         errors = errors or {}
         error_summary = error_summary or {}
         vars = {
@@ -51,11 +69,29 @@ class FeedbackController(BaseController):
                             will be passed to the controller
         :param dict error_summary: Summary of any validation errors
         '''
+        name = ""
+        email = ""
+        feedback = ""
         # If the HTTP request is POST
         if request.params:
-            return self._post_feedback()
+            try:
+                if request.params['g-recaptcha-response']:
+                    return self._post_feedback()
+                else:
+                    name = request.params['name']
+                    email = request.params['email']
+                    feedback = request.params['feedback']
+                    h.flash_notice(_('Must enter captcha below'))
+            except KeyError:
+                name = request.params['name']
+                email = request.params['email']
+                feedback = request.params['feedback']
+                h.flash_notice(_('Must enter captcha below'))
 
-        data = data or {}
+        data = data or {"name": "", "email": "", "feedback": ""}
+        data['name'] = name or ""
+        data['email'] = email or ""
+        data['feedback'] = feedback or ""
         errors = errors or {}
         error_summary = error_summary or {}
         vars = {
