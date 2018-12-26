@@ -8,7 +8,8 @@ from ckan.lib.base import BaseController, render, _
 from ckan.lib import helpers as h
 from ckan.common import request
 from ckanext.ioos_theme.lib import feedback
-
+from pylons import config
+import logging
 
 class FeedbackController(BaseController):
     '''
@@ -51,11 +52,17 @@ class FeedbackController(BaseController):
         data['feedback'] = feedback or ""
         errors = errors or {}
         error_summary = error_summary or {}
+        site_key = config.get('feedback.site_key') or ""
+
+        if not site_key:
+            logging.warning('Administrator must setup feedback.site_key')
+
         vars = {
             'package_name': None,
             'data': data,
             'errors': errors,
-            'error_summary': error_summary
+            'error_summary': error_summary,
+            'feedback_site_key': site_key
         }
         return render('feedback/form.html', extra_vars=vars)
 

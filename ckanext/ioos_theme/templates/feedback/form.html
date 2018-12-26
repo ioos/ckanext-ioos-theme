@@ -29,7 +29,7 @@
 
         <div class="form-actions">
           {% block form_actions %}
-          <div class="g-recaptcha" data-sitekey="6Lcv_YIUAAAAAEVat3AhH8JX9aEcxbrVh6uGO4-1"></div>
+          <div class="g-recaptcha" data-sitekey={{feedback_site_key}}></div>
           <button class="btn btn-primary" type="submit" name="submit">{{ _("Submit") }}</button>
           {% endblock %}
         </div>
