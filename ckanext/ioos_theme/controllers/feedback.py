@@ -52,7 +52,7 @@ class FeedbackController(BaseController):
         data['feedback'] = feedback or ""
         errors = errors or {}
         error_summary = error_summary or {}
-        site_key = config.get('feedback.site_key') or ""
+        site_key = config.get('feedback.site_key', '')
 
         if not site_key:
             logging.warning('Administrator must setup feedback.site_key')
