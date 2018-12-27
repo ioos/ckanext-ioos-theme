@@ -8,7 +8,8 @@ from ckan.lib.base import BaseController, render, _
 from ckan.lib import helpers as h
 from ckan.common import request
 from ckanext.ioos_theme.lib import feedback
-
+from pylons import config
+import logging
 
 class FeedbackController(BaseController):
     '''
@@ -17,7 +18,7 @@ class FeedbackController(BaseController):
     thanking the user for their feedback and then redirect to the home page.
     '''
 
-    def index(self, data=None, errors=None, error_summary=None):
+    def index(self, data=None, errors=None, error_summary=None, package_name=None):
         '''
         Returns a render for the feedback form.
 
@@ -26,43 +27,42 @@ class FeedbackController(BaseController):
                             will be passed to the controller
         :param dict error_summary: Summary of any validation errors
         '''
+        name = ""
+        email = ""
+        feedback = ""
         # If the HTTP request is POST
         if request.params:
-            return self._post_feedback()
+            try:
+                if request.params['g-recaptcha-response']:
+                    return self._post_feedback()
+                else:
+                    name = request.params['name']
+                    email = request.params['email']
+                    feedback = request.params['feedback']
+                    h.flash_notice(_('Must enter captcha below'))
+            except KeyError:
+                name = request.params['name']
+                email = request.params['email']
+                feedback = request.params['feedback']
+                h.flash_notice(_('Must enter captcha below'))
 
-        data = data or {}
+        data = data or {"name": "", "email": "", "feedback": ""}
+        data['name'] = name or ""
+        data['email'] = email or ""
+        data['feedback'] = feedback or ""
         errors = errors or {}
         error_summary = error_summary or {}
-        vars = {
-            'package_name': None,
-            'data': data,
-            'errors': errors,
-            'error_summary': error_summary
-        }
-        return render('feedback/form.html', extra_vars=vars)
+        site_key = config.get('feedback.site_key', '')
 
-    def feedback_package(self, package_name=None, data=None, errors=None,
-                         error_summary=None):
-        '''
-        Returns a render for the feedback form.
+        if not site_key:
+            logging.warning('Administrator must setup feedback.site_key')
 
-        :param dict data: Unused
-        :param dict errors: Any validation errors that the user has entered
-                            will be passed to the controller
-        :param dict error_summary: Summary of any validation errors
-        '''
-        # If the HTTP request is POST
-        if request.params:
-            return self._post_feedback()
-
-        data = data or {}
-        errors = errors or {}
-        error_summary = error_summary or {}
         vars = {
             'package_name': package_name,
             'data': data,
             'errors': errors,
-            'error_summary': error_summary
+            'error_summary': error_summary,
+            'feedback_site_key': site_key
         }
         return render('feedback/form.html', extra_vars=vars)
 

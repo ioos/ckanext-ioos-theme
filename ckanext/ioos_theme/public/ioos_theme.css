@@ -367,3 +367,8 @@ html, body {
 #feedback:hover{
   left:-2px;
 }
+
+/* Feedback captcha */
+.g-recaptcha {
+  margin-left: 130px;
+}

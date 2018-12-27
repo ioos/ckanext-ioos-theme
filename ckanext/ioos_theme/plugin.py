@@ -204,7 +204,7 @@ class Ioos_ThemePlugin(plugins.SingletonPlugin):
         Defines routes for feedback and overrides routes for the admin controller
         '''
         controller = 'ckanext.ioos_theme.controllers.feedback:FeedbackController'
-        map.connect('feedback_package', '/feedback/{package_name}', controller=controller, action='feedback_package')
+        map.connect('feedback_package', '/feedback/{package_name}', controller=controller, action='index', package_name='{package_name}')
         map.connect('feedback', '/feedback', controller=controller, action='index')
 
         admin_controller = 'ckanext.ioos_theme.controllers.admin:IOOSAdminController'
