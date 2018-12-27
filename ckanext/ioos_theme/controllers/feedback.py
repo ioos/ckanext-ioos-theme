@@ -18,7 +18,7 @@ class FeedbackController(BaseController):
     thanking the user for their feedback and then redirect to the home page.
     '''
 
-    def index(self, data=None, errors=None, error_summary=None):
+    def index(self, data=None, errors=None, error_summary=None, package_name=None):
         '''
         Returns a render for the feedback form.
 
@@ -58,54 +58,11 @@ class FeedbackController(BaseController):
             logging.warning('Administrator must setup feedback.site_key')
 
         vars = {
-            'package_name': None,
+            'package_name': package_name,
             'data': data,
             'errors': errors,
             'error_summary': error_summary,
             'feedback_site_key': site_key
-        }
-        return render('feedback/form.html', extra_vars=vars)
-
-    def feedback_package(self, package_name=None, data=None, errors=None,
-                         error_summary=None):
-        '''
-        Returns a render for the feedback form.
-
-        :param dict data: Unused
-        :param dict errors: Any validation errors that the user has entered
-                            will be passed to the controller
-        :param dict error_summary: Summary of any validation errors
-        '''
-        name = ""
-        email = ""
-        feedback = ""
-        # If the HTTP request is POST
-        if request.params:
-            try:
-                if request.params['g-recaptcha-response']:
-                    return self._post_feedback()
-                else:
-                    name = request.params['name']
-                    email = request.params['email']
-                    feedback = request.params['feedback']
-                    h.flash_notice(_('Must enter captcha below'))
-            except KeyError:
-                name = request.params['name']
-                email = request.params['email']
-                feedback = request.params['feedback']
-                h.flash_notice(_('Must enter captcha below'))
-
-        data = data or {"name": "", "email": "", "feedback": ""}
-        data['name'] = name or ""
-        data['email'] = email or ""
-        data['feedback'] = feedback or ""
-        errors = errors or {}
-        error_summary = error_summary or {}
-        vars = {
-            'package_name': package_name,
-            'data': data,
-            'errors': errors,
-            'error_summary': error_summary
         }
         return render('feedback/form.html', extra_vars=vars)
 
