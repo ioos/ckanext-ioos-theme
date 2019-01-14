@@ -77,10 +77,14 @@ ckan.module('ioos_theme_daterange', function($) {
                                    function(ev, picker) {
                                        $('input[name="start_time"]').val(picker.startDate.format('YYYY-MM-DDTHH:mm') + "Z");
                                        $('input[name="end_time"]').val(picker.endDate.format('YYYY-MM-DDTHH:mm') + "Z");
-                                       // setting .val doesn't fire the
-                                       // on change handler, so we need to
-                                       // call the function directly.
+                                       /* setting .val doesn't fire the
+                                        * on change handler, so we need to
+                                        * call the function directly. */
                                        make_daterange();
+                                       /* submit the form after selecting dates
+                                        * to make behavior consistent with
+                                        * other widgets */
+                                       form.submit();
                                    });
   $.validator.setDefaults({
     debug: true,
@@ -149,4 +153,4 @@ ckan.module('ioos_theme_daterange', function($) {
     }
   }
 
- });
+});
