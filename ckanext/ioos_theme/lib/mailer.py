@@ -53,6 +53,7 @@ from email.utils import formatdate, formataddr, make_msgid, parseaddr
 from contextlib import contextmanager
 
 from pylons import config
+from paste.deploy.converters import asbool
 
 MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost')
 MAIL_PORT = os.environ.get('MAIL_PORT', 25)
@@ -565,7 +566,7 @@ class Mail(_MailMixin):
             config.get('smtp.user'),
             config.get('smtp.password'),
             int(config.get('smtp.port')),
-            config.get('smtp.starttls'),
+            asbool(config.get('smtp.starttls', False)),
             False,
             config.get('smtp.mail_from'),
             1,

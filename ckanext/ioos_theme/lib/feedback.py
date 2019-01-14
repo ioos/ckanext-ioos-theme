@@ -32,5 +32,6 @@ def send_feedback(context):
     recipients = recipients.split(' ')
     mail = Mail()
     msg = Message(subject, sender=config.get('smtp.mail_from'), recipients=recipients)
+    msg.extra_headers = {"referring_site": context['referrer']}
     msg.body = body
     mail.send(msg)

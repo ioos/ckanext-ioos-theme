@@ -213,6 +213,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
     '''
     Plugin definition for the IOOS Theme
     '''
+
     p.implements(p.IConfigurer)
     p.implements(p.ITemplateHelpers)
     p.implements(p.IRoutes, inherit=True)
@@ -330,7 +331,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         Defines routes for feedback and overrides routes for the admin controller
         '''
         controller = 'ckanext.ioos_theme.controllers.feedback:FeedbackController'
-        map.connect('feedback_dataset', '/feedback/{ds_id}', controller=controller, action='dataset_id')
+        map.connect('feedback_package', '/feedback/{package_name}', controller=controller, action='index', package_name='{package_name}')
         map.connect('feedback', '/feedback', controller=controller, action='index')
 
         admin_controller = 'ckanext.ioos_theme.controllers.admin:IOOSAdminController'
@@ -361,3 +362,21 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             'smtp.port': [int_validator]
         })
         return schema
+
+    def get_package_dict(self, context, data_dict):
+
+        package_dict = data_dict['package_dict']
+        iso_values = data_dict['iso_values']
+
+        # ckanext-dcat uses temporal_start and temporal_end for time extents
+        # instead of temporal-extent-begin and temporal-extent-end as used by
+        # CKAN
+        time_pairs = (('temporal_start', 'temporal-extent-begin'),
+                      ('temporal_end', 'temporal-extent-end'))
+        for new_key, iso_time_field in time_pairs:
+            # recreating ckanext-spatial's logic here
+            if len(iso_values.get(iso_time_field, [])) > 0:
+                package_dict['extras'].append(
+                    {'key': new_key, 'value': iso_values[iso_time_field][0]})
+
+        return package_dict
