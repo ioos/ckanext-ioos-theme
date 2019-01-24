@@ -69,7 +69,8 @@ ckan.module('ioos_theme_daterange', function($) {
     endDate: moment().startOf('hour').add(32, 'hour'),
     locale: {
       format: 'YYYY-MM-DDTHH:mm\\Z'
-    }
+    },
+    timePicker: true
   });
 
   // set ISO-like date on range selection
