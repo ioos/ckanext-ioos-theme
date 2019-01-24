@@ -35,7 +35,7 @@ body {
   margin-top: 5px;
 }
 
-.masthead { 
+.masthead {
   background: #003087;
   color: #55D6F8;
 }
@@ -67,6 +67,47 @@ ul.unstyled, ol.unstyled {
   margin-left: 0;
   padding-left: 0;
   list-style: none;
+}
+
+form[name="datetime-selection"] input {
+    margin-bottom: 4px;
+}
+
+form[name="datetime-selection"] #start-end-time-container {
+  margin: 8px;
+}
+
+form[name="datetime-selection"] #start-end-btn-container {
+  display: flex;
+  justify-content: center;
+}
+
+form[name="datetime-selection"] .btn {
+  margin-right: 3px;
+}
+
+/* use CKAN theme presets for validation errors */
+input.error {
+  color: #b94a48;
+  border-color: #ee5f5b;
+}
+
+label.error {
+  color: #c00;
+  font-style: italic;
+  margin-bottom: 0;
+}
+
+/* don't display colon after form validation errors */
+/* why isn't this hiding the colon? don't know, should have higher
+ * CSS specificity */
+label.error::after {
+  content: none;
+}
+
+/* stop ugly word wrapping inside datetime info popover */
+form .popover .popover-content {
+  word-break: normal;
 }
 
 .site-footer {
@@ -184,11 +225,11 @@ section.browse-graphic img.browse-graphic-img {
 .label[data-format=erddap-tabledap], .label[data-format=erddap] {
   background-color: #128cb5;
 }
-.label[data-format=wms], 
+.label[data-format=wms],
 .label[data-format*=wms],
-.label[data-format=wcs], 
+.label[data-format=wcs],
 .label[data-format*=wcs],
-.label[data-format=wfs], 
+.label[data-format=wfs],
 .label[data-format*=wfs] {
   background-color: #f66d61;
 }
@@ -275,7 +316,7 @@ section.browse-graphic img.browse-graphic-img {
 }
 
 [role=main] {
-  background: -moz-linear-gradient(#ffffff80, #fff), url(img/glider-underwater2.jpg) !important; 
+  background: -moz-linear-gradient(#ffffff80, #fff), url(img/glider-underwater2.jpg) !important;
   background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.5), rgb(255, 255, 255)), url(img/glider-underwater2.jpg) !important;
   background-position: top !important;
   background-repeat: no-repeat !important;

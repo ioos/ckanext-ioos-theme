@@ -2,6 +2,28 @@
 {% block secondary_content %}
 
   {% snippet "spatial/snippets/spatial_query.html" %}
+  {% snippet "snippets/date_picker_search.html" %}
+  {#
+  {% resource "ioos_theme/moment.js" %}
+  {% resource "ioos_theme/daterangepicker.js" %}
+  {% resource "ioos_theme/daterangepicker.css" %}
+  {% resource "ioos_theme/date_range_input.js" %}
+<section class="module module-narrow module-shallow">
+  <h2 class="module-heading">
+    <i class="fa fa-medium fa-clock-o"></i> Date/Time Selection
+         <a><i class="fa fa-info-circle"></i></a>
+  </h2>
+    <a><i name="datefilter" class="fa fa-calendar"></i> Choose extents via datepicker</a>
+    <label for="start_time">Start Time</label>
+    <input name="start_time" value="" type="text"
+           placeholder="ISO 8601 date or * for all dates">
+    <label for="start_time">End Time</label>
+    <input name="start_time" value="" type="text"
+           placeholder="ISO 8601 date or * for all dates">
+    <a class="btn apply btn-primary">Apply</a>
+</section>
+  #}
+
   {% for facet in c.facet_titles %}
     {{ h.snippet('snippets/facet_list.html', title=c.facet_titles[facet], name=facet) }}
   {% endfor %}
