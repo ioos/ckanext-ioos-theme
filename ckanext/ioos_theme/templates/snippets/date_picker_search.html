@@ -24,20 +24,25 @@
                               </ul>
                             </p>"><i class="fa fa-info-circle"></i></a>
     </h2>
-      <div>
-      <label for="start_time">Start Time</label>
-      <a name="datefilter"><i name="datefilter" class="fa fa-calendar"></i></a>
-      <input id="start_time" name="start_time" value="" type="text" class="form-control"
-             placeholder="ISO 8601 date or * for all dates">
+      <div id="start-end-time-container">
+        <div>
+          <label for="start_time">Start Time</label>
+          <a name="datefilter"><i name="datefilter" class="fa fa-calendar"></i></a>
+          <input id="start_time" name="start_time" value="" type="text" class="form-control"
+                 placeholder="ISO 8601 date or * for all dates">
+        </div>
+        <div>
+          <label for="end_time">End Time</label>
+          <a name="datefilter"><i name="datefilter" class="fa fa-calendar"></i></a>
+          <input id="end_time" name="end_time" value="" type="text" class="form-control"
+                 placeholder="ISO 8601 date or * for all dates">
+        </div>
+
+        <div id="start-end-btn-container">
+          <button class="btn apply btn-primary">Apply</a>
+          <button type="reset" class="btn btn-secondary">Clear</a>
+        </div>
       </div>
-      <div>
-      <label for="end_time">End Time</label>
-      <a name="datefilter"><i name="datefilter" class="fa fa-calendar"></i></a>
-      <input id="end_time" name="end_time" value="" type="text" class="form-control"
-             placeholder="ISO 8601 date or * for all dates">
-      </div>
-      <button class="btn apply btn-primary">Apply</a>
-      <button type="reset" class="btn btn-secondary">Clear</a>
       </form>
   </section>
   {% resource "ioos_theme/moment.js" %}
