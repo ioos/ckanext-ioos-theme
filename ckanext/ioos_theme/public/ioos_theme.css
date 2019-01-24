@@ -73,6 +73,19 @@ form[name="datetime-selection"] input {
     margin-bottom: 4px;
 }
 
+form[name="datetime-selection"] #start-end-time-container {
+  margin: 8px;
+}
+
+form[name="datetime-selection"] #start-end-btn-container {
+  display: flex;
+  justify-content: center;
+}
+
+form[name="datetime-selection"] .btn {
+  margin-right: 3px;
+}
+
 /* use CKAN theme presets for validation errors */
 input.error {
   color: #b94a48;
