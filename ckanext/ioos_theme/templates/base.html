@@ -8,5 +8,5 @@
 
   {# populate dataset name for feedback when we are on a dataset page #}
   {% set opt_pkg = pkg.name if pkg is defined else "" %}
-  <a id="feedback" class="hidden-xs" href="/feedback/{{opt_pkg}}"></a>
+  <a id="feedback" href="/feedback/{{opt_pkg}}"></a>
 {% endblock %}
