@@ -17,6 +17,7 @@ from ckanext.spatial.interfaces import ISpatialHarvester
 import copy
 import pendulum
 import datetime
+import six
 from six.moves import urllib
 
 log = logging.getLogger(__name__)
@@ -264,6 +265,22 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         # should this even be possible to reach?
         elif len(start_end_time) == 1:
             data_modified["temporal_extent"] = start_end_time[0]
+
+        # Solr StringField max length is 32766 bytes.  Truncate to this length
+        # if any field exceeds this length so that harvesting doesn't crash
+        max_solr_strlen_bytes = 32766
+        for extra_key, extra_val in data_modified.iteritems():
+            if isinstance(extra_val, six.string_types):
+                bytes_str = extra_val.encode("utf-8")
+                bytes_len = len(bytes_str)
+                if bytes_len > max_solr_strlen_bytes:
+                    log.info("Key {} length of {} bytes exceeds maximum of {}, "
+                             "truncating string".format(extra_key,
+                                                        max_solr_strlen_bytes,
+                                                        bytes_len))
+                    trunc_val = bytes_str[:max_solr_strlen_bytes].decode('utf-8',
+                                                                         'ignore')
+                    data_modified[extra_key] = trunc_val
 
         log.debug(data_modified.get('temporal_extent'))
         return data_modified
