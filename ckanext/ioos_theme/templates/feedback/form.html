@@ -7,8 +7,7 @@
 {% endblock %}
 
 {% block primary_content %}
-<!-- Google recaptcha api -->
-<script src='https://www.google.com/recaptcha/api.js'></script>
+
 
   <article class="module">
     <div class="module-content">
@@ -27,9 +26,32 @@
         {{ form.hidden("package_name", value=c.package_name) }}
      {% endif %}
 
+        <!-- Make name, email and feedback required fields -->
+        <script>
+        document.querySelector("#field-name").required = true;
+        document.querySelector("#field-email").required = true;
+        document.querySelector("#field-feedback").required = true;
+        </script>
+
+        <!-- Google Recaptcha V3 -->
+        <script src="https://www.google.com/recaptcha/api.js?render={{feedback_site_key}}"></script>
+        <script>
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{feedback_site_key}}', {action: 'homepage'}).then(function(token) {
+              var input = document.createElement("input");
+              input.setAttribute("value", token);
+              input.setAttribute("type", "hidden");
+              input.setAttribute("name", "g-captcha-token");
+              document.querySelector("#user-register-form").appendChild(input);
+            });
+        });
+        </script>
+
         <div class="form-actions">
           {% block form_actions %}
-          <div class="g-recaptcha" data-sitekey={{feedback_site_key}}></div>
+          <!-- Google Recaptcha V2 api  Left for reference -->
+          <!-- <div class="g-recaptcha" data-sitekey={{feedback_site_key}}></div> -->
+
           <button class="btn btn-primary" type="submit" name="submit">{{ _("Submit") }}</button>
           {% endblock %}
         </div>

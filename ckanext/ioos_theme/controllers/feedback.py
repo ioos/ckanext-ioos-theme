@@ -10,6 +10,9 @@ from ckan.common import request
 from ckanext.ioos_theme.lib import feedback
 from pylons import config
 import logging
+import urllib
+import urllib2
+import json
 
 class FeedbackController(BaseController):
     '''
@@ -30,21 +33,36 @@ class FeedbackController(BaseController):
         name = ""
         email = ""
         feedback = ""
+
+        recaptcha_response = request.params.get('g-captcha-token')
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        values = {
+            'secret': config.get('feedback.site_secret', ''),
+            'response': recaptcha_response
+        }
+
+        url_data = urllib.urlencode(values)
+        req = urllib2.Request(url, url_data)
+        response = urllib2.urlopen(req)
+        result = json.load(response)
+
         # If the HTTP request is POST
         if request.params:
             try:
-                if request.params['g-recaptcha-response']:
+                # Left for reference during refactor to captcha V3
+                #if request.params['g-recaptcha-response']:
+                if result['success']:
                     return self._post_feedback()
                 else:
                     name = request.params['name']
                     email = request.params['email']
                     feedback = request.params['feedback']
-                    h.flash_notice(_('Must enter captcha below'))
+                    h.flash_notice(_('Please fill out missing fields below.'))
             except KeyError:
                 name = request.params['name']
                 email = request.params['email']
                 feedback = request.params['feedback']
-                h.flash_notice(_('Must enter captcha below'))
+                h.flash_notice(_('Please fill out missing fields below.'))
 
         data = data or {"name": "", "email": "", "feedback": ""}
         data['name'] = name or ""
@@ -53,6 +71,7 @@ class FeedbackController(BaseController):
         errors = errors or {}
         error_summary = error_summary or {}
         site_key = config.get('feedback.site_key', '')
+        token = config.get('feedback.g-captcha-token', '')
 
         if not site_key:
             logging.warning('Administrator must setup feedback.site_key')
