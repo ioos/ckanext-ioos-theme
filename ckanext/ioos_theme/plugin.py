@@ -18,6 +18,8 @@ import copy
 import pendulum
 import datetime
 import six
+from itertools import chain
+import re
 from six.moves import urllib
 
 log = logging.getLogger(__name__)
@@ -384,6 +386,18 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
         package_dict = data_dict['package_dict']
         iso_values = data_dict['iso_values']
+
+        # split any GCMD keyword components (usually separated by " > " into
+        # separate, unique tags
+        # TODO: should we also store the full GCMD keywords as extras and in
+        #       Solr?
+        try:
+            unique_tags = set(chain(*[re.split(r'\s*>\s*', t.strip()) for t
+                                      in iso_values['tags']]))
+            package_dict['tags'] = [{'name': val} for val in
+                                    sorted(unique_tags)]
+        except:
+            log.exception("Error occurred while splitting GCMD tags:")
 
         # ckanext-dcat uses temporal_start and temporal_end for time extents
         # instead of temporal-extent-begin and temporal-extent-end as used by
