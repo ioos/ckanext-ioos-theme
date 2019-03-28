@@ -22,13 +22,27 @@ from six.moves import urllib
 
 log = logging.getLogger(__name__)
 
+def get_originator_name(party_text):
+    ret_val = None
+    try:
+        parties = json.loads(party_text)
+        for party in parties:
+            if 'originator' in party.get('roles', []):
+                name = party.get('name')
+                # will return True if not empty string or
+                # nonexistent key
+                if name:
+                    ret_val = name
+                    break
+    except ValueError, TypeError:
+        log.exception("Error occured while parsing JSON value")
+    return ret_val
 
 def get_party(pkg):
     responsible_party = next((extra['value'] for extra in pkg['extras'] if
                               extra['key'] == 'responsible-party'))
     decoded_party = json.loads(responsible_party)
     return decoded_party
-
 
 def get_responsible_party(pkg):
     responsible_party = get_party(pkg)
@@ -220,6 +234,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
     p.implements(p.IRoutes, inherit=True)
     p.implements(p.IPackageController, inherit=True)
     p.implements(ISpatialHarvester, inherit=True)
+    p.implements(p.IFacets, inherit=True)
 
     # IConfigurer
 
@@ -238,6 +253,13 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
     def before_index(self, data_dict):
         data_modified = copy.deepcopy(data_dict)
         start_end_time = []
+        responsible_party = data_dict.get('extras_responsible-party')
+        # get originator
+        if responsible_party is not None:
+            originator = get_originator_name(responsible_party)
+            if originator is not None:
+                data_modified['data_provider'] = originator
+
         for field in ('temporal-extent-begin', 'temporal-extent-end'):
             if field in data_dict:
                 log.debug("Found time for field {}: {}".format(field, data_dict[field]))
@@ -294,33 +316,39 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             extras = search_params['extras']
             begin_time = extras.get('ext_timerange_start')
             end_time = extras.get('ext_timerange_end')
-        # if both begin and end time are none, no search window was provided
-        if begin_time is None and end_time is None:
-            return search_params
-        else:
-            try:
-                log.debug(begin_time)
-                convert_begin = convert_date(begin_time)
-                log.debug(convert_begin)
-                log.debug(end_time)
-                convert_end = convert_date(end_time)
-                log.debug(convert_end)
-            except pendulum.parsing.exceptions.ParserError:
-                log.exception("Error while parsing begin/end time")
-                raise SearchError("Cannot parse provided time")
+            # temporal handling
+            # if both begin and end time are none, no search window was provided
+            if begin_time is None and end_time is None:
+                return search_params
+            else:
+                try:
+                    log.debug(begin_time)
+                    convert_begin = convert_date(begin_time)
+                    log.debug(convert_begin)
+                    log.debug(end_time)
+                    convert_end = convert_date(end_time)
+                    log.debug(convert_end)
+                except pendulum.parsing.exceptions.ParserError:
+                    log.exception("Error while parsing begin/end time")
+                    raise SearchError("Cannot parse provided time")
 
 
-            log.debug(search_params)
-            # fq should be defined in query params, but just in case, use .get
-            # defaulting to empty string
-            fq_contents = search_params.get('fq', '')
-            fq_modified = ("{} +temporal_extent:[{} TO {}]".format(
-                              fq_contents, convert_begin, convert_end))
+                log.debug(search_params)
+                # fq should be defined in query params, but just in case, use .get
+                # defaulting to empty string
+                fq_contents = search_params.get('fq', '')
+                fq_modified = ("{} +temporal_extent:[{} TO {}]".format(
+                                fq_contents, convert_begin, convert_end))
 
-            search_params_modified['fq'] = fq_modified
-            log.debug(search_params_modified)
-            return search_params_modified
+                search_params_modified['fq'] = fq_modified
+                log.debug(search_params_modified)
+                return search_params_modified
 
+    # IFacets
+
+    def dataset_facets(self, facets_dict, package_type):
+        facets_dict['data_provider'] = p.toolkit._('Data Provider')
+        return facets_dict
 
     # ITemplateHelpers
 
