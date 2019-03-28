@@ -18,6 +18,8 @@ import copy
 import pendulum
 import datetime
 import six
+from itertools import chain
+import re
 from six.moves import urllib
 
 log = logging.getLogger(__name__)
@@ -223,6 +225,21 @@ def jsonpath(obj, path):
         log.info("OBJ: %s", obj)
     return obj
 
+def split_gcmd_tags(tags):
+    """
+    Splits any GCMD keyword components (usually separated by " > " into
+    separate, unique tags. Returns a list of tags if successful, or None
+    if the tags ran into an exception
+    """
+    #TODO: should we also store the full GCMD keywords as extras and in
+    #           Solr?
+    try:
+        unique_tags = set(chain(*[re.split(r'\s*>\s*', t.strip()) for t
+                                    in tags]))
+        return [{'name': val} for val in sorted(unique_tags)]
+    except:
+        log.exception("Error occurred while splitting GCMD tags:")
+        return None
 
 class Ioos_ThemePlugin(p.SingletonPlugin):
     '''
@@ -412,6 +429,10 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
         package_dict = data_dict['package_dict']
         iso_values = data_dict['iso_values']
+
+        returned_tags =  split_gcmd_tags(iso_values['tags'])
+        if returned_tags is not None:
+            package_dict['tags'] = returned_tags
 
         # ckanext-dcat uses temporal_start and temporal_end for time extents
         # instead of temporal-extent-begin and temporal-extent-end as used by
