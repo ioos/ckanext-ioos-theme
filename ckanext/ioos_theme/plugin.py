@@ -309,9 +309,11 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         # if any field exceeds this length so that harvesting doesn't crash
         max_solr_strlen_bytes = 32766
         for extra_key, extra_val in data_modified.iteritems():
-            if isinstance(extra_val, six.string_types):
+            if (extra_key not in {'data_dict', 'validated_data_dict'} and
+                isinstance(extra_val, six.string_types)):
                 bytes_str = extra_val.encode("utf-8")
                 bytes_len = len(bytes_str)
+                # TODO: if json, ignore
                 if bytes_len > max_solr_strlen_bytes:
                     log.info("Key {} length of {} bytes exceeds maximum of {}, "
                              "truncating string".format(extra_key,
