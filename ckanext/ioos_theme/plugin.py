@@ -236,7 +236,8 @@ def split_gcmd_tags(tags):
     try:
         unique_tags = set(chain(*[re.split(r'\s*>\s*', t.strip()) for t
                                     in tags]))
-        return [{'name': val} for val in sorted(unique_tags)]
+        # limit tags to 100 chars so we don't get a database error
+        return [{'name': val[:100]} for val in sorted(unique_tags)]
     except:
         log.exception("Error occurred while splitting GCMD tags:")
         return None
