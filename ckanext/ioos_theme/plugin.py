@@ -367,7 +367,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
     # IFacets
 
     def dataset_facets(self, facets_dict, package_type):
-        facets_dict['data_provider'] = p.toolkit._('Data Provider')
+        facets_dict['data_provider'] = p.toolkit._('Data Providers')
         return facets_dict
 
     # ITemplateHelpers
