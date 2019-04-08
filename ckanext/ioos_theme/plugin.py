@@ -370,6 +370,10 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         facets_dict['data_provider'] = p.toolkit._('Data Providers')
         return facets_dict
 
+    def organization_facets(self, facets_dict, organization_type,
+                                    package_type):
+            return self.dataset_facets(facets_dict, package_type)
+
     # ITemplateHelpers
 
     def get_helpers(self):
