@@ -24,8 +24,8 @@ from six.moves import urllib
 
 log = logging.getLogger(__name__)
 
-def get_originator_name(party_text):
-    ret_val = None
+def get_originator_names(party_text):
+    ret_val = []
     try:
         parties = json.loads(party_text)
         for party in parties:
@@ -34,8 +34,7 @@ def get_originator_name(party_text):
                 # will return True if not empty string or
                 # nonexistent key
                 if name:
-                    ret_val = name
-                    break
+                    ret_val.append(name)
     except ValueError, TypeError:
         log.exception("Error occured while parsing JSON value")
     return ret_val
@@ -272,11 +271,10 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         data_modified = copy.deepcopy(data_dict)
         start_end_time = []
         responsible_party = data_dict.get('extras_responsible-party')
-        # get originator
         if responsible_party is not None:
-            originator = get_originator_name(responsible_party)
-            if originator is not None:
-                data_modified['data_provider'] = originator
+            originators = get_originator_names(responsible_party)
+            if len(originators) > 0:
+                data_modified['data_provider'] = originators
 
         for field in ('temporal-extent-begin', 'temporal-extent-end'):
             if field in data_dict:
