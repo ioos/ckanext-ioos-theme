@@ -1,4 +1,8 @@
 {% ckan_extends %}
+{% block breadcrumb_content %}
+  <li class="active">{{ h.nav_link(_(dataset_type.title() + 's'), controller='package', action='search', highlight_actions = 'new index') }}</li>
+{% endblock %}
+
 {% block secondary_content %}
 
   {% snippet "spatial/snippets/spatial_query.html" %}
