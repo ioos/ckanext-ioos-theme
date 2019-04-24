@@ -280,12 +280,12 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             if field in data_dict:
                 log.debug("Found time for field {}: {}".format(field, data_dict[field]))
                 # "now" is probably not strictly valid ISO 19139 but it occurs
-                    # fairly often
+                # fairly often
                 if data_dict.get(field, '').lower() == 'now':
                     log.info("Converting 'now' to current date and time")
                     utc = pendulum.timezone("UTC")
-                    parsed_val = utc.convert(pendulum.now().replace(
-                                        microsecond=0)).to_iso8601_string()
+                    parsed_val = pendulum.now(utc).replace(
+                                        microsecond=0).to_iso8601_string()
                 else:
                     try:
                         # TODO: Add some sane support for indeterminate dates
