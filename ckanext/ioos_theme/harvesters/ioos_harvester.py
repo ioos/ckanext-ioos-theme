@@ -41,6 +41,19 @@ class IOOSHarvester(SpatialHarvester):
             keywords[keyword_type].append(keyword)
 
         extras['grouped_keywords'] = []
+        cf_std_names = next((d['keywords'] for d in iso_values['keywords']
+                            if any(v in d['thesaurus']['title'].lower() for v in
+                                   ['cf', 'climate and forecast'])), None)
+        if cf_std_names is not None:
+            extras['cf_standard_names'] = cf_std_names
+
+        gcmd_keywords = next((d['keywords'] for d in iso_values['keywords']
+                           if any(v in d['thesaurus']['title'].lower() for v in
+                                  ['gcmd', 'global change'])), None)
+
+        if gcmd_keywords is not None:
+            extras['gcmd_keywords'] = gcmd_keywords
+
         for keyword_type in ['theme', 'dataCenter', 'platform', 'instrument', 'place', 'project', 'dataResolution', 'stratum', 'otherRestrictions', 'keywords']:
             if keyword_type in keywords:
                 extras['grouped_keywords'].append([titleize(keyword_type), keywords[keyword_type]])

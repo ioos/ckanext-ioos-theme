@@ -276,6 +276,16 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             if len(originators) > 0:
                 data_modified['data_provider'] = originators
 
+        gcmd_keywords = data_dict.get('extras_gcmd_keywords')
+        if gcmd_keywords is not None:
+            try:
+                gcmd_keywords_parse = [e.strip() for e in
+                                       json.loads(gcmd_keywords)]
+            except ValueError:
+                log.exception("Can't parse GCMD keywords from JSON")
+            else:
+                data_modified['gcmd_keywords_full'] = gcmd_keywords_parse
+
         for field in ('temporal-extent-begin', 'temporal-extent-end'):
             if field in data_dict:
                 log.debug("Found time for field {}: {}".format(field, data_dict[field]))
