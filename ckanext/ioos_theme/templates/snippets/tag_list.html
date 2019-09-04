@@ -1,0 +1,40 @@
+{#
+render a list of tags linking to the dataset search page
+tags: list of tags
+#}
+{% ckan_extends %}
+{% set _class = _class or 'tag-list' %}
+{% block tag_list %}
+{% set gcmd_keywords = h.ioos_theme_get_pkg_item(c.pkg_dict,
+                                                        "gcmd_keywords") %}
+{% set cf_standard_names = h.ioos_theme_get_pkg_item(c.pkg_dict,
+                                                        "cf_standard_names") %}
+
+{% if gcmd_keywords %}
+<h3>GCMD Keywords</h3>
+<ul class="{{ _class }}">
+{% for kw in gcmd_keywords %}
+{% set gcmd_str="gcmd_keywords_full:\"" + kw|trim + "\""%}
+    <li>
+      <a class="{% block tag_list_item_class_2 %}tag{% endblock %}" href="{% url_for controller='package', action='search', q=gcmd_str %}">{{ kw }}</a>
+    </li>
+{% endfor %}
+</ul>
+{% endif %}
+{% if cf_standard_names %}
+<h3>CF Standard Names</h3>
+<ul class="{{ _class }}">
+{% for std_name in cf_standard_names %}
+    {% set q_str="extras_cf_standard_names:" + std_name|trim %}
+    <li>
+      <a class="{% block tag_list_item_class_3 %}tag{% endblock %}" href="{% url_for controller='package', action='search', q=q_str %}">{{ std_name }}</a>
+    </li>
+{% endfor %}
+</ul>
+
+{% endif %}
+{% if tags %}
+<h3>Freeform Tags</h3>
+{{ super() }}
+{% endif %}
+{% endblock %}
