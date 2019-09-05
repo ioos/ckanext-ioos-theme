@@ -36,8 +36,9 @@
 <br>
 <h1 class="page-heading">Frequently Asked Questions</h1>
 
-<p><b>What are the dataset filtering options provided by the IOOS Data Catalog?</b>
+<h3>What are the dataset filtering options provided by the IOOS Data Catalog?</h3>
     <br>
+    <p>
     The current faceted filtering options provided by the CKAN software underlying the Data
     Catalog are:
     <ul>
@@ -51,16 +52,19 @@
     indexed metadata fields such as dataset title, abstract, keywords, and others and provide matched datasets.
     </p>
 
-<p><b>How can I search for datasets by time window?</b><br>
+<h3>How can I search for datasets by time window?</h3><br>
+<p>
         The <a href="https://data.ioos.us/dataset">datasets search page</a>
         provides an option to search by start and/or end time.
         </p>
 
-<p><b>I sometimes get different search results from the CS-W service and the Data Catalog.  Why is this?</b><br>
+<h3>I sometimes get different search results from the CS-W service and the Data Catalog.  Why is this?</h3><br>
+<p>
         The CS-W service is provided by pycsw, a Python-based OGC Catalog Service software.  It has its own internal search implementation that sometimes gives different results than CKAN’s embedded search, which is powered by the Apache Solr search indexing software.  There is a long-term plan to abstract pycsw’s search implementation to allow external pluggable search implementations (including Solr) to interoperate with pycsw but this functionality is not yet available.
         </p>
 
-<p><b>Can I filter search results in the Data Catalog by IOOS data provider or platform operator?</b><br>
+<h3>Can I filter search results in the Data Catalog by IOOS data provider or platform operator?</h3><br>
+<p>
         Partially.  The <i>CI_RoleCode</i> in ISO 19115 with a value of "originator" is used as the value of the data provider field.
         With development of standardized metadata profiles to
         represent this information in incoming metadata from the IOOS RAs and DACs, the CKAN catalog software could be
@@ -68,14 +72,39 @@
         For more information on planned work on this, see: <a href="https://github.com/ioos/catalog/milestone/7">https://github.com/ioos/catalog/milestone/7</a>.
         </p>
 
-<p><b>How do I identify oceanographic forecast model output datasets in the Catalog versus oceanographic observations?</b><br>
+<h3>How do I identify oceanographic forecast model output datasets in the Catalog versus oceanographic observations?</h3>
+<p>
         At the moment, there is not a straightforward technique for this.  We hope to address this deficiency in the near future.
         As part of an upcoming development milestone (<a href="https://github.com/ioos/catalog/milestone/7">https://github.com/ioos/catalog/milestone/7</a>), we will be investigating
         enhancements to both the CKAN software as well as developing metadata conventions to better enable our data providers
         to tag oceanographic forecast model output in a distinctive way that could then be represented in the Data Catalog
-         interface to users.  Also, the ability to filter data by time coverage should compliment a forecast model tagging
+         interface to users.  Also, the ability to filter data by time coverage should complement a forecast model tagging
          capability to search for data covering present time onward.
         </p>
+
+<h3>Can I search for datasets with particular GCMD keywords and/or CF standard names</h3>
+<p>
+Yes.  Under the hood, CKAN uses Solr for search, and can accept Solr query strings in either the dataset search on the website or the
+<code><a href="https://docs.ckan.org/en/2.8/api/#ckan.logic.action.get.package_search">package_search</a></code> CKAN API endpoint.
+CF Standard Names are primarily provided by the `extras_cf_standard_names` field.  An example query is below:
+<a href='https://data.ioos.us/dataset?q=extras_cf_standard_names:"sea_water_pressure"'>https://data.ioos.us/dataset?q=extras_cf_standard_names:"sea_water_pressure"</a></p>
+<p>
+GCMD keywords work somewhat differently and are organized by hierarchy
+For example a query of <a href='https://data.ioos.us/dataset?q=gcmd_keywords:"Earth Science > Oceans > Ocean Chemistry > Chlorophyll"'>https://data.ioos.us/dataset?q=gcmd_keywords:"Earth Science &gt; Oceans &gt; Ocean Chemistry &gt; Chlorophyll"</a>
+is equivalent to specifying the following values for <code>gcmd_keywords</code>:
+<ul>
+  <li><a href='https://data.ioos.us/dataset?q=gcmd_keywords:"EARTH SCIENCE > OCEANS > OCEAN CHEMISTRY > CHLOROPHYLL"'><code>"EARTH SCIENCE &gt; OCEANS &gt; OCEAN CHEMISTRY &gt; CHLOROPHYLL"</code></a></li>
+  <li><a href='https://data.ioos.us/dataset?q=gcmd_keywords:"Earth Science>Oceans>Ocean Chemistry>Chlorophyll"'><code>"Earth Science&gt;Oceans&gt;Ocean Chemistry&gt;Chlorophyll"</code></a></li>
+  <li><a href='https://data.ioos.us/dataset?q=gcmd_keywords:"Earth   Science  >  Oceans  >  Ocean Chemistry  >  Chlorophyll"'><code>"Earth   Science  &gt;  Oceans  &gt;  Ocean Chemistry  &gt;  Chlorophyll"</code></a></li>
+</ul>
+The search is hierarchical and can also contain prefixes, i.e.
+<a href='https://data.ioos.us/dataset?q=gcmd_keywords:"Earth Science > Oceans"'>https://data.ioos.us/dataset?q=gcmd_keywords:"Earth Science &gt; Oceans"</a> will find any GCMD keywords underneath it.
+If you want to search for a suffix with GCMD keywords, you will need to use
+a wildcard search:
+<a href='https://data.ioos.us/dataset?q=gcmd_keywords:*Water\ Temperature'><code>*Water\ Temperature'</code></a>
+Note here the use of the escaped space per the Lucene query syntax.
+</p>
+
 <br>
 <p>References:
         <br>
