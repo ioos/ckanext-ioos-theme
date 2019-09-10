@@ -12,14 +12,7 @@ tags: list of tags
 
 {% if gcmd_keywords %}
 <h3>GCMD Keywords</h3>
-<ul class="{{ _class }}">
-{% for kw in gcmd_keywords %}
-{% set gcmd_str="gcmd_keywords_full:\"" + kw|trim + "\""%}
-    <li>
-      <a class="{% block tag_list_item_class_2 %}tag{% endblock %}" href="{% url_for controller='package', action='search', q=gcmd_str %}">{{ kw }}</a>
-    </li>
-{% endfor %}
-</ul>
+{{ h.gcmd_generate(gcmd_keywords)|safe }}
 {% endif %}
 {% if cf_standard_names %}
 <h3>CF Standard Names</h3>

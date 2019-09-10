@@ -61,7 +61,8 @@ setup(
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
     install_requires=[
         'inflection>=0.3.1',
-        'pendulum>=2.0.3'
+        'pendulum>=2.0.3',
+        'sortedcontainers>=2.1.0',
     ],
 
     # If there are data files included in your packages that need to be

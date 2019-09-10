@@ -21,6 +21,8 @@ import six
 from itertools import chain
 import re
 from six.moves import urllib
+from lxml import etree
+from sortedcontainers import SortedDict
 
 log = logging.getLogger(__name__)
 
@@ -224,6 +226,49 @@ def jsonpath(obj, path):
         log.info("OBJ: %s", obj)
     return obj
 
+def gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords):
+
+    gcmd_dict = SortedDict()
+    prepped_kw = (re.sub(r"\s*>\s*", ' > ', re.sub(r"\s+", " ", kw)).upper()
+                  for kw in gcmd_keywords)
+    # put into multilevel sorted dict.  Could possibly subclass defaultdict
+    # for this?
+    for kw in prepped_kw:
+        gcmd_levels = kw.split(' > ')
+        current_hierarchy = gcmd_dict
+        for level in gcmd_levels:
+            if level not in current_hierarchy:
+                current_hierarchy[level] = SortedDict()
+            current_hierarchy = current_hierarchy[level]
+
+    # now generate
+    return gcmd_dict
+
+def gcmd_generate(gcmd_keywords):
+    return gcmd_to_ul(gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords))
+
+def gcmd_to_ul(gcmd_dict, elem=etree.Element('ul', {'class': 'tag-list tree'}),
+               prev_results=None):
+    if prev_results is None:
+        prev_results = []
+    for sub_key, sub_dict in gcmd_dict.items():
+        gcmd_list = etree.SubElement(elem, 'li')
+        new_hier = prev_results + [sub_key]
+        exploded_kw = " > ".join(new_hier)
+        gcmd_link = etree.SubElement(gcmd_list, 'a',
+                                     {'class': 'tag',
+                                      'href': '/dataset?q=gcmd_keywords_full:"{}"'.format(exploded_kw)})
+        gcmd_link.text = sub_key
+        if sub_dict:
+            new_ul = etree.SubElement(gcmd_list, 'ul', {'class': 'tag-list'})
+            gcmd_to_ul(sub_dict, new_ul, new_hier)
+
+    # operates on side effects, so if the base recursion case, return
+    # the generated XML string.
+    if not prev_results:
+        return etree.tostring(elem, pretty_print=True)
+
+
 def split_gcmd_tags(tags):
     """
     Splits any GCMD keyword components (usually separated by " > " into
@@ -399,6 +444,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             "ioos_theme_get_pkg_ordereddict": get_pkg_ordereddict,
             "ioos_theme_jsonpath": jsonpath,
             "ioos_theme_get_role_code": get_role_code,
+            "gcmd_generate": gcmd_generate,
         }
 
     # IRoutes
