@@ -41,22 +41,29 @@ class IOOSHarvester(SpatialHarvester):
             keywords[keyword_type].append(keyword)
 
         extras['grouped_keywords'] = []
-        cf_std_names = next((d['keywords'] for d in iso_values['keywords']
-                            if any(v in d['thesaurus']['title'].lower() for v in
-                                   ['cf', 'climate and forecast'])), None)
-        if cf_std_names is not None:
-            extras['cf_standard_names'] = cf_std_names
+        for extra_name, matches in (('cf_standard_names',
+                                     ('cf', 'climate and forecast')),
+                                    ('gcmd_keywords',
+                                     ('gcmd', 'global change'))):
+            try:
+                match_result = next((d['keywords'] for d in
+                                     iso_values['keywords']
+                                     if d['thesaurus'] and
+                                     any(v in d['thesaurus']['title'].lower()
+                                     for v in matches)), None)
+            except:
+                match_result = None
+                log.exception("Execption raised when trying to extract {}".format(
+                              extra_name))
+            if match_result is not None:
+                extras[extra_name] = match_result
 
-        gcmd_keywords = next((d['keywords'] for d in iso_values['keywords']
-                           if any(v in d['thesaurus']['title'].lower() for v in
-                                  ['gcmd', 'global change'])), None)
-
-        if gcmd_keywords is not None:
-            extras['gcmd_keywords'] = gcmd_keywords
-
-        for keyword_type in ['theme', 'dataCenter', 'platform', 'instrument', 'place', 'project', 'dataResolution', 'stratum', 'otherRestrictions', 'keywords']:
+        for keyword_type in ['theme', 'dataCenter', 'platform', 'instrument',
+                             'place', 'project', 'dataResolution', 'stratum',
+                             'otherRestrictions', 'keywords']:
             if keyword_type in keywords:
-                extras['grouped_keywords'].append([titleize(keyword_type), keywords[keyword_type]])
+                extras['grouped_keywords'].append([titleize(keyword_type),
+                                                   keywords[keyword_type]])
 
         if iso_values.get('publisher', None):
             extras['publisher'] = iso_values.get('publisher', [])
