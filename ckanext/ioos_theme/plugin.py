@@ -247,10 +247,12 @@ def gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords):
 def gcmd_generate(gcmd_keywords):
     return gcmd_to_ul(gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords))
 
-def gcmd_to_ul(gcmd_dict, elem=etree.Element('ul', {'class': 'tag-list tree'}),
-               prev_results=None):
+def gcmd_to_ul(gcmd_dict, elem=None, prev_results=None):
+    # avoid side effects with mutable args duplicating same tree several times
     if prev_results is None:
         prev_results = []
+    if elem is None:
+        elem = etree.Element('ul', {'class': 'tag-list tree'})
     for sub_key, sub_dict in gcmd_dict.items():
         gcmd_list = etree.SubElement(elem, 'li')
         new_hier = prev_results + [sub_key]
