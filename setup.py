@@ -88,7 +88,7 @@ setup(
         [babel.extractors]
         ckan = ckan.lib.extract:extract_ckan
         [ckan.rdf.profiles]
-        ioos_dcat=ckanext.ioos_theme.profiles.IOOSDCATProfile
+        ioos_dcat=ckanext.ioos_theme.profiles:IOOSDCATProfile
     ''',
 
     # If you are changing from the default layout of your extension, you may
