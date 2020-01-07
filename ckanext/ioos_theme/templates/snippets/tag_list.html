@@ -18,7 +18,7 @@ tags: list of tags
 <h3>CF Standard Names</h3>
 <ul class="{{ _class }}">
 {% for std_name in cf_standard_names %}
-    {% set q_str="extras_cf_standard_names:" + std_name|trim %}
+    {% set q_str="cf_standard_names:\"" + std_name|trim + "\"" %}
     <li>
       <a class="{% block tag_list_item_class_3 %}tag{% endblock %}" href="{% url_for controller='package', action='search', q=q_str %}">{{ std_name }}</a>
     </li>

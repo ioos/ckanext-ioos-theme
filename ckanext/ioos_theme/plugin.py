@@ -259,7 +259,7 @@ def gcmd_to_ul(gcmd_dict, elem=None, prev_results=None):
         exploded_kw = " > ".join(new_hier)
         gcmd_link = etree.SubElement(gcmd_list, 'a',
                                      {'class': 'tag',
-                                      'href': '/dataset?q=gcmd_keywords_full:"{}"'.format(exploded_kw)})
+                                      'href': '/dataset?q=gcmd_keywords:"{}"'.format(exploded_kw)})
         gcmd_link.text = sub_key
         if sub_dict:
             new_ul = etree.SubElement(gcmd_list, 'ul', {'class': 'tag-list'})
