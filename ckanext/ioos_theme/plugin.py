@@ -218,6 +218,26 @@ def get_pkg_extra(pkg, key):
         return None
     return pkg_item
 
+def filter_tag_names(tags, cf_standard_names=None, gcmd_keywords=None):
+    """
+    Takes a list of tags which to filter based upon the provided CF Standard
+    Names and GCMD Keywords to be excluded and filters out
+    any tags which have a display_name which is present in the set of values to
+    be excluded.
+    """
+    excludes_set = set()
+    if cf_standard_names:
+        excludes_set.update(set(standard_name.lower() for standard_name in
+                                cf_standard_names))
+    if gcmd_keywords:
+        gcmd_components = set(t.lower() for t in
+                              split_gcmd_list(gcmd_keywords))
+        excludes_set.update(gcmd_components)
+    # return tag list of dicts without excluded tags deduplicated and sorted
+    # against the tag "display_name"
+    return sorted(map(dict, set(frozenset(d.items()) for d in tags if
+                                d['display_name'].lower() not in excludes_set)
+                     ), key=lambda d: d['display_name'])
 
 def jsonpath(obj, path):
     for key in path.split('.'):
@@ -271,6 +291,8 @@ def gcmd_to_ul(gcmd_dict, elem=None, prev_results=None):
     if not prev_results:
         return etree.tostring(elem, pretty_print=True)
 
+def split_gcmd_list(tags):
+    return chain(*[re.split(r'\s*>\s*', t.strip()) for t in tags])
 
 def split_gcmd_tags(tags):
     """
@@ -281,8 +303,7 @@ def split_gcmd_tags(tags):
     #TODO: should we also store the full GCMD keywords as extras and in
     #           Solr?
     try:
-        unique_tags = set(chain(*[re.split(r'\s*>\s*', t.strip()) for t
-                                    in tags]))
+        unique_tags = set(split_gcmd_list(tags))
         # limit tags to 100 chars so we don't get a database error
         return [{'name': val[:100]} for val in sorted(unique_tags)]
     except:
@@ -448,6 +469,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             "ioos_theme_get_pkg_ordereddict": get_pkg_ordereddict,
             "ioos_theme_jsonpath": jsonpath,
             "ioos_theme_get_role_code": get_role_code,
+            "filter_tag_names": filter_tag_names,
             "gcmd_generate": gcmd_generate,
         }
 
