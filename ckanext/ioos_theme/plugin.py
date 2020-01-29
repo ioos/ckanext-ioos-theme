@@ -161,6 +161,7 @@ def get_pkg_item(pkg, key):
     return None
 
 
+
 def get_pkg_ordereddict(pkg, key):
     try:
         pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
@@ -423,6 +424,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
     def dataset_facets(self, facets_dict, package_type):
         facets_dict['data_provider'] = p.toolkit._('Data Providers')
+        facets_dict['gcmd_keywords_full'] = p.toolkit._('GCMD Keywords')
         return facets_dict
 
     def organization_facets(self, facets_dict, organization_type,
