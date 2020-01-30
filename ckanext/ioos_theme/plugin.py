@@ -324,15 +324,18 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             if len(originators) > 0:
                 data_modified['data_provider'] = originators
 
-        gcmd_keywords = data_dict.get('extras_gcmd_keywords')
-        if gcmd_keywords is not None:
-            try:
-                gcmd_keywords_parse = [e.strip() for e in
-                                       json.loads(gcmd_keywords)]
-            except ValueError:
-                log.exception("Can't parse GCMD keywords from JSON")
-            else:
-                data_modified['gcmd_keywords'] = gcmd_keywords_parse
+        # write GCMD Keywords and CF Standard Names to corresponding solr
+        # multi-index fields
+        for field_name in ('cf_standard_names', 'gcmd_keywords'):
+            extras_str = data_dict.get("extras_{}".format(field_name))
+            if extras_str is not None:
+                try:
+                    extras_parse = [e.strip() for e in
+                                    json.loads(extras_str)]
+                except ValueError:
+                    log.exception("Can't parse {} from JSON".format(field_name))
+                else:
+                    data_modified[field_name] = extras_parse
 
         for field in ('temporal-extent-begin', 'temporal-extent-end'):
             if field in data_dict:
@@ -424,6 +427,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
     def dataset_facets(self, facets_dict, package_type):
         facets_dict['data_provider'] = p.toolkit._('Data Providers')
+        facets_dict['cf_standard_names'] = p.toolkit._('CF Standard Names')
         facets_dict['gcmd_keywords'] = p.toolkit._('GCMD Keywords')
         return facets_dict
 
