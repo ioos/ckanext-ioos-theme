@@ -332,7 +332,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             except ValueError:
                 log.exception("Can't parse GCMD keywords from JSON")
             else:
-                data_modified['gcmd_keywords_full'] = gcmd_keywords_parse
+                data_modified['gcmd_keywords'] = gcmd_keywords_parse
 
         for field in ('temporal-extent-begin', 'temporal-extent-end'):
             if field in data_dict:
@@ -424,7 +424,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
     def dataset_facets(self, facets_dict, package_type):
         facets_dict['data_provider'] = p.toolkit._('Data Providers')
-        facets_dict['gcmd_keywords_full'] = p.toolkit._('GCMD Keywords')
+        facets_dict['gcmd_keywords'] = p.toolkit._('GCMD Keywords')
         return facets_dict
 
     def organization_facets(self, facets_dict, organization_type,
