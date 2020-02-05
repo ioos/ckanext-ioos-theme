@@ -4,12 +4,37 @@
             {% with items = items or h.get_facet_items_dict(name) %}
             {% if items %}
               <nav>
-                {# TODO: find a better way of representing hierarchy for
-                         GCMD Keywords, e.g. collapsable spans, etc #}
                 {% if name == 'gcmd_keywords' %}
-                  {% set items = items | sort(attribute='name') %}
+                {% set gcmd_pairs = h.gcmd_generate_facets(items) %}
+                {% set gcmd_level = gcmd_pairs %}
+                <section class="module module-narrow module-shallow" data-module="ioos_theme_hier_expand">
+                <ul id="gcmd_tree" class="{{ nav_class or 'list-unstyled nav nav-simple nav-facet' }}">
+                {% for key, value in gcmd_level.items() recursive %}
+                {% set href = h.remove_url_param(name, value.full_name, extras=extras, alternative_url=alternative_url) if value.active else h.add_url_param(new_params={name: value.full_name}, extras=extras, alternative_url=alternative_url) %}
+                {% set label = label_function(key) if label_function else key %}
+                {% set label_truncated = h.truncate(label, 22) if not label_function else label %}
+                {% set has_children = value|length > 0 %}
+
+                    <li class="{{ nav_item_class or 'nav-item' }}{% if value.active %} active{% endif %}">
+
+                    {% if has_children %}
+                    <span class="tree-caret"></span>
+                    {% endif %}
+                      <a href="{{ href }}" title="{{ label if label != label_truncated else '' }}">
+                        <span class="item-label">{{ label_truncated }}</span>
+                        <span class="hidden separator"> - </span>
+                        <span class="item-count badge">{{ value.count }}</span>
+                      </a>
+                        {% if has_children %}
+                          <ul class="{{ nav_class or 'list-unstyled nav nav-simple nav-facet' }} nested">{{ loop(value.items()) }}</ul>
+                        {% endif %}
+                    </li>
+
+                {% endfor %}
+          </ul>
+          </section>
+          {% resource "ioos_theme/hier_expand.js" %}
                 {% else %}
-                {% endif %}
                 <ul class="{{ nav_class or 'list-unstyled nav nav-simple nav-facet' }}">
                   {% for item in items %}
                     {% set href = h.remove_url_param(name, item.name, extras=extras, alternative_url=alternative_url) if item.active else h.add_url_param(new_params={name: item.name}, extras=extras, alternative_url=alternative_url) %}
@@ -17,22 +42,15 @@
                     {% set label_truncated = h.truncate(label, 22) if not label_function else label %}
                     {% set count = count_label(item['count']) if count_label else ('%d' % item['count']) %}
                       <li class="{{ nav_item_class or 'nav-item' }}{% if item.active %} active{% endif %}">
-                        {% if name == 'gcmd_keywords' %}
-                        <a href="{{ href }}" title="{{ label if label != label_truncated else '' }}">
-                           {% set label_split = label.split(' > ') %}
-                           <span class="item-label">
-                             {% for i in range((label_split | length) - 1) %}&nbsp;&nbsp;&nbsp;{% endfor %}{{h.truncate(label_split[-1], 22)}}
-                           </span>
-                         {% else %}
-                           <a href="{{ href }}" title="{{ label if label != label_truncated else '' }}">
-                           <span class="item-label">{{ label_truncated }}</span>
-                         {% endif %}
+                          <a href="{{ href }}" title="{{ label if label != label_truncated else '' }}">
+                          <span class="item-label">{{ label_truncated }}</span>
                           <span class="hidden separator"> - </span>
                           <span class="item-count badge">{{ count }}</span>
                         </a>
                       </li>
                   {% endfor %}
                 </ul>
+                  {% endif %}
               </nav>
 
               <p class="module-footer">
@@ -49,4 +67,3 @@
             {% endif %}
             {% endwith %}
           {% endblock %}
-
