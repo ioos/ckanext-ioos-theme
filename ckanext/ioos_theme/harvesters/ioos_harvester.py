@@ -55,7 +55,10 @@ class IOOSHarvester(SpatialHarvester):
                                      if d['thesaurus'] and
                                      any(v in d['thesaurus']['title'].lower()
                                      for v in matches)), None)
-                match_result = sorted(set(map(data_filter, match_raw)))
+                if hasattr(match_raw, '__iter__'):
+                    match_result = sorted(set(map(data_filter, match_raw)))
+                else:
+                    match_result = data_filter(match_raw)
             except:
                 match_result = None
                 log.exception("Execption raised when trying to extract {}".format(
