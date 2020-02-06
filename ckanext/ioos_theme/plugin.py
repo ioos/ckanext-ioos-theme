@@ -22,6 +22,7 @@ from itertools import chain
 import re
 from six.moves import urllib
 from lxml import etree
+from collections import OrderedDict
 from sortedcontainers import SortedDict
 
 log = logging.getLogger(__name__)
@@ -247,41 +248,93 @@ def jsonpath(obj, path):
         log.info("OBJ: %s", obj)
     return obj
 
-def gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords):
+def gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords,
+                                            dict_factory=SortedDict,
+                                            is_facet=False):
 
-    gcmd_dict = SortedDict()
-    prepped_kw = (re.sub(r"\s*>\s*", ' > ', re.sub(r"\s+", " ", kw)).upper()
-                  for kw in gcmd_keywords)
+    gcmd_dict = dict_factory()
+    if is_facet:
+        prepped_kw = ((re.sub(r"\s*>\s*", ' > ',
+                             re.sub(r"\s+", " ", kw)).upper(), count)
+                    for kw, count in gcmd_keywords)
+        for kw, count in prepped_kw:
+            gcmd_levels = kw.split(' > ')
+            current_hierarchy = gcmd_dict
+            for level in gcmd_levels:
+                if level not in current_hierarchy:
+                    current_hierarchy[level] = dict_factory()
+                    current_hierarchy[level].full_name = kw
+                    current_hierarchy[level].count = count
+                current_hierarchy = current_hierarchy[level]
+    # TODO: eliminate repetition of code
+    else:
+        prepped_kw = (re.sub(r"\s*>\s*", ' > ', re.sub(r"\s+", " ", kw)).upper()
+                    for kw in gcmd_keywords)
+        for kw in prepped_kw:
+            gcmd_levels = kw.split(' > ')
+            current_hierarchy = gcmd_dict
+            for level in gcmd_levels:
+                if level not in current_hierarchy:
+                    current_hierarchy[level] = dict_factory()
+                current_hierarchy = current_hierarchy[level]
+
     # put into multilevel sorted dict.  Could possibly subclass defaultdict
     # for this?
-    for kw in prepped_kw:
-        gcmd_levels = kw.split(' > ')
-        current_hierarchy = gcmd_dict
-        for level in gcmd_levels:
-            if level not in current_hierarchy:
-                current_hierarchy[level] = SortedDict()
-            current_hierarchy = current_hierarchy[level]
 
     # now generate
     return gcmd_dict
 
 def gcmd_generate(gcmd_keywords):
-    return gcmd_to_ul(gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords))
+    return gcmd_to_ul(gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords),
+                      ul_attrs={'class': 'tag-list tree'})
 
-def gcmd_to_ul(gcmd_dict, elem=None, prev_results=None):
+def gcmd_generate_facets(gcmd_keywords):
+    def sort_gcmd(kw_in):
+        kw_split = kw_in[0].split('>')
+        # return the "root term", followed by the number of levels, followed
+        # by the count descending (thus negative), followed by the last term
+        return len(kw_split), -kw_in[1], kw_split[0], kw_split[-1]
+
+    gcmd_facets = [(d['name'], d['count']) for d in gcmd_keywords]
+    gcmd_facets.sort(key=sort_gcmd)
+    return gcmd_keywords_to_multilevel_sorted_dict(gcmd_facets, OrderedDict,
+                                                   True)
+
+
+def gen_tree_ul(parent_li, prev_results, sub_key):
+    new_hier = prev_results + [sub_key]
+    exploded_kw = " > ".join(new_hier)
+    anchor_attrs = {'class': 'tag',
+                    'href': '/dataset?q=gcmd_keywords:"{}"'.format(exploded_kw)}
+    gcmd_link = etree.SubElement(parent_li, 'a', anchor_attrs)
+    gcmd_link.text = sub_key
+    return new_hier
+
+
+def gen_facet_ul(parent_li, prev_results, sub_key):
+    new_hier = prev_results + [sub_key[0]]
+    exploded_kw = " > ".join(new_hier)
+    anchor_attrs = {'href': '/dataset?q=gcmd_keywords:"{}"'.format(exploded_kw)}
+    gcmd_link = etree.SubElement(parent_li, 'a', anchor_attrs)
+    label_span = etree.SubElement(gcmd_link, "span", {"class": "item-label"})
+    label_span.text = sub_key[0]
+    sep_span = etree.SubElement(gcmd_link, "span", {"class": "item-label"})
+    return new_hier
+
+
+def gcmd_to_ul(gcmd_dict, elem=None, prev_results=None,
+               list_gen_fun=gen_tree_ul,
+               base_ul_attrs={'class': 'tag-list tree'},
+               ul_attrs={'class': 'tag-list'}):
     # avoid side effects with mutable args duplicating same tree several times
     if prev_results is None:
         prev_results = []
     if elem is None:
-        elem = etree.Element('ul', {'class': 'tag-list tree'})
+        elem = etree.Element('ul', base_ul_attrs)
     for sub_key, sub_dict in gcmd_dict.items():
         gcmd_list = etree.SubElement(elem, 'li')
-        new_hier = prev_results + [sub_key]
-        exploded_kw = " > ".join(new_hier)
-        gcmd_link = etree.SubElement(gcmd_list, 'a',
-                                     {'class': 'tag',
-                                      'href': '/dataset?q=gcmd_keywords:"{}"'.format(exploded_kw)})
-        gcmd_link.text = sub_key
+
+        new_hier = list_gen_fun(gcmd_list, prev_results, sub_key)
         if sub_dict:
             new_ul = etree.SubElement(gcmd_list, 'ul', {'class': 'tag-list'})
             gcmd_to_ul(sub_dict, new_ul, new_hier)
@@ -475,6 +528,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             "ioos_theme_get_role_code": get_role_code,
             "filter_tag_names": filter_tag_names,
             "gcmd_generate": gcmd_generate,
+            "gcmd_generate_facets": gcmd_generate_facets,
         }
 
     # IRoutes

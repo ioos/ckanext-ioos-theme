@@ -69,6 +69,57 @@ ul.unstyled, ol.unstyled {
   list-style: none;
 }
 
+ul#gcmd_tree li {
+  padding-left: 10px;
+  padding-right: 0;
+}
+
+ul#gcmd_tree li a {
+  padding-left: 0;
+  margin-left: 5px;
+  display: inline;
+}
+
+ul#gcmd_tree.nav-facet .nav-item > a:hover::after, .nav-facet .nav-item.active > a::after {
+    background-image: none;
+}
+
+/* Style the caret/arrow */
+.tree-caret {
+  cursor: pointer;
+  user-select: none; /* Prevent text selection */
+}
+
+/* Create the caret/arrow with a unicode, and style it */
+.tree-caret::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+  margin-bottom: 7px;
+  z-index: 300;
+}
+
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+.tree-caret-down::before {
+  transform: rotate(90deg);
+}
+
+ul#gcmd_tree .nav > li > a:hover, ul#gcmd_tree .nav > li > a:focus {
+  // make chevron appear on top of highlighted extent
+  z-index: -1;
+}
+
+/* Hide the nested list */
+.nested {
+  display: none;
+}
+
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+.tree-active {
+  display: block;
+}
+
 form[name="datetime-selection"] input {
     margin-bottom: 4px;
 }
