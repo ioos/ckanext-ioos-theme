@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 class IOOSHarvester(SpatialHarvester):
 
+
     def get_package_dict(self, iso_values, harvest_object):
         '''
         '''
@@ -41,16 +42,23 @@ class IOOSHarvester(SpatialHarvester):
             keywords[keyword_type].append(keyword)
 
         extras['grouped_keywords'] = []
-        for extra_name, matches in (('cf_standard_names',
-                                     ('cf', 'climate and forecast')),
+        for extra_name, matches, data_filter in (('cf_standard_names',
+                                     ('cf', 'climate and forecast'),
+                                      lambda s: s.strip().split(' ', 1)[0]),
                                     ('gcmd_keywords',
-                                     ('gcmd', 'global change'))):
+                                     ('gcmd', 'global change'),
+                                     lambda s: s.strip()),
+                                     ):
             try:
-                match_result = next((d['keywords'] for d in
+                match_raw = next((d['keywords'] for d in
                                      iso_values['keywords']
                                      if d['thesaurus'] and
                                      any(v in d['thesaurus']['title'].lower()
                                      for v in matches)), None)
+                if hasattr(match_raw, '__iter__'):
+                    match_result = sorted(set(map(data_filter, match_raw)))
+                else:
+                    match_result = data_filter(match_raw)
             except:
                 match_result = None
                 log.exception("Execption raised when trying to extract {}".format(
