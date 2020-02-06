@@ -86,8 +86,9 @@
 <p>
 Yes.  Under the hood, CKAN uses Solr for search, and can accept Solr query strings in either the dataset search on the website or the
 <code><a href="https://docs.ckan.org/en/2.8/api/#ckan.logic.action.get.package_search">package_search</a></code> CKAN API endpoint.
-CF Standard Names are primarily provided by the `extras_cf_standard_names` field.  An example query is below:
-<a href='https://data.ioos.us/dataset?q=extras_cf_standard_names:"sea_water_pressure"'>https://data.ioos.us/dataset?q=extras_cf_standard_names:"sea_water_pressure"</a></p>
+CF Standard Names are primarily provided by the `cf_standard_names` field.  An example query is below:
+<a href='https://data.ioos.us/dataset?q=cf_standard_names:"sea_water_pressure"'>https://data.ioos.us/dataset?q=cf_standard_names:"sea_water_pressure"</a></p>
+
 <p>
 GCMD keywords work somewhat differently and are organized by hierarchy
 For example a query of <a href='https://data.ioos.us/dataset?q=gcmd_keywords:"Earth Science > Oceans > Ocean Chemistry > Chlorophyll"'>https://data.ioos.us/dataset?q=gcmd_keywords:"Earth Science &gt; Oceans &gt; Ocean Chemistry &gt; Chlorophyll"</a>
