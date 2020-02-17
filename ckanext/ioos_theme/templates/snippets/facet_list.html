@@ -1,7 +1,14 @@
 {% ckan_extends %}
 
           {% block facet_list_items %}
-            {% with items = items or h.get_facet_items_dict(name) %}
+            {% if name != 'gcmd_keywords' %}
+              {% set items = items or h.get_facet_items_dict(name) %}
+            {% else %}
+            {# put no limit on the number of facet items for GCMD Keywords
+               since they are displayed hierarchically #}
+              {% set items = items or h.get_facet_items_dict(name, 0) %}
+            {% endif %}
+            {% with items = items %}
             {% if items %}
               <nav>
                 {% if name == 'gcmd_keywords' %}
@@ -54,12 +61,14 @@
               </nav>
 
               <p class="module-footer">
+                {% if name != "gcmd_keywords" %}
                 {% if h.get_param_int('_%s_limit' % name) %}
                   {% if h.has_more_facets(name) %}
                     <a href="{{ h.remove_url_param('_%s_limit' % name, replace=0, extras=extras, alternative_url=alternative_url) }}" class="read-more">{{ _('Show More {facet_type}').format(facet_type=title) }}</a>
                   {% endif %}
-                {% else %}
-                  <a href="{{ h.remove_url_param('_%s_limit' % name, extras=extras, alternative_url=alternative_url) }}" class="read-more">{{ _('Show Only Popular {facet_type}').format(facet_type=title) }}</a>
+                  {% else %}
+                     <a href="{{ h.remove_url_param('_%s_limit' % name, extras=extras, alternative_url=alternative_url) }}" class="read-more">{{ _('Show Only Popular {facet_type}').format(facet_type=title) }}</a>
+                {% endif %}
                 {% endif %}
               </p>
             {% else %}
