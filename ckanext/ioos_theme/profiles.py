@@ -76,6 +76,7 @@ class IOOSDCATProfile(RDFProfile):
                 spatial_ref = BNode()
 
         g.add((spatial_ref, RDF.type, SCHEMA.Place))
+        g.add((dataset_ref, SCHEMA.spatialCoverage, spatial_ref))
 
         if spatial_text:
             g.add((spatial_ref, SKOS.prefLabel, Literal(spatial_text)))
