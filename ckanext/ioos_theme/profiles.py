@@ -34,6 +34,25 @@ class IOOSDCATProfile(RDFProfile):
     def graph_from_dataset(self, dataset_dict, dataset_ref):
         g = self.g
 
+        # change license over to "use-limitations"
+        use_limitations_str = self._get_dataset_value(dataset_dict,
+                                                      'use-limitations')
+        dataset_name = self._get_dataset_value(dataset_dict, 'name')
+        try:
+            use_limitations = json.loads(use_limitations_str)
+            if use_limitations:
+                for use_limitation in use_limitations:
+                    creative_work = BNode()
+                    g.add((creative_work, RDF.type, SCHEMA.CreativeWork))
+                    license_str = "License text for {}".format(dataset_name)
+                    g.add((creative_work, SCHEMA.text, Literal(use_limitation)))
+                    g.add((creative_work, SCHEMA.name, Literal(license_str)))
+                    g.add((dataset_ref, SCHEMA.license, creative_work))
+        # NB: this is accurate in Python 2.  In Python 3 JSON parsing
+        #     exceptions are moved to json.JSONDecodeError
+        except ValueError:
+            pass
+
         try:
             std_names = get_pkg_item(dataset_dict, 'cf_standard_names')
         except:
@@ -93,12 +112,12 @@ class IOOSDCATProfile(RDFProfile):
                     bounds = shape(gj).bounds
                     bbox = [str(bound) for bound in bounds[1::-1] +
                                                     bounds[:1:-1]]
-            except:
+            except Exception as e:
                 pass
             else:
                 bbox_str = ' '.join(bbox)
                 geo_shape = BNode()
                 g.add((geo_shape, RDF.type, SCHEMA.GeoShape))
-                g.add((spatial_ref, SCHEMA.geo, geo_shape))
-                # Add bounding box element
                 g.add((geo_shape, SCHEMA.box, Literal(bbox_str)))
+                # Add bounding box element
+                g.add((spatial_ref, SCHEMA.geo, geo_shape))

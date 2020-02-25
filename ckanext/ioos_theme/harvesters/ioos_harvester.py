@@ -29,6 +29,7 @@ class IOOSHarvester(SpatialHarvester):
             # Constraints
             'use-constraints',
             'access-constraints',
+            'use-limitations',
             'fees',
             # lineage
             'lineage',
