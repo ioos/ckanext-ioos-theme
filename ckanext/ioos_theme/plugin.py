@@ -358,7 +358,8 @@ def split_gcmd_tags(tags):
     try:
         unique_tags = set(split_gcmd_list(tags))
         # limit tags to 100 chars so we don't get a database error
-        return [{'name': val[:100]} for val in sorted(unique_tags)]
+        return [{'name': val[:100]} for val in sorted(unique_tags)
+                if val != '']
     except:
         log.exception("Error occurred while splitting GCMD tags:")
         return None
