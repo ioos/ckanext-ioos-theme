@@ -63,6 +63,8 @@ setup(
         'inflection>=0.3.1',
         'pendulum>=2.0.3',
         'sortedcontainers>=2.1.0',
+        'geojson>=2.5.0',
+        'Shapely>=1.5.17'
     ],
 
     # If there are data files included in your packages that need to be
