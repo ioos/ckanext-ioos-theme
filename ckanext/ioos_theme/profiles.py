@@ -36,7 +36,7 @@ class IOOSDCATProfile(RDFProfile):
 
         # change license over to "use-limitations"
         use_limitations_str = self._get_dataset_value(dataset_dict,
-                                                      'use-limitations')
+                                                      'use-limitations', '[]')
         dataset_name = self._get_dataset_value(dataset_dict, 'name')
         try:
             use_limitations = json.loads(use_limitations_str)
