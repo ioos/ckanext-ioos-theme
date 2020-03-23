@@ -65,6 +65,20 @@ class IOOSDCATProfile(RDFProfile):
                 g.add((dataset_ref, SCHEMA.variableMeasured,
                         Literal(standard_name)))
 
+
+        spatial_uri = self._get_dataset_value(dataset_dict, 'spatial_uri')
+        spatial_text = self._get_dataset_value(dataset_dict, 'spatial_text')
+
+        if spatial_uri:
+            spatial_ref = URIRef(spatial_uri)
+        else:
+            spatial_ref = BNode()
+
+        if spatial_text:
+            g.add((dataset_ref, DCT.spatial, spatial_ref))
+            g.add((spatial_ref, RDF.type, DCT.Location))
+            g.add((spatial_ref, RDFS.label, Literal(spatial_text)))
+
         spatial_uri = self._get_dataset_value(dataset_dict, 'spatial_uri')
         spatial_text = self._get_dataset_value(dataset_dict, 'spatial_text')
         spatial_geom = self._get_dataset_value(dataset_dict, 'spatial')
@@ -82,19 +96,6 @@ class IOOSDCATProfile(RDFProfile):
             g.add((spatial_ref, SKOS.prefLabel, Literal(spatial_text)))
 
         if spatial_geom:
-            # GeoJSON
-            g.add((spatial_ref,
-                    LOCN.geometry,
-                    Literal(spatial_geom, datatype=GEOJSON_IMT)))
-            # WKT, because GeoDCAT-AP says so
-            try:
-                g.add((spatial_ref,
-                       LOCN.geometry,
-                       Literal(wkt.dumps(json.loads(spatial_geom),
-                                         decimals=4),
-                               datatype=GSP.wktLiteral)))
-            except (TypeError, ValueError, InvalidGeoJSONException):
-                pass
             try:
                 gj = geojson.loads(spatial_geom)
                 geo_shape = BNode()
@@ -105,10 +106,6 @@ class IOOSDCATProfile(RDFProfile):
                     bbox = [min(all_features[1]), min(all_features[0]),
                             max(all_features[3]), max(all_features[2])]
 
-                    g.add((place, RDF.type))
-
-
-                    g.add((spatial_ref, SCHEMA.geom, place))
                 else:
                     bounds = shape(gj).bounds
                     bbox = [str(bound) for bound in bounds[1::-1] +
