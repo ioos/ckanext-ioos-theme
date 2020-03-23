@@ -25,7 +25,7 @@
 {% block structured_data %}
   <script type="application/ld+json">
   {{ h.structured_data(pkg.id,
-                       ["schemaorg","euro_dcat_ap","ioos_dcat"])|safe }}
+                       ["schemaorg","ioos_dcat"])|safe }}
   </script>
 {% endblock %}
 
