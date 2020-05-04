@@ -164,6 +164,9 @@ class IOOSHarvester(SpatialHarvester):
         Returns the package dictionary with updated resources
         '''
         for resource in package_dict['resources']:
+            # TODO: consider moving some of these if statements to dict lookup
+            # instead
+
             # Skip resources that already have a format, but if you find "sos"
             # capitalize it. Also, change application/x-netcdf to netCDF
             if resource['format'] == 'sos':
@@ -194,7 +197,9 @@ class IOOSHarvester(SpatialHarvester):
                 else:
                     resource['format'] = 'OPeNDAP'
 
-            if resource['resource_locator_protocol'] == 'ERDDAP:tabledap':
+            if resource['resource_locator_protocol'] == 'ERDDAP:griddap':
+                resource['format'] = 'ERDDAP-GridDAP'
+            elif resource['resource_locator_protocol'] == 'ERDDAP:tabledap':
                 resource['format'] = 'ERDDAP-TableDAP'
         return package_dict
 
