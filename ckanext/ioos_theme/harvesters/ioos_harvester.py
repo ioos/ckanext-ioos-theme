@@ -190,14 +190,8 @@ class IOOSHarvester(SpatialHarvester):
                 resource['format'] = 'OPeNDAP'
 
             if resource['resource_locator_protocol'] == 'OPeNDAP:OPeNDAP':
-                if 'tabledap' in resource['url']:
-                    resource['format'] = 'ERDDAP-TableDAP'
-                elif 'erddap' in resource['url']:
-                    resource['format'] = 'ERDDAP'
-                else:
-                    resource['format'] = 'OPeNDAP'
-
-            if resource['resource_locator_protocol'] == 'ERDDAP:griddap':
+                resource['format'] = 'OPeNDAP'
+            elif resource['resource_locator_protocol'] == 'ERDDAP:griddap':
                 resource['format'] = 'ERDDAP-GridDAP'
             elif resource['resource_locator_protocol'] == 'ERDDAP:tabledap':
                 resource['format'] = 'ERDDAP-TableDAP'
