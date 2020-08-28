@@ -210,13 +210,13 @@ class IOOSHarvester(SpatialHarvester):
 
             extra_keys = {kvp["key"] for kvp in data_dict["extras"]}
             if "vertical_min" not in extra_keys:
-        converted_min = str(orig_units.convert(float(
+                converted_min = str(orig_units.convert(float(
                             global_atts["geospatial_vertical_min"]), m))
                 data_dict["extras"].append({"key": "vertical_min",
                                             "value": converted_min})
             if "vertical_max" not in extra_keys:
                 converted_max = str(orig_units.convert(float(
-                                                    global_atts["geospatial_vertical_max"]), m))
+                                                       global_atts["geospatial_vertical_max"]), m))
                 data_dict["extras"].append({"key": "vertical_max",
                                             "value": converted_max})
             log.info("PASS")
