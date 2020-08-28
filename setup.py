@@ -64,7 +64,8 @@ setup(
         'pendulum>=2.0.3',
         'sortedcontainers>=2.1.0',
         'geojson>=2.5.0',
-        'Shapely>=1.5.17'
+        'Shapely>=1.5.17',
+        'cf-units>=2.1.4'
     ],
 
     # If there are data files included in your packages that need to be

@@ -7,9 +7,32 @@ from ckanext.spatial.interfaces import ISpatialHarvester
 import json
 from inflection import titleize
 from collections import defaultdict
+import requests
+import re
+import csv
+from cf_units import Unit
+from contextlib import closing
 
 log = logging.getLogger(__name__)
 
+class ErddapCSVMetadataReader(object):
+    """Auxiliary class to help read ERDDAP CSV metadata"""
+    def __init__(self, url):
+        self.metadata_mapping = defaultdict(dict)
+        with closing(requests.get(url, stream=True, timeout=5)) as req:
+            try:
+                req.raise_for_status()
+
+                for row in csv.DictReader(req.iter_lines()):
+                    if row["Row Type"] != "attribute":
+                        continue
+
+                    self.metadata_mapping[row["Variable Name"]][row["Attribute Name"]] = \
+                                    row["Value"]
+                    log.info("%s = %s", self.metadata_mapping[row["Variable Name"]][row["Attribute Name"]],
+                                        row["Value"])
+            except Exception as e:
+                return None
 
 class IOOSHarvester(SpatialHarvester):
 
@@ -112,7 +135,94 @@ class IOOSHarvester(SpatialHarvester):
         package_dict['resources'] = self.reorder_resources(package_dict)
         package_dict = self.update_resources(package_dict)
 
+        for resource in package_dict["resources"]:
+            if resource["format"] in {"ERDDAP", "ERDDAP-TableDAP",
+                                      "ERDDAP-GridDAP"}:
+                # TODO: try/catch here
+                try:
+                    info_url = re.sub(r"^(https?://.+/erddap/)(?:grid|table)dap(/[^.]+)\.(\w+)$",
+                                        r"\1info\2/index.csv",
+                                        resource["url"])
+                    ds = ErddapCSVMetadataReader(info_url)
+                    self.get_vertical_extent(ds, package_dict)
+                    self.get_ioos_nc_attributes(ds, package_dict)
+                except:
+                    pass
+
         return package_dict
+
+    def get_ioos_nc_attributes(self, ds, data_dict):
+        global_atts = ds.metadata_mapping["NC_GLOBAL"]
+        attributes = [
+            "platform",
+            "platform_id",
+            "platform_name",
+            "platform_vocabulary",
+            "wmo_platform_code",
+            "gts_ingest",
+            "ioos_ingest",
+            "infoUrl",
+            "contributor_email",
+            "contributor_name",
+            "contributor_role",
+            "contributor_url",
+            "creator_address",
+            "creator_city",
+            "creator_country",
+            "creator_phone",
+            "creator_sector",
+            "creator_state",
+            "creator_postalcode",
+            "creator_url",
+            "publisher_address",
+            "publisher_city",
+            "publisher_country",
+            "publisher_phone",
+            "publisher_state",
+            "publisher_postalcode",
+            "publisher_url",
+            "standard_name_vocabulary",
+            "instrument"
+        ]
+
+        extra_keys = {kvp["key"] for kvp in data_dict["extras"]}
+        for att_name in attributes:
+            if att_name in global_atts and att_name not in extra_keys:
+                data_dict["extras"].append({"key": att_name,
+                                            "value": global_atts[att_name]})
+
+
+    def get_vertical_extent(self, ds, data_dict):
+        global_atts = ds.metadata_mapping["NC_GLOBAL"]
+        try:
+            if global_atts["geospatial_vertical_positive"] == "down":
+                sign = 1
+            elif global_atts["geospatial_vertical_positive"] == "up":
+                sign = -1
+
+            units = Unit(global_atts["geospatial_vertical_units"])
+
+            # convert to meters
+            #unit_conv = Unit(ds.geospatial_vertical_units) / Unit("m")
+
+            m = Unit("meters")
+            orig_units = Unit(global_atts["geospatial_vertical_units"]) * sign
+
+            extra_keys = {kvp["key"] for kvp in data_dict["extras"]}
+            if "vertical_min" not in extra_keys:
+        converted_min = str(orig_units.convert(float(
+                            global_atts["geospatial_vertical_min"]), m))
+                data_dict["extras"].append({"key": "vertical_min",
+                                            "value": converted_min})
+            if "vertical_max" not in extra_keys:
+                converted_max = str(orig_units.convert(float(
+                                                    global_atts["geospatial_vertical_max"]), m))
+                data_dict["extras"].append({"key": "vertical_max",
+                                            "value": converted_max})
+            log.info("PASS")
+        except (AttributeError, ValueError, KeyError) as e:
+            log.exception("Encountered attribute error when attempting to get vertical bounds of OPeNDAP dataset")
+
 
     def unique_responsible_parties(self, responsible_parties):
         '''
