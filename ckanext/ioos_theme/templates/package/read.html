@@ -56,6 +56,7 @@
     <li><a data-toggle="tab" href="#keywords">Keywords</a></li>
     <li><a data-toggle="tab" href="#constraints">Constraints</a></li>
     <li><a data-toggle="tab" href="#lineage">Lineage</a></li>
+    <li><a data-toggle="tab" href="#ioos_metadata">IOOS 1.2 Metadata</a></li>
   </ul>
 
   <div id="dataset-meta-pane" class="tab-content">
@@ -79,6 +80,9 @@
     </div>
     <div id="lineage" class="tab-pane fade">
       {% snippet "package/snippets/meta_lineage.html", pkg=pkg %}
+    </div>
+    <div id="ioos_metadata" class="tab-pane fade">
+      {% snippet "package/snippets/meta_ioos.html", pkg=pkg %}
     </div>
   </div>
 
