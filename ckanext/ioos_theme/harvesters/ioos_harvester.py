@@ -216,7 +216,7 @@ class IOOSHarvester(SpatialHarvester):
                                             "value": converted_min})
             if "vertical_max" not in extra_keys:
                 converted_max = str(orig_units.convert(float(
-                                                    global_atts["geospatial_vertical_max"]), m))
+                                                       global_atts["geospatial_vertical_max"]), m))
                 data_dict["extras"].append({"key": "vertical_max",
                                             "value": converted_max})
             log.info("PASS")
