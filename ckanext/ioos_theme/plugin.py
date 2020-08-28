@@ -467,14 +467,31 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
 
         if 'extras' in search_params:
+            fq_modified = search_params.get('fq', '')
             extras = search_params['extras']
+
+            if extras.get("ext_min_depth") is not None:
+                vert_min = extras["ext_min_depth"]
+            else:
+                vert_min = "*"
+
+            if extras.get("ext_max_depth") is not None:
+                vert_max = extras["ext_max_depth"]
+            else:
+                vert_max = "*"
+
+            if not (vert_min == "*" and vert_max == "*"):
+                # handle depth filters.  Filter against max depth.
+                fq_modified += " +vertical_min:[* TO {}]".format(vert_min)
+                fq_modified += " +vertical_max:[{} TO {}]".format(
+                                   vert_min, vert_max)
+                log.info(fq_modified)
+
+            # handle temporal filters
             begin_time = extras.get('ext_timerange_start')
             end_time = extras.get('ext_timerange_end')
-            # temporal handling
             # if both begin and end time are none, no search window was provided
-            if begin_time is None and end_time is None:
-                return search_params
-            else:
+            if not (begin_time is None and end_time is None):
                 try:
                     log.debug(begin_time)
                     convert_begin = convert_date(begin_time)
@@ -490,13 +507,12 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                 log.debug(search_params)
                 # fq should be defined in query params, but just in case, use .get
                 # defaulting to empty string
-                fq_contents = search_params.get('fq', '')
-                fq_modified = ("{} +temporal_extent:[{} TO {}]".format(
-                                fq_contents, convert_begin, convert_end))
+                fq_modified += " +temporal_extent:[{} TO {}]".format(
+                                 convert_begin, convert_end)
 
-                search_params_modified['fq'] = fq_modified
-                log.debug(search_params_modified)
-                return search_params_modified
+            search_params_modified['fq'] = fq_modified
+            log.info(search_params_modified)
+            return search_params_modified
 
     # IFacets
 
