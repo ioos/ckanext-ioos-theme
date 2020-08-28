@@ -1,0 +1,66 @@
+{% set ioos_1_2_attrs = {
+"Platforms": [
+  "platform",
+  "platform_id",
+  "platform_name",
+  "platform_vocabulary",
+  "wmo_platform_code",
+  ],
+"Ingestion Attributes": [
+  "gts_ingest",
+  "ioos_ingest",
+  ],
+"Instrument Attributes": [
+  "instrument_attrs"
+  "instrument",
+  "instrument_vocabulary",
+  ],
+"Attribution Information": [
+  "contributor_email",
+  "contributor_name",
+  "contributor_role ",
+  "contributor_url",
+  "creator_address",
+  "creator_city",
+  "creator_country",
+  "creator_phone",
+  "creator_sector",
+  "creator_state",
+  "creator_postalcode",
+  "creator_url",
+  "publisher_address",
+  "publisher_city",
+  "publisher_country",
+  "publisher_phone",
+  "publisher_state",
+  "publisher_postalcode",
+  "infoUrl",
+  "publisher_url",
+  ],
+"CF related": [
+  "standard_name_vocabulary"
+  ]
+} %}
+
+<table class="table table-condesnsed table-bordered">
+  <tbody>
+  {% for category in ioos_1_2_attrs %}
+    <tr> 
+      <th colspan="2">{{category}}</th>
+    </tr>
+    {% for item in ioos_1_2_attrs[category] %}
+      {% set value = h.ioos_theme_get_pkg_extra(pkg, item) %}
+      {% if value is not none %}
+    <tr>
+      <td width="30%">
+        {{ item }}
+      </td>
+      <td width="70%">
+        {{ value }}
+      </td>
+    </tr>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+  </tbody>
+</table>
