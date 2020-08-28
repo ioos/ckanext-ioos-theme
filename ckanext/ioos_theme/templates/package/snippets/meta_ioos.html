@@ -1,0 +1,50 @@
+{% set ioos_1_2_attrs = [
+"platform",
+"platform_id",
+"platform_name",
+"platform_vocabulary",
+"wmo_platform_code",
+"gts_ingest",
+"ioos_ingest",
+"infoUrl",
+"instrument",
+"instrument_vocabulary ",
+"contributor_email",
+"contributor_name",
+"contributor_role ",
+"contributor_url",
+"creator_address",
+"creator_city",
+"creator_country",
+"creator_phone",
+"creator_sector",
+"creator_state",
+"creator_postalcode",
+"creator_url",
+"publisher_address",
+"publisher_city",
+"publisher_country",
+"publisher_phone",
+"publisher_state",
+"publisher_postalcode",
+"publisher_url",
+"standard_name_vocabulary"
+] %}
+
+<table class="table table-condesnsed table-bordered">
+  <tbody>
+  {% for item in ioos_1_2_attrs %}
+    {% set value = h.ioos_theme_get_pkg_extra(pkg, item) %}
+    {% if value is not none %}
+    <tr> 
+      <td width="30%">
+        {{ item }}
+      </td>
+      <td width="70%">
+        {{ value }}
+      </td>
+    </tr>
+    {% endif %}
+  {% endfor %}
+  </tbody>
+</table>
