@@ -234,13 +234,9 @@ section.browse-graphic img.browse-graphic-img {
   background-size: 32px 35px;
 }
 
-.format-label[data-format="erddap-dap"] {
-  background-position: 0 0;
-  background-image: url("../img/icon-erddap-dap.png");
-  background-size: 32px 35px;
-}
-
-.format-label[data-format="erddap-tabledap"] {
+/* erddap-dap, erddap-tabledap, and erddap-griddap should all display the
+ * ERDDAP DAP icon */
+.format-label[data-format^="erddap-"][data-format$="dap"] {
   background-position: 0 0;
   background-image: url("../img/icon-erddap-dap.png");
   background-size: 32px 35px;
