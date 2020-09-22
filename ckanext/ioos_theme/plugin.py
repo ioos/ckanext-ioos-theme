@@ -481,11 +481,20 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                 vert_max = "*"
 
             if not (vert_min == "*" and vert_max == "*"):
-                # handle depth filters.  Filter against max depth.
-                fq_modified += " +vertical_min:[* TO {}]".format(vert_min)
-                fq_modified += " +vertical_max:[{} TO {}]".format(
-                                   vert_min, vert_max)
-                log.info(fq_modified)
+                if vert_min == "*":
+                    cases = "vertical_min:[* TO {}]".format(vert_max)
+                elif vert_max == "*":
+                    cases = "vertical_max:[{} TO *]".format(vert_min)
+                # could the below expression be simplified?
+                else:
+                    cases = ("((vertical_min:[{0} TO {1}] AND"
+                            " vertical_max:[{0} TO {1}]) OR"
+                            " (vertical_min:[* TO {0}] AND"
+                            " vertical_max:[{0} TO *]) OR"
+                            " (vertical_min:[* TO {1}] AND"
+                            " vertical_max:[{1} TO *]))").format(vert_min,
+                                                                vert_max)
+                fq_modified += " +{}".format(cases)
 
             # handle temporal filters
             begin_time = extras.get('ext_timerange_start')
