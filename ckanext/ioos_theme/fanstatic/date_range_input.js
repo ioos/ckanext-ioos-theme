@@ -29,11 +29,13 @@ function make_daterange() {
    }
 
    var date_form = $('form[name="datetime-selection"]');
-   var form_btn = date_form.find('.btn.apply');
+   var form_btn = date_form.find(".btn.apply");
    date_form.validate()
    if (date_form.valid()) {
      $('input#ext_timerange_start').val(start_val_scrub);
      $('input#ext_timerange_end').val(end_val_scrub);
+     $("input#ext_min_depth").val($("input#min_depth").val())
+     $("input#ext_max_depth").val($("input#max_depth").val())
      form_btn.attr('disabled', false);
    } else {
      form_btn.attr('disabled', true);
@@ -46,7 +48,8 @@ ckan.module('ioos_theme_daterange', function($) {
   // toggle date info popover
   $('[data-toggle="popover"]').popover({placement: 'bottom', html: true});
   var form = $(".search-form");
-  $(['ext_timerange_start', 'ext_timerange_end']).each(function(index, item){
+  $(['ext_timerange_start', 'ext_timerange_end',
+     'ext_min_depth', 'ext_max_depth']).each(function(index, item) {
     var time_elem = $("#" + item);
     if (time_elem.length === 0) {
       $('<input type="hidden" />').attr({'id': item,
@@ -61,6 +64,14 @@ ckan.module('ioos_theme_daterange', function($) {
     var param_end_time = search_params.get('ext_timerange_end');
     if (param_end_time !== null) {
         $('input#end_time').val(param_end_time);
+    }
+    var param_min_depth = search_params.get('ext_min_depth');
+    if (param_start_time !== null) {
+        $('input#min_depth').val(param_min_depth);
+    }
+    var param_max_depth = search_params.get('ext_max_depth');
+    if (param_start_time !== null) {
+        $('input#max_depth').val(param_max_depth);
     }
 
   $('a[name="datefilter"]').daterangepicker({
@@ -92,6 +103,28 @@ ckan.module('ioos_theme_daterange', function($) {
     success: "valid"
   });
 
+  function comparator(pred_fn) {
+    return function(value, element, param) {
+      var other_val = $(param).val();
+      // empty values are just taken to mean open ended ranges, so are valid
+      if (other_val === "" || value === "") {
+       return true;
+      } else {
+       var i = parseFloat(value);
+       var j = parseFloat($(param).val());
+       return pred_fn(i, j);
+      }
+    }
+  }
+
+  $.validator.addMethod('lessThanEqual',
+                        comparator(function(x, y) { return x <= y }),
+                        "The value {0} must be less than or equal to {1}");
+
+  $.validator.addMethod('greaterThanEqual',
+                        comparator(function(x, y) { return x >= y }),
+                        "The value {0} must be greater than or equal to {1}");
+
   $.validator.addMethod("isMomentCompatible",
       function (value, element, params) {
         if (this.optional(element) || value === null || value === "*") {
@@ -117,6 +150,14 @@ ckan.module('ioos_theme_daterange', function($) {
          end_time: {
              isMomentCompatible: true,
              required: false
+         },
+         min_depth: {
+             lessThanEqual: "#max_depth",
+             required: false
+         },
+         max_depth: {
+             greaterThanEqual: "#min_depth",
+             required: false
          }
       },
      messages: {
@@ -135,8 +176,9 @@ ckan.module('ioos_theme_daterange', function($) {
                                        make_daterange();
                                    });
 
-  $('input[name="start_time"]').on('change', make_daterange);
-  $('input[name="end_time"]').on('change', make_daterange);
+  for (name of ["start_time", "end_time", "min_depth", "max_depth"]) {
+      $('input[name="' + name + '"]').on('change', make_daterange);
+  }
 
   // submit the updated form when the Apply button is clicked
   $(this.el).find('.btn.apply').click(function() { form.submit() });

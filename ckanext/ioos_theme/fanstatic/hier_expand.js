@@ -12,4 +12,4 @@ ckan.module('ioos_theme_hier_expand', function($) {
          }
        }
    }
-})
+});
