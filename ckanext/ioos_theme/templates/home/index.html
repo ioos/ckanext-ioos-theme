@@ -1,5 +1,5 @@
 {% ckan_extends %}
-{% set homepage_style = '3' %}
+{% set homepage_style = g.homepage_style or '-ioos' %}
 
 {% block subtitle %}{{ _("Welcome") }}{% endblock %}
 
@@ -12,7 +12,7 @@
       {{ self.flash() }}
     </div>
     {% block primary_content %}
-      {% snippet "home/layout-ioos.html" %}
+    {% snippet "home/layout{0}.html".format(homepage_style) %}
     {% endblock %}
   </div>
 {% endblock %}

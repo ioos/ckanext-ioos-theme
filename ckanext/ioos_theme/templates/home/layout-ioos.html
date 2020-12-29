@@ -1,4 +1,11 @@
 <div role="main" class="hero">
+  <div class="container">
+    <div class="row">
+      {% block search %}
+        {% snippet 'home/snippets/search.html' %}
+      {% endblock %}
+    </div>
+  </div>
   <div class="container below-search">
     <div class="row row2">
       <div class="col-md-6 column">
@@ -40,13 +47,6 @@
             </table>
           </div>
       </div>
-    </div>
-  </div>
-  <div class="container">
-    <div class="row">
-      {% block search %}
-        {% snippet 'home/snippets/search.html' %}
-      {% endblock %}
     </div>
   </div>
 </div>
