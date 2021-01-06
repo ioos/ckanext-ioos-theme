@@ -9,7 +9,7 @@
                 <ul class="unstyled">
                     {% block footer_links %}
                       <li><a href="{{ h.url_for(controller='home', action='about') }}">{{ _('About {0}').format(g.site_title) }}</a></li>
-                      <li><a href="https://ioos.noaa.gov/">ioos.noaa.gov</a></li>
+                      <li><a href="https://ioos.us">ioos.noaa.gov</a></li>
                     {% endblock %}
                     {% block footer_debug %}
                         {% if g.debug %}

@@ -4,6 +4,19 @@
   }
 }
 
+#center-logo {
+    text-align: center;
+}
+
+#header-logo {
+    display: block;
+    margin-bottom: 10px;
+    width: 480px;
+    padding-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .container{
   padding-left: 10px;
   padding-right: 10px;
