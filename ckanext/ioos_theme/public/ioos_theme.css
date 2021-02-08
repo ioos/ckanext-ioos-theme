@@ -297,10 +297,6 @@ section.browse-graphic img.browse-graphic-img {
   background-color: #27c97b;
 }
 
-.below-search {
-  padding-top: 50px;
-}
-
 .homepage .below-search .row{
   margin-left: -10px;
   margin-right: -10px;
@@ -445,7 +441,7 @@ html, body {
 }
 
 .module:last-child {
-  margin-bottom: 75px !important;
+  margin-bottom: 2em;
 }
 
 .account-masthead .account .notifications a span {
