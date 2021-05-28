@@ -38,7 +38,7 @@ def get_originator_names(party_text):
                 # nonexistent key
                 if name:
                     ret_val.append(name)
-    except ValueError, TypeError:
+    except (ValueError, TypeError):
         log.exception("Error occured while parsing JSON value")
     return ret_val
 
