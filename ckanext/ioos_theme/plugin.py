@@ -236,7 +236,7 @@ def filter_tag_names(tags, cf_standard_names=None, gcmd_keywords=None):
         excludes_set.update(gcmd_components)
     # return tag list of dicts without excluded tags deduplicated and sorted
     # against the tag "display_name"
-    return sorted(map(dict, set(frozenset(d.items()) for d in tags if
+    return sorted(map(dict, set(frozenset(list(d.items())) for d in tags if
                                 d['display_name'].lower() not in excludes_set)
                      ), key=lambda d: d['display_name'])
 
@@ -331,7 +331,7 @@ def gcmd_to_ul(gcmd_dict, elem=None, prev_results=None,
         prev_results = []
     if elem is None:
         elem = etree.Element('ul', base_ul_attrs)
-    for sub_key, sub_dict in gcmd_dict.items():
+    for sub_key, sub_dict in list(gcmd_dict.items()):
         gcmd_list = etree.SubElement(elem, 'li')
 
         new_hier = list_gen_fun(gcmd_list, prev_results, sub_key)
@@ -444,7 +444,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         # Solr StringField max length is 32766 bytes.  Truncate to this length
         # if any field exceeds this length so that harvesting doesn't crash
         max_solr_strlen_bytes = 32766
-        for extra_key, extra_val in data_modified.iteritems():
+        for extra_key, extra_val in data_modified.items():
             if (extra_key not in {'data_dict', 'validated_data_dict'} and
                 isinstance(extra_val, six.string_types)):
                 bytes_str = extra_val.encode("utf-8")
@@ -592,7 +592,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         :param schema: Passed in from CKAN framework
         '''
         schema.update({
-            'feedback.recipients': [unicode],
+            'feedback.recipients': [str],
             'smtp.port': [int_validator]
         })
         return schema

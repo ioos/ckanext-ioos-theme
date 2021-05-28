@@ -48,6 +48,8 @@ class IOOSDCATProfile(RDFProfile):
                     g.add((creative_work, SCHEMA.text, Literal(use_limitation)))
                     g.add((creative_work, SCHEMA.name, Literal(license_str)))
                     g.add((dataset_ref, SCHEMA.license, creative_work))
+                    g.add((creative_work, SCHEMA.isAvailableForFree,
+                           Literal(True)))
         # NB: this is accurate in Python 2.  In Python 3 JSON parsing
         #     exceptions are moved to json.JSONDecodeError
         except ValueError:
@@ -101,8 +103,8 @@ class IOOSDCATProfile(RDFProfile):
                 geo_shape = BNode()
                 if gj['type'] == 'FeatureCollection':
                     features = gj['features']
-                    all_features = zip(shape(f['geometry']).bounds for f
-                                       in features)
+                    all_features = list(zip(shape(f['geometry']).bounds for f
+                                       in features))
                     bbox = [min(all_features[1]), min(all_features[0]),
                             max(all_features[3]), max(all_features[2])]
 

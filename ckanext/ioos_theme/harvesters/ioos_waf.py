@@ -6,7 +6,7 @@ ckanext-ioos_theme/ckanext/ioos_theme/harvesters/ioos_waf.py
 
 import logging
 import hashlib
-from urlparse import urljoin
+from urllib.parse import urljoin
 import dateutil.parser
 import pyparsing as parse
 import requests
@@ -306,7 +306,7 @@ def _extract_waf(content, base_url, scraper, results = None, depth=0):
                 response = requests.get(new_url)
                 content = response.content
             except Exception as e:
-                print str(e)
+                print(str(e))
                 continue
             _extract_waf(content, new_url, scraper, results, new_depth)
             continue
