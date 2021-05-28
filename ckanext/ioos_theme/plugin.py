@@ -426,7 +426,8 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                     try:
                         # TODO: Add some sane support for indeterminate dates
                         parsed_val = convert_date(data_dict[field], True, True)
-                    except ValueError, pendulum.parsing.exceptions.ParserError:
+                    except (ValueError,
+                            pendulum.parsing.exceptions.ParserError):
                         log.exception("data_dict[field] does not convert to "
                                         "datetime, skipping storage of temporal "
                                         "extents into Solr")
