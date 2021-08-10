@@ -6,7 +6,6 @@
                                                        "cf_standard_names") %}
   {% set gcmd_keywords = h.ioos_theme_get_pkg_item(c.pkg_dict,
                                                    "gcmd_keywords") %}
-  {% set tags_filt = h.filter_tag_names(tags, cf_standard_names, gcmd_keywords) %}
   <section class="tags">
     {% snippet 'snippets/tag_list.html', tags=tags_filt, _class='tag-list well' %}
   </section>

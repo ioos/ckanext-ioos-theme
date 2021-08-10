@@ -216,7 +216,6 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
     def dataset_facets(self, facets_dict, package_type):
         facets_dict['data_provider'] = p.toolkit._('Data Providers')
         facets_dict['cf_standard_names'] = p.toolkit._('CF Standard Names')
-        facets_dict['gcmd_keywords'] = p.toolkit._('GCMD Keywords')
         return facets_dict
 
     def organization_facets(self, facets_dict, organization_type,
@@ -240,9 +239,6 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             "ioos_theme_get_pkg_ordereddict": get_pkg_ordereddict,
             "ioos_theme_jsonpath": jsonpath,
             "ioos_theme_get_role_code": get_role_code,
-            "filter_tag_names": filter_tag_names,
-            "gcmd_generate": gcmd_generate,
-            "gcmd_generate_facets": gcmd_generate_facets,
         }
 
     # IRoutes
