@@ -215,7 +215,6 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
     def dataset_facets(self, facets_dict, package_type):
         facets_dict['data_provider'] = p.toolkit._('Data Providers')
-        facets_dict['cf_standard_names'] = p.toolkit._('CF Standard Names')
         return facets_dict
 
     def organization_facets(self, facets_dict, organization_type,
