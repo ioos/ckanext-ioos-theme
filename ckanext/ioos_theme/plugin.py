@@ -251,13 +251,13 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         map.connect('feedback', '/feedback', controller=controller, action='index')
 
         admin_controller = 'ckanext.ioos_theme.controllers.admin:IOOSAdminController'
-        map.connect('ckanadmin_index', '/ckan-admin', controller=admin_controller,
+        map.connect('admin_index', '/ckan-admin', controller=admin_controller,
                     action='index', ckan_icon='legal')
-        map.connect('ckanadmin_config', '/ckan-admin/config', controller=admin_controller,
+        map.connect('admin_config', '/ckan-admin/config', controller=admin_controller,
                     action='config', ckan_icon='check')
-        map.connect('ckanadmin_trash', '/ckan-admin/trash', controller=admin_controller,
+        map.connect('admin_trash', '/ckan-admin/trash', controller=admin_controller,
                     action='trash', ckan_icon='trash')
-        map.connect('ckanadmin', '/ckan-admin/{action}', controller=admin_controller)
+        map.connect('admin', '/ckan-admin/{action}', controller=admin_controller)
 
         csw_controller = 'ckanext.ioos_theme.controllers.csw:CswController'
         map.connect('csw_admin', '/admin/csw', controller=csw_controller, action='index', ckan_icon='gear')
