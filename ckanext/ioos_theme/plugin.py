@@ -24,6 +24,7 @@ from six.moves import urllib
 from lxml import etree
 from collections import OrderedDict
 from sortedcontainers import SortedDict
+from ckanext.ioos_theme import blueprint
 
 log = logging.getLogger(__name__)
 
@@ -161,15 +162,12 @@ def get_pkg_item(pkg, key):
         return json.loads(pkg_item)
     return None
 
-
-
 def get_pkg_ordereddict(pkg, key):
     try:
         pkg_item = next((extra['value'] for extra in pkg['extras'] if extra['key'] == key))
     except StopIteration:
         return {}
     return json.loads(pkg_item, object_pairs_hook=OrderedDict)
-
 
 def get_pkg_extra(pkg, key):
     try:
@@ -194,10 +192,16 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
     p.implements(p.IConfigurer)
     p.implements(p.ITemplateHelpers)
-    p.implements(p.IRoutes, inherit=True)
+    p.implements(p.IBlueprint)
     p.implements(p.IPackageController, inherit=True)
     p.implements(ISpatialHarvester, inherit=True)
     p.implements(p.IFacets, inherit=True)
+
+    # IBlueprint
+    def get_blueprint(self):
+        blueprints = [blueprint.ioos_bp]
+        log.info(blueprints)
+        return blueprints
 
     # IConfigurer
 
@@ -219,7 +223,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
     def organization_facets(self, facets_dict, organization_type,
                                     package_type):
-            return self.dataset_facets(facets_dict, package_type)
+        return self.dataset_facets(facets_dict, package_type)
 
     # ITemplateHelpers
 
@@ -240,31 +244,6 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             "ioos_theme_get_role_code": get_role_code,
         }
 
-    # IRoutes
-
-    def before_map(self, map):
-        '''
-        Defines routes for feedback and overrides routes for the admin controller
-        '''
-        controller = 'ckanext.ioos_theme.controllers.feedback:FeedbackController'
-        map.connect('feedback_package', '/feedback/{package_name}', controller=controller, action='index', package_name='{package_name}')
-        map.connect('feedback', '/feedback', controller=controller, action='index')
-
-        admin_controller = 'ckanext.ioos_theme.controllers.admin:IOOSAdminController'
-        map.connect('admin.index', '/ckan-admin', controller=admin_controller,
-                    action='index', ckan_icon='legal')
-        map.connect('admin.config', '/ckan-admin/config', controller=admin_controller,
-                    action='config', ckan_icon='check')
-        map.connect('admin.trash', '/ckan-admin/trash', controller=admin_controller,
-                    action='trash', ckan_icon='trash')
-        map.connect('admin', '/ckan-admin/{action}', controller=admin_controller)
-
-        csw_controller = 'ckanext.ioos_theme.controllers.csw:CswController'
-        map.connect('csw_admin', '/admin/csw', controller=csw_controller, action='index', ckan_icon='gear')
-        map.connect('csw_clear', '/admin/csw/clear', controller=csw_controller, action='clear')
-        map.connect('csw_sync', '/admin/csw/sync', controller=csw_controller, action='sync')
-
-        return map
 
     def update_config_schema(self, schema):
         '''

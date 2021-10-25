@@ -21,7 +21,8 @@ class FeedbackController(BaseController):
     thanking the user for their feedback and then redirect to the home page.
     '''
 
-    def index(self, data=None, errors=None, error_summary=None, package_name=None):
+    def index(self, data=None, errors=None, error_summary=None,
+              package_name=None):
         '''
         Returns a render for the feedback form.
 

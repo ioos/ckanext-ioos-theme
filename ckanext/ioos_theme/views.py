@@ -52,7 +52,9 @@ class IOOSAdminController(AdminController):
         Defines routes for feedback and overrides routes for the admin controller
         '''
         controller = 'ckanext.ioos_theme.controllers.feedback:FeedbackController'
-        map.connect('feedback_package', '/feedback/{package_name}', controller=controller, action='index', package_name='{package_name}')
+        map.connect('feedback_package', '/feedback/{package_name}',
+                    controller=controller, action='index',
+                    package_name='{package_name}')
         map.connect('feedback', '/feedback', controller=controller, action='index')
 
         admin_controller = 'ckanext.ioos_theme.controllers.admin:IOOSAdminController'
@@ -62,7 +64,8 @@ class IOOSAdminController(AdminController):
                     action='config', ckan_icon='check')
         map.connect('admin.trash', '/ckan-admin/trash', controller=admin_controller,
                     action='trash', ckan_icon='trash')
-        map.connect('admin', '/ckan-admin/{action}', controller=admin_controller)
+        map.connect('admin', '/ckan-admin/{action}',
+                    controller=admin_controller)
 
         csw_controller = 'ckanext.ioos_theme.controllers.csw:CswController'
         map.connect('csw_admin', '/admin/csw', controller=csw_controller,
