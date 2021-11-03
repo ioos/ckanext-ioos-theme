@@ -258,24 +258,3 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         })
         return schema
 
-    def get_package_dict(self, context, data_dict):
-
-        package_dict = data_dict['package_dict']
-        iso_values = data_dict['iso_values']
-
-        returned_tags =  split_gcmd_tags(iso_values['tags'])
-        if returned_tags is not None:
-            package_dict['tags'] = returned_tags
-
-        # ckanext-dcat uses temporal_start and temporal_end for time extents
-        # instead of temporal-extent-begin and temporal-extent-end as used by
-        # CKAN
-        time_pairs = (('temporal_start', 'temporal-extent-begin'),
-                      ('temporal_end', 'temporal-extent-end'))
-        for new_key, iso_time_field in time_pairs:
-            # recreating ckanext-spatial's logic here
-            if len(iso_values.get(iso_time_field, [])) > 0:
-                package_dict['extras'].append(
-                    {'key': new_key, 'value': iso_values[iso_time_field][0]})
-
-        return package_dict
