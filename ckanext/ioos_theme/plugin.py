@@ -202,7 +202,6 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         blueprints = [blueprint.ioos_bp]
         log.info(blueprints)
         return blueprints
-
     # IConfigurer
 
     def update_config(self, config_):
