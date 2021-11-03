@@ -12,7 +12,7 @@ from ckan.plugins import toolkit
 import json
 import logging
 from collections import OrderedDict
-from ckan.logic.validators import int_validator
+from ckan.logic.validators import int_validator, email_validator
 from ckanext.spatial.interfaces import ISpatialHarvester
 import copy
 import pendulum
@@ -253,7 +253,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         :param schema: Passed in from CKAN framework
         '''
         schema.update({
-            'feedback.recipients': [str],
+            'feedback.recipients': [email_validator],
             'smtp.port': [int_validator]
         })
         return schema
