@@ -1,12 +1,7 @@
-#!/usr/bin/env python
-#-*- coding: utf-8 -*-
-'''
-ckanext-ioos_theme/ckanext/ioos_theme/harvesters/ioos_waf.py
-'''
-
+import six
+from six.moves.urllib.parse import urljoin
 import logging
 import hashlib
-from urllib.parse import urljoin
 import dateutil.parser
 import pyparsing as parse
 import requests
@@ -306,16 +301,17 @@ def _extract_waf(content, base_url, scraper, results = None, depth=0):
                 response = requests.get(new_url)
                 content = response.content
             except Exception as e:
-                print(str(e))
+                print(six.text_type(e))
                 continue
-            _extract_waf(content, new_url, scraper, results, new_depth)
+            _extract_waf(six.text_type(content), new_url, scraper, results,
+                         new_depth)
             continue
         if not url.endswith('.xml'):
             continue
         date = record.date
         if date:
             try:
-                date = str(dateutil.parser.parse(date))
+                date = six.text_type(dateutil.parser.parse(date))
             except Exception as e:
                 raise
                 date = None
