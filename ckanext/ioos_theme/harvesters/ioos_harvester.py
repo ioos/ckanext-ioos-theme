@@ -5,6 +5,7 @@ import logging
 from ckanext.spatial.harvesters.base import SpatialHarvester
 from ckanext.spatial.interfaces import ISpatialHarvester
 import json
+from math import isnan
 from inflection import titleize
 from collections import defaultdict
 import requests
@@ -210,15 +211,21 @@ class IOOSHarvester(SpatialHarvester):
 
             extra_keys = {kvp["key"] for kvp in data_dict["extras"]}
             if "vertical_min" not in extra_keys:
-                converted_min = str(orig_units.convert(float(
-                            global_atts["geospatial_vertical_min"]), m))
-                data_dict["extras"].append({"key": "vertical_min",
-                                            "value": converted_min})
+                converted_min = orig_units.convert(float(
+                            global_atts["geospatial_vertical_min"]), m)
+                if not isnan(converted_min):
+                    data_dict["extras"].append({"key": "vertical_min",
+                                                "value": str(converted_min)})
+                else:
+                    log.warning("vertical_min was NaN, skipping")
             if "vertical_max" not in extra_keys:
-                converted_max = str(orig_units.convert(float(
-                                                       global_atts["geospatial_vertical_max"]), m))
-                data_dict["extras"].append({"key": "vertical_max",
-                                            "value": converted_max})
+                converted_max = orig_units.convert(float(
+                                   global_atts["geospatial_vertical_max"]), m)
+                if not isnan(converted_max):
+                    data_dict["extras"].append({"key": "vertical_max",
+                                                "value": str(converted_max)})
+                else:
+                    log.warning("vertical_max was NaN, skipping")
             log.info("PASS")
         except (AttributeError, ValueError, KeyError) as e:
             log.exception("Encountered attribute error when attempting to get vertical bounds of OPeNDAP dataset")
