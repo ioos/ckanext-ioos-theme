@@ -13,6 +13,7 @@ import json
 import logging
 from collections import OrderedDict
 from ckan.logic.validators import int_validator
+from ckan.lib.navl.validators import unicode_safe
 from ckanext.spatial.interfaces import ISpatialHarvester
 import copy
 import pendulum
@@ -592,7 +593,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         :param schema: Passed in from CKAN framework
         '''
         schema.update({
-            'feedback.recipients': [unicode],
+            'feedback.recipients': [unicode_safe],
             'smtp.port': [int_validator]
         })
         return schema
