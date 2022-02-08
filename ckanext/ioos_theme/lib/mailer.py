@@ -78,8 +78,8 @@ if PY3:
     from email import policy
     message_policy = policy.SMTP
 else:
-    string_types = basestring,
-    text_type = unicode
+    string_types = str,
+    text_type = str
     message_policy = None
 
 charset.add_charset('utf-8', charset.SHORTEST, None, 'utf-8')
@@ -159,7 +159,7 @@ def sanitize_address(addr, encoding='utf-8'):
 
 
 def sanitize_addresses(addresses, encoding='utf-8'):
-    return map(lambda e: sanitize_address(e, encoding), addresses)
+    return [sanitize_address(e, encoding) for e in addresses]
 
 
 def _has_newline(line):
@@ -365,7 +365,7 @@ class Message(object):
             msg = MIMEMultipart()
             alternative = MIMEMultipart('alternative')
             alternative.attach(self._mimetext(self.body, 'plain'))
-            for mimetype, content in self.alts.items():
+            for mimetype, content in list(self.alts.items()):
                 alternative.attach(self._mimetext(content, mimetype))
             msg.attach(alternative)
 
@@ -386,7 +386,7 @@ class Message(object):
             msg['Reply-To'] = sanitize_address(self.reply_to, encoding)
 
         if self.extra_headers:
-            for k, v in self.extra_headers.items():
+            for k, v in list(self.extra_headers.items()):
                 msg[k] = v
 
         SPACES = re.compile(r'[\s]+', re.UNICODE)
@@ -400,7 +400,7 @@ class Message(object):
                 # force filename to ascii
                 filename = unicodedata.normalize('NFKD', filename)
                 filename = filename.encode('ascii', 'ignore').decode('ascii')
-                filename = SPACES.sub(u' ', filename).strip()
+                filename = SPACES.sub(' ', filename).strip()
 
             try:
                 filename and filename.encode('ascii')
@@ -413,7 +413,7 @@ class Message(object):
                          attachment.disposition,
                          filename=filename)
 
-            for key, value in attachment.headers.items():
+            for key, value in list(attachment.headers.items()):
                 f.add_header(key, value)
 
             msg.attach(f)

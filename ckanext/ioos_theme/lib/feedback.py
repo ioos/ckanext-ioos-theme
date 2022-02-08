@@ -4,7 +4,7 @@ ckanext/ioos_theme/lib/feedback.py
 
 Send feedback email
 '''
-from ckan.lib.base import render_jinja2
+from ckan.lib.base import render
 from ckanext.ioos_theme.lib.mailer import Message, Mail
 from pylons import config
 
@@ -22,7 +22,7 @@ def send_feedback(context):
                          from a user.
     '''
 
-    body = render_jinja2('emails/feedback.txt', context)
+    body = render('emails/feedback.txt', context)
     subject = 'IOOS Catalog Feedback'
 
     recipients = config.get('feedback.recipients')

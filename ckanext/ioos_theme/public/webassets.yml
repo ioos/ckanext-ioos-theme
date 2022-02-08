@@ -1,0 +1,57 @@
+boostrap_treeview_js:
+  filter: rjsmin
+  output: ckanext-ioos-theme/%(version)s_boostrap_treeview.js
+  extra:
+    preload:
+      - base/main
+  contents:
+    - js/boostrap-treeview.js
+
+boostrap_treeview_css:
+  filters: cssrewrite
+  output: ckanext-ioos-theme/%(version)s_bootstrap_treeview.css
+  contents:
+    - css/bootstrap-treeview.css
+
+dataset_tabs_js:
+  filter: rjsmin
+  output: ckanext-ioos-theme/%(version)s_dataset_tabs.js
+  extra:
+    preload:
+      - base/main
+  contents:
+    - js/dataset_tabs.js
+
+date_range_input_js:
+  filter: rjsmin
+  output: ckanext-ioos-theme/%(version)s_daterangepicker.js
+  extra:
+    preload:
+      base/main
+  contents:
+    - js/date_range_input.js
+    - js/daterangepicker.js
+    - js/jquery.validate.js
+    - js/moment.js
+
+date_range_input_css:
+  filters: cssrewrite
+  output: ckanext-ioos-theme/%(version)s_daterangeinput.css
+  contents:
+    - css/bootstrap-treeview.css
+
+hier_expand_js:
+  filter: rjsmin
+  output: ckanext-ioos-theme/%(version)s_hier_expand.js
+  extra:
+    preload:
+      base/main
+  contents:
+    - js/hier_expand.js
+    - js/jquery_simpletree.min.js
+
+hier_expand_css:
+  filters: cssrewrite
+  output: ckanext-ioos-theme/%(version)s_hier_expand.css
+  contents:
+    - css/simpletree.css

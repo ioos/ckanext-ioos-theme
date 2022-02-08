@@ -10,8 +10,8 @@ from ckan.common import request
 from ckanext.ioos_theme.lib import feedback
 from pylons import config
 import logging
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import json
 
 class FeedbackController(BaseController):
@@ -21,7 +21,8 @@ class FeedbackController(BaseController):
     thanking the user for their feedback and then redirect to the home page.
     '''
 
-    def index(self, data=None, errors=None, error_summary=None, package_name=None):
+    def index(self, data=None, errors=None, error_summary=None,
+              package_name=None):
         '''
         Returns a render for the feedback form.
 
@@ -41,9 +42,9 @@ class FeedbackController(BaseController):
             'response': recaptcha_response
         }
 
-        url_data = urllib.urlencode(values)
-        req = urllib2.Request(url, url_data)
-        response = urllib2.urlopen(req)
+        url_data = urllib.parse.urlencode(values)
+        req = urllib.request.Request(url, url_data)
+        response = urllib.request.urlopen(req)
         result = json.load(response)
 
         # If the HTTP request is POST

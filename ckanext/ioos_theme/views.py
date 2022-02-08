@@ -1,14 +1,4 @@
-#!/usr/bin/env python
-'''
-ckanext/ioos_theme/controllers/admin.py
-
-IOOS Theme Admin Controller
-'''
-from ckan.controllers.admin import AdminController
-from ckan.lib import base
-
-_ = base._
-
+from flask import Blueprint, make_response
 
 class IOOSAdminController(AdminController):
     '''
@@ -56,3 +46,33 @@ class IOOSAdminController(AdminController):
             }
         ])
         return items
+
+    def before_map(self, map):
+        '''
+        Defines routes for feedback and overrides routes for the admin controller
+        '''
+        controller = 'ckanext.ioos_theme.controllers.feedback:FeedbackController'
+        map.connect('feedback_package', '/feedback/{package_name}',
+                    controller=controller, action='index',
+                    package_name='{package_name}')
+        map.connect('feedback', '/feedback', controller=controller, action='index')
+
+        admin_controller = 'ckanext.ioos_theme.controllers.admin:IOOSAdminController'
+        map.connect('admin.index', '/ckan-admin', controller=admin_controller,
+                    action='index', ckan_icon='legal')
+        map.connect('admin.config', '/ckan-admin/config', controller=admin_controller,
+                    action='config', ckan_icon='check')
+        map.connect('admin.trash', '/ckan-admin/trash', controller=admin_controller,
+                    action='trash', ckan_icon='trash')
+        map.connect('admin', '/ckan-admin/{action}',
+                    controller=admin_controller)
+
+        csw_controller = 'ckanext.ioos_theme.controllers.csw:CswController'
+        map.connect('csw_admin', '/admin/csw', controller=csw_controller,
+                    action='index', ckan_icon='gear')
+        map.connect('csw_clear', '/admin/csw/clear',
+                    controller=csw_controller, action='clear')
+        map.connect('csw_sync', '/admin/csw/sync',
+                    controller=csw_controller, action='sync')
+
+        return map

@@ -119,7 +119,7 @@ class IOOSHarvester(SpatialHarvester):
         for item in harvest_object.extras:
             key = item.key
             value = item.value
-            if key == u'waf_location':
+            if key == 'waf_location':
                 extras['waf_location'] = value
                 break
         else:
@@ -129,7 +129,7 @@ class IOOSHarvester(SpatialHarvester):
 
         extras_kv = [{'key': k,
                       'value': json.dumps(v) if isinstance(v, (list, dict))
-                               else v} for k, v in extras.iteritems()]
+                               else v} for k, v in extras.items()]
 
         package_dict['extras'] = package_dict['extras'] + extras_kv
         package_dict['resources'] = self.filter_duplicate_resources(package_dict)
