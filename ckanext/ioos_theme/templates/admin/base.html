@@ -9,7 +9,9 @@
   {{ h.build_nav_icon('admin.config', _('Config')) }}
   {{ h.build_nav_icon('admin.trash', _('Trash')) }}
   {{ h.build_nav_icon('harvest.search', _('Harvests'), icon='book') }}
+  {# Remove CSW admin until cause of issues is determined
   {{ h.build_nav_icon('csw.admin', _('CSW')) }}
+  #}
   {{ h.build_extra_admin_nav() }}
 {% endblock %}
 
