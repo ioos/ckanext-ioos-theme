@@ -480,7 +480,7 @@ html, body {
     list-style-type: none;
     margin: 3px 3px 3px 3px;
     position: relative;
-    display: inherit;
+    display: block !important;
 }
 
 .tree li::before {
