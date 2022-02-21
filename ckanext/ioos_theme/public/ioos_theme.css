@@ -25,6 +25,9 @@
 .masthead {
   padding: 0;
   min-height: 55px;
+  background: #003087 !important;
+  color: #55D6F8 !important;
+}
 }
 
 .masthead .navbar-collapse{
@@ -36,7 +39,7 @@
 }
 
 .account-masthead {
-    background-color: #ffffff;
+    background-color: #f7f7f7 !important;
 }
 
 body {
@@ -49,8 +52,7 @@ body {
 }
 
 .masthead {
-  background: #003087;
-  color: #55D6F8;
+  background-color: #f7f7f7;
 }
 
 .masthead .nav > li > a, .masthead .nav > li > a:focus, .masthead .nav > li > a:hover, .masthead .nav > .active > a, .masthead .nav > .active > a:hover, .masthead .nav > .active > a:focus {
@@ -324,11 +326,11 @@ section.browse-graphic img.browse-graphic-img {
 }
 
 .homepage .module-search .module-content {
-  background-color: #003087;
+  background-color: #003087 !important;
 }
 
 .homepage .module-search .tags {
-  background-color: #0084B6;
+  background-color: #0084B6 !important;
 }
 
 .account-masthead .account ul li a {
@@ -336,7 +338,7 @@ section.browse-graphic img.browse-graphic-img {
 }
 
 .account-masthead .account ul li {
-  border-left: 1px solid #ffffff;
+  border-left: 1px solid #ffffff !important;
 }
 
 .account-masthead .account ul li a:hover {
@@ -371,7 +373,7 @@ section.browse-graphic img.browse-graphic-img {
   color: #ffffff;
 }
 
-[role=main] {
+.main {
   background: -moz-linear-gradient(#ffffff80, #fff), url(img/glider-underwater2.jpg) !important;
   background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.5), rgb(255, 255, 255)), url(img/glider-underwater2.jpg) !important;
   background-position: top !important;
