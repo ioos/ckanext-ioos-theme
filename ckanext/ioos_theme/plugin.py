@@ -212,7 +212,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         '''
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
-        toolkit.add_resource('fanstatic', 'ioos_theme')
+        toolkit.add_resource('public', 'ioos_theme')
 
     # IPackageController
 

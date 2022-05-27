@@ -1,4 +1,4 @@
-boostrap_treeview_js:
+bootstrap_treeview_js:
   filter: rjsmin
   output: ckanext-ioos-theme/%(version)s_boostrap_treeview.js
   extra:
@@ -7,7 +7,7 @@ boostrap_treeview_js:
   contents:
     - js/boostrap-treeview.js
 
-boostrap_treeview_css:
+bootstrap_treeview_css:
   filters: cssrewrite
   output: ckanext-ioos-theme/%(version)s_bootstrap_treeview.css
   contents:
