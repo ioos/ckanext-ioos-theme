@@ -1,0 +1,78 @@
+{% ckan_extends %}
+
+          {% block facet_list_items %}
+            {% if name != 'gcmd_keywords' %}
+              {% set items = items or h.get_facet_items_dict(name) %}
+            {% else %}
+            {# put no limit on the number of facet items for GCMD Keywords
+               since they are displayed hierarchically #}
+              {% set items = items or h.get_facet_items_dict(name, 0) %}
+            {% endif %}
+            {% with items = items %}
+            {% if items %}
+              <nav>
+                {% if name == 'gcmd_keywords' %}
+                {% set gcmd_pairs = h.gcmd_generate_facets(items) %}
+                {% set gcmd_level = gcmd_pairs %}
+                <section class="module module-narrow module-shallow" data-module="ioos_theme_hier_expand">
+                <ul id="gcmd_tree" class="{{ nav_class or 'list-unstyled nav nav-simple nav-facet' }}">
+                {% for key, value in gcmd_level.items() recursive %}
+                {% set href = h.remove_url_param(name, value.full_name, extras=extras, alternative_url=alternative_url) if value.active else h.add_url_param(new_params={name: value.full_name}, extras=extras, alternative_url=alternative_url) %}
+                {% set label = label_function(key) if label_function else key %}
+                {% set label_truncated = h.truncate(label, 22) if not label_function else label %}
+                {% set has_children = value|length > 0 %}
+
+                    <li class="{{ nav_item_class or 'nav-item' }}{% if value.active %} active{% endif %}">
+
+                    {% if has_children %}
+                    <span class="tree-caret"></span>
+                    {% endif %}
+                      <a href="{{ href }}" title="{{ label if label != label_truncated else '' }}">
+                        <span class="item-label">{{ label_truncated }}</span>
+                        <span class="hidden separator"> - </span>
+                        <span class="item-count badge">{{ value.count }}</span>
+                      </a>
+                        {% if has_children %}
+                          <ul class="{{ nav_class or 'list-unstyled nav nav-simple nav-facet' }} nested">{{ loop(value.items()) }}</ul>
+                        {% endif %}
+                    </li>
+
+                {% endfor %}
+          </ul>
+          </section>
+          {% asset "ioos_theme/hier_expand_js" %}
+                {% else %}
+                <ul class="{{ nav_class or 'list-unstyled nav nav-simple nav-facet' }}">
+                  {% for item in items %}
+                    {% set href = h.remove_url_param(name, item.name, extras=extras, alternative_url=alternative_url) if item.active else h.add_url_param(new_params={name: item.name}, extras=extras, alternative_url=alternative_url) %}
+                    {% set label = label_function(item) if label_function else item.display_name %}
+                    {% set label_truncated = h.truncate(label, 22) if not label_function else label %}
+                    {% set count = count_label(item['count']) if count_label else ('%d' % item['count']) %}
+                      <li class="{{ nav_item_class or 'nav-item' }}{% if item.active %} active{% endif %}">
+                          <a href="{{ href }}" title="{{ label if label != label_truncated else '' }}">
+                          <span class="item-label">{{ label_truncated }}</span>
+                          <span class="hidden separator"> - </span>
+                          <span class="item-count badge">{{ count }}</span>
+                        </a>
+                      </li>
+                  {% endfor %}
+                </ul>
+                  {% endif %}
+              </nav>
+
+              <p class="module-footer">
+                {% if name != "gcmd_keywords" %}
+                {% if h.get_param_int('_%s_limit' % name) %}
+                  {% if h.has_more_facets(name) %}
+                    <a href="{{ h.remove_url_param('_%s_limit' % name, replace=0, extras=extras, alternative_url=alternative_url) }}" class="read-more">{{ _('Show More {facet_type}').format(facet_type=title) }}</a>
+                  {% endif %}
+                  {% else %}
+                     <a href="{{ h.remove_url_param('_%s_limit' % name, extras=extras, alternative_url=alternative_url) }}" class="read-more">{{ _('Show Only Popular {facet_type}').format(facet_type=title) }}</a>
+                {% endif %}
+                {% endif %}
+              </p>
+            {% else %}
+              <p class="module-content empty">{{ _('There are no {facet_type} that match this search').format(facet_type=title) }}</p>
+            {% endif %}
+            {% endwith %}
+          {% endblock %}
