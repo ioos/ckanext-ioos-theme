@@ -42,9 +42,11 @@ function make_daterange() {
    }
 }
 
+console.log("Plz work!");
 ckan.module('ioos_theme_daterange', function($) {
     return {
         initialize: function() {
+  console.log("Initialized date range plugin");
   // toggle date info popover
   $('[data-toggle="popover"]').popover({placement: 'bottom', html: true});
   var form = $(".search-form");
@@ -183,8 +185,8 @@ ckan.module('ioos_theme_daterange', function($) {
   // submit the updated form when the Apply button is clicked
   $(this.el).find('.btn.apply').click(function() { form.submit() });
   $('form[name="datetime-selection"]').on('reset', function() {
-                                           $('input#ext_timerange_start').remove();
-                                           $('input#ext_timerange_end').remove();
+                                           $('input#start_time').remove();
+                                           $('input#end_time').remove();
                                            /* semi-hack to wait until reset
                                             * event has fired by pushing
                                             * onto the event stack */

@@ -45,7 +45,7 @@ hier_expand_js:
   output: ckanext-ioos-theme/%(version)s_hier_expand.js
   extra:
     preload:
-      base/main
+      - base/main
   contents:
     - js/hier_expand.js
     - js/jquery_simpletree.min.js
