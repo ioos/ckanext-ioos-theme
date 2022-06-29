@@ -1,11 +1,11 @@
 bootstrap_treeview_js:
   filter: rjsmin
-  output: ckanext-ioos-theme/%(version)s_boostrap_treeview.js
+  output: ckanext-ioos-theme/%(version)s_bootstrap_treeview.js
   extra:
     preload:
       - base/main
   contents:
-    - js/boostrap-treeview.js
+    - js/bootstrap-treeview.js
 
 bootstrap_treeview_css:
   filters: cssrewrite
@@ -48,7 +48,7 @@ hier_expand_js:
       - base/main
   contents:
     - js/hier_expand.js
-    - js/jquery_simpletree.min.js
+    - js/jquery.simpletree.min.js
 
 hier_expand_css:
   filters: cssrewrite
