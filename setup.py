@@ -65,8 +65,7 @@ setup(
         'sortedcontainers>=2.1.0',
         'geojson>=2.5.0',
         'Shapely>=1.5.17',
-        # for CKAN 2.8 support only, drop when moving to CKAN 2.8
-        'cf-units==2.1.4'
+        'cf-units>=3.1.0'
     ],
 
     # If there are data files included in your packages that need to be
