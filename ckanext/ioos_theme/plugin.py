@@ -341,7 +341,7 @@ def gcmd_to_ul(gcmd_dict, elem=None, prev_results=None,
     # operates on side effects, so if the base recursion case, return
     # the generated XML string.
     if not prev_results:
-        return etree.tostring(elem, pretty_print=True)
+        return etree.tostring(elem, pretty_print=True, encoding=str)
 
 def split_gcmd_list(tags):
     return chain(*[re.split(r'\s*>\s*', t.strip()) for t in tags])
@@ -493,6 +493,8 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             "ioos_theme_get_pkg_ordereddict": get_pkg_ordereddict,
             "ioos_theme_jsonpath": jsonpath,
             "ioos_theme_get_role_code": get_role_code,
+            "gcmd_generate": gcmd_generate,
+            "gcmd_generate_facets": gcmd_generate_facets,
         }
 
 
