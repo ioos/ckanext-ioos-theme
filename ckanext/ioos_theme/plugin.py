@@ -466,6 +466,68 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         log.debug(data_modified.get('temporal_extent'))
         return data_modified
 
+    def before_search(self, search_params):
+        search_params_modified = copy.deepcopy(search_params)
+
+
+
+        if 'extras' in search_params:
+            fq_modified = search_params.get('fq', '')
+            extras = search_params['extras']
+
+            if extras.get("ext_min_depth") is not None:
+                vert_min = extras["ext_min_depth"]
+            else:
+                vert_min = "*"
+
+            if extras.get("ext_max_depth") is not None:
+                vert_max = extras["ext_max_depth"]
+            else:
+                vert_max = "*"
+
+            if not (vert_min == "*" and vert_max == "*"):
+                if vert_min == "*":
+                    cases = "vertical_min:[* TO {}]".format(vert_max)
+                elif vert_max == "*":
+                    cases = "vertical_max:[{} TO *]".format(vert_min)
+                # could the below expression be simplified?
+                else:
+                    cases = ("((vertical_min:[{0} TO {1}] AND"
+                            " vertical_max:[{0} TO {1}]) OR"
+                            " (vertical_min:[* TO {0}] AND"
+                            " vertical_max:[{0} TO *]) OR"
+                            " (vertical_min:[* TO {1}] AND"
+                            " vertical_max:[{1} TO *]))").format(vert_min,
+                                                                vert_max)
+                fq_modified += " +{}".format(cases)
+
+            # handle temporal filters
+            begin_time = extras.get('ext_timerange_start')
+            end_time = extras.get('ext_timerange_end')
+            # if both begin and end time are none, no search window was provided
+            if not (begin_time is None and end_time is None):
+                try:
+                    log.debug(begin_time)
+                    convert_begin = convert_date(begin_time)
+                    log.debug(convert_begin)
+                    log.debug(end_time)
+                    convert_end = convert_date(end_time)
+                    log.debug(convert_end)
+                except pendulum.parsing.exceptions.ParserError:
+                    log.exception("Error while parsing begin/end time")
+                    raise SearchError("Cannot parse provided time")
+
+
+                log.debug(search_params)
+                # fq should be defined in query params, but just in case, use .get
+                # defaulting to empty string
+                fq_modified += " +temporal_extent:[{} TO {}]".format(
+                                 convert_begin, convert_end)
+
+            search_params_modified['fq'] = fq_modified
+            log.info(search_params_modified)
+            return search_params_modified
+
     # IFacets
 
     def dataset_facets(self, facets_dict, package_type):

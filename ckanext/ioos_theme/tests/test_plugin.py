@@ -50,7 +50,7 @@ class TestIOOSPlugin(TestCase):
         # don't pass in CF standard names and GCMD KWs - the result should be
         # the same as the sorted list of all tags
         expected_tags_no_filter = [generate_tag_dict(name) for name in
-                   set(split_gcmd + cf_standard_names +
+				   set(split_gcmd + cf_standard_names +
                                        other_tags)]
         self.assertEqual(sorted(expected_tags_no_filter,
                                 key=lambda d: d['display_name']),
