@@ -13,8 +13,8 @@ function convert_date_string(date_time_str) {
 function make_daterange() {
    // converts the time range inputs to a format that can be
    // used by solr
-   var start_val = $('input#start_time').val();
-   var end_val = $('input#end_time').val();
+   var start_val = $('input#ext_timerange_start').val();
+   var end_val = $('input#ext_timerange_end').val();
    // TODO: add input verification on server side
 
    var form_button = $('form[name="datetime-selection"').find('.btn.apply');
@@ -34,19 +34,17 @@ function make_daterange() {
    if (date_form.valid()) {
      $('input#ext_timerange_start').val(start_val_scrub);
      $('input#ext_timerange_end').val(end_val_scrub);
-     $("input#ext_min_depth").val($("input#min_depth").val())
-     $("input#ext_max_depth").val($("input#max_depth").val())
+     $("input#ext_min_depth").val($("input#ext_min_depth").val())
+     $("input#ext_max_depth").val($("input#ext_max_depth").val())
      form_btn.attr('disabled', false);
    } else {
      form_btn.attr('disabled', true);
    }
 }
 
-console.log("Plz work!");
 ckan.module('ioos_theme_daterange', function($) {
     return {
         initialize: function() {
-  console.log("Initialized date range plugin");
   // toggle date info popover
   $('[data-toggle="popover"]').popover({placement: 'bottom', html: true});
   var form = $(".search-form");
@@ -61,49 +59,49 @@ ckan.module('ioos_theme_daterange', function($) {
     var search_params = new URLSearchParams(location.search);
     var param_start_time = search_params.get('ext_timerange_start');
     if (param_start_time !== null) {
-        $('input#start_time').val(param_start_time);
+        $('input#ext_timerange_start').val(param_start_time);
     }
     var param_end_time = search_params.get('ext_timerange_end');
     if (param_end_time !== null) {
-        $('input#end_time').val(param_end_time);
+        $('input#ext_timerange_end').val(param_end_time);
     }
-    var param_min_depth = search_params.get('ext_min_depth');
+    var param_ext_min_depth = search_params.get('ext_min_depth');
     if (param_start_time !== null) {
-        $('input#min_depth').val(param_min_depth);
+        $('input#ext_min_depth').val(param_ext_min_depth);
     }
-    var param_max_depth = search_params.get('ext_max_depth');
+    var param_ext_max_depth = search_params.get('ext_max_depth');
     if (param_start_time !== null) {
-        $('input#max_depth').val(param_max_depth);
+        $('input#ext_max_depth').val(param_ext_max_depth);
     }
 
-  $('a[name="datefilter"]').daterangepicker({
-    timePicker24Hour: true,
-    startDate: moment().startOf('hour'),
-    endDate: moment().startOf('hour').add(32, 'hour'),
-    locale: {
-      format: 'YYYY-MM-DDTHH:mm\\Z'
-    },
-    timePicker: true
-  });
+    //$('a[name="datefilter"]').daterangepicker({
+    //timePicker24Hour: true,
+    //startDate: moment().startOf('hour'),
+    //endDate: moment().startOf('hour').add(32, 'hour'),
+    //locale: {
+    //  format: 'YYYY-MM-DDTHH:mm\\Z'
+    //},
+    //timePicker: true
+    //});
 
-  // set ISO-like date on range selection
-  $('a[name="datefilter"]').on('apply.daterangepicker',
-                                   function(ev, picker) {
-                                       $('input[name="start_time"]').val(picker.startDate.format('YYYY-MM-DDTHH:mm') + "Z");
-                                       $('input[name="end_time"]').val(picker.endDate.format('YYYY-MM-DDTHH:mm') + "Z");
-                                       /* setting .val doesn't fire the
-                                        * on change handler, so we need to
-                                        * call the function directly. */
-                                       make_daterange();
-                                       /* submit the form after selecting dates
-                                        * to make behavior consistent with
-                                        * other widgets */
-                                       form.submit();
-                                   });
-  $.validator.setDefaults({
-    debug: true,
-    success: "valid"
-  });
+    //// set ISO-like date on range selection
+    //$('a[name="datefilter"]').on('apply.daterangepicker',
+    //                               function(ev, picker) {
+    //                                   $('input[name="ext_timerange_start"]').val(picker.startDate.format('YYYY-MM-DDTHH:mm') + "Z");
+    //                                   $('input[name="ext_timerange_end"]').val(picker.endDate.format('YYYY-MM-DDTHH:mm') + "Z");
+    //                                   /* setting .val doesn't fire the
+    //                                    * on change handler, so we need to
+    //                                    * call the function directly. */
+    //                                   make_daterange();
+    //                                   /* submit the form after selecting dates
+    //                                    * to make behavior consistent with
+    //                                    * other widgets */
+    //                                   form.submit();
+    //                               });
+    //$.validator.setDefaults({
+    //  debug: true,
+    //  success: "valid"
+    //});
 
   function comparator(pred_fn) {
     return function(value, element, param) {
@@ -145,48 +143,48 @@ ckan.module('ioos_theme_daterange', function($) {
 
   var validator = $('form[name="datetime-selection"]').validate({
       rules: {
-         start_time: {
+         ext_timerange_start: {
              isMomentCompatible: true,
              required: false
          },
-         end_time: {
+         ext_timerange_end: {
              isMomentCompatible: true,
              required: false
          },
-         min_depth: {
-             lessThanEqual: "#max_depth",
+         ext_min: {
+             lessThanEqual: "#ext_max",
              required: false
          },
-         max_depth: {
-             greaterThanEqual: "#min_depth",
+         ext_max: {
+             greaterThanEqual: "#ext_min",
              required: false
          }
       },
      messages: {
-        start_time: { isMomentCompatible: "Start time not valid" },
-        end_time: { isMomentCompatible: "End time not valid" }
+        ext_timerange_start: { isMomentCompatible: "Start time not valid" },
+        ext_timerange_end: { isMomentCompatible: "End time not valid" }
      }
   });
 
   make_daterange();
 
   // clear data selection on cancel
-  $('a[name="datefilter"]').on('cancel.daterangepicker',
-                                   function(ev, picker) {
-                                       $('input[name="start_time"]').val('');
-                                       $('input[name="end_time"]').val('');
-                                       make_daterange();
-                                   });
+  //$('a[name="datefilter"]').on('cancel.daterangepicker',
+  //                                 function(ev, picker) {
+  //                                     $('input[name="ext_timerange_start"]').val('');
+  //                                     $('input[name="ext_timerange_end"]').val('');
+  //                                     make_daterange();
+  //                                 });
 
-  for (name of ["start_time", "end_time", "min_depth", "max_depth"]) {
+  for (name of ["ext_timerange_start", "ext_timerange_end", "ext_min", "ext_max"]) {
       $('input[name="' + name + '"]').on('change', make_daterange);
   }
 
   // submit the updated form when the Apply button is clicked
   $(this.el).find('.btn.apply').click(function() { form.submit() });
   $('form[name="datetime-selection"]').on('reset', function() {
-                                           $('input#start_time').remove();
-                                           $('input#end_time').remove();
+                                           $('input#ext_timerange_start').remove();
+                                           $('input#ext_timerange_end').remove();
                                            /* semi-hack to wait until reset
                                             * event has fired by pushing
                                             * onto the event stack */

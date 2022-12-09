@@ -65,7 +65,7 @@ setup(
         'sortedcontainers>=2.1.0',
         'geojson>=2.5.0',
         'Shapely>=1.5.17',
-        #'cf-units>=3.1.0'
+        'cf-units>=3.1.0'
     ],
 
     # If there are data files included in your packages that need to be

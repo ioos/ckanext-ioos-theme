@@ -27,10 +27,10 @@ date_range_input_js:
   output: ckanext-ioos-theme/%(version)s_daterangepicker.js
   extra:
     preload:
-      base/main
+      - base/main
   contents:
     - js/date_range_input.js
-    - js/daterangepicker.js
+    #- js/daterangepicker.js
     - js/jquery.validate.js
     - js/moment.js
 

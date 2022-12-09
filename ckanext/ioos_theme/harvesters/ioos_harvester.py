@@ -21,10 +21,11 @@ class ErddapCSVMetadataReader(object):
     def __init__(self, url):
         self.metadata_mapping = defaultdict(dict)
         with closing(requests.get(url, stream=True, timeout=5)) as req:
+            # Py3: cast lines to str/utf-8 prior to reading CSV
             try:
                 req.raise_for_status()
-
-                for row in csv.DictReader(req.iter_lines()):
+                line_gen = (line.decode('utf-8') for line in req.iter_lines())
+                for row in csv.DictReader(line_gen):
                     if row["Row Type"] != "attribute":
                         continue
 
@@ -33,7 +34,8 @@ class ErddapCSVMetadataReader(object):
                     log.info("%s = %s", self.metadata_mapping[row["Variable Name"]][row["Attribute Name"]],
                                         row["Value"])
             except Exception as e:
-                return None
+                logger.exception("Exception occurred attempting to fetch "
+                                 "ERDDAP dataset info: ")
 
 class IOOSHarvester(SpatialHarvester):
 
@@ -55,8 +57,6 @@ class IOOSHarvester(SpatialHarvester):
             'access-constraints',
             'use-limitations',
             'fees',
-            # lineage
-            'lineage',
             'lineage-process-steps',
         }
         extras = {k: iso_values.get(k) for k in simple_keys if k in iso_values}
@@ -137,8 +137,10 @@ class IOOSHarvester(SpatialHarvester):
         package_dict = self.update_resources(package_dict)
 
         for resource in package_dict["resources"]:
+            log.info(resource["format"])
             if resource["format"] in {"ERDDAP", "ERDDAP-TableDAP",
-                                      "ERDDAP-GridDAP"}:
+                                      "ERDDAP-GridDAP", "ERDDAP-tabledap",
+                                      "ERDDAP-griddap"}:
                 # TODO: try/catch here
                 try:
                     info_url = re.sub(r"^(https?://.+/erddap/)(?:grid|table)dap(/[^.]+)\.(\w+)$",
@@ -200,6 +202,7 @@ class IOOSHarvester(SpatialHarvester):
                 sign = 1
             elif global_atts["geospatial_vertical_positive"] == "up":
                 sign = -1
+
 
             units = Unit(global_atts["geospatial_vertical_units"])
 

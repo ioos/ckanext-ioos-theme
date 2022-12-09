@@ -283,9 +283,47 @@ def gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords,
     # now generate
     return gcmd_dict
 
+
+def gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords,
+                                            dict_factory=SortedDict,
+                                            is_facet=False):
+
+    gcmd_dict = dict_factory()
+    if is_facet:
+        prepped_kw = ((re.sub(r"\s*>\s*", ' > ',
+                             re.sub(r"\s+", " ", kw)).upper(), count)
+                    for kw, count in gcmd_keywords)
+        for kw, count in prepped_kw:
+            gcmd_levels = kw.split(' > ')
+            current_hierarchy = gcmd_dict
+            for level in gcmd_levels:
+                if level not in current_hierarchy:
+                    current_hierarchy[level] = dict_factory()
+                    current_hierarchy[level].full_name = kw
+                    current_hierarchy[level].count = count
+                current_hierarchy = current_hierarchy[level]
+    # TODO: eliminate repetition of code
+    else:
+        prepped_kw = (re.sub(r"\s*>\s*", ' > ', re.sub(r"\s+", " ", kw)).upper()
+                    for kw in gcmd_keywords)
+        for kw in prepped_kw:
+            gcmd_levels = kw.split(' > ')
+            current_hierarchy = gcmd_dict
+            for level in gcmd_levels:
+                if level not in current_hierarchy:
+                    current_hierarchy[level] = dict_factory()
+                current_hierarchy = current_hierarchy[level]
+
+    # put into multilevel sorted dict.  Could possibly subclass defaultdict
+    # for this?
+
+    # now generate
+    return gcmd_dict
+
 def gcmd_generate(gcmd_keywords):
     return gcmd_to_ul(gcmd_keywords_to_multilevel_sorted_dict(gcmd_keywords),
                       ul_attrs={'class': 'tag-list tree'})
+
 
 def gcmd_generate_facets(gcmd_keywords):
     def sort_gcmd(kw_in):
@@ -470,7 +508,6 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         search_params_modified = copy.deepcopy(search_params)
 
 
-
         if 'extras' in search_params:
             fq_modified = search_params.get('fq', '')
             extras = search_params['extras']
@@ -526,12 +563,14 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
 
             search_params_modified['fq'] = fq_modified
             log.info(search_params_modified)
+            print(search_params_modified)
             return search_params_modified
 
     # IFacets
-
     def dataset_facets(self, facets_dict, package_type):
         facets_dict['data_provider'] = p.toolkit._('Data Providers')
+        facets_dict['cf_standard_names'] = p.toolkit._('CF Standard Names')
+        facets_dict['gcmd_keywords'] = p.toolkit._('GCMD Keywords')
         return facets_dict
 
     def organization_facets(self, facets_dict, organization_type,
@@ -555,6 +594,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             "ioos_theme_get_pkg_ordereddict": get_pkg_ordereddict,
             "ioos_theme_jsonpath": jsonpath,
             "ioos_theme_get_role_code": get_role_code,
+            "filter_tag_names": filter_tag_names,
             "gcmd_generate": gcmd_generate,
             "gcmd_generate_facets": gcmd_generate_facets,
         }
