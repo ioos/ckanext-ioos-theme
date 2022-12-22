@@ -4,6 +4,8 @@ import logging
 import hashlib
 import dateutil.parser
 import pyparsing as parse
+import re
+import html
 import requests
 from sqlalchemy.orm import aliased
 from sqlalchemy.exc import DataError
@@ -246,7 +248,7 @@ iis =      parse.SkipTo("<br>").suppress() \
          + parse.Literal('<A HREF=').suppress() \
          + parse.quotedString.setParseAction(parse.removeQuotes).setResultsName('url')
 
-other = parse.SkipTo(parse.CaselessLiteral("<a href="), include=True).suppress() \
+other = parse.SkipTo(parse.Regex(r"(?i)<a [^>]*href="), include=True).suppress() \
         + parse.quotedString.setParseAction(parse.removeQuotes).setResultsName('url')
 
 
@@ -278,14 +280,15 @@ def _extract_waf(content, base_url, scraper, results = None, depth=0):
         parsed = scrapers['other'].parseString(content)
 
     for record in parsed:
-        url = record.url
+        url = html.unescape(record.url)
         if not url:
             continue
         if url.startswith('_'):
             continue
         if '?' in url:
             continue
-        if '#' in url:
+        # Reject anchors, etc but allow HTML entities.
+        if re.search(r'(?<!&)#', url):
             continue
         if 'mailto:' in url:
             continue
@@ -307,7 +310,7 @@ def _extract_waf(content, base_url, scraper, results = None, depth=0):
             _extract_waf(six.text_type(content), new_url, scraper, results,
                          new_depth)
             continue
-        if not url.endswith('.xml'):
+        if not (url.endswith('.xml') or url.endswith('&#x2e;xml')):
             continue
         date = record.date
         if date:
@@ -316,6 +319,6 @@ def _extract_waf(content, base_url, scraper, results = None, depth=0):
             except Exception as e:
                 raise
                 date = None
-        results.append((urljoin(base_url, record.url), date))
+        results.append((urljoin(base_url, url), date))
 
     return results
