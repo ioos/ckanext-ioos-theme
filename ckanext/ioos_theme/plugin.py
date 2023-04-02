@@ -490,7 +490,8 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
     def before_index(self, data_dict):
         data_modified = copy.deepcopy(data_dict)
         start_end_time = []
-        if data_modified["extras_spatial"] is not None:
+        if ("extras_spatial" in data_modified and
+            data_modified["extras_spatial"] is not None):
             data_modified["extras_spatial"] = \
                   self.split_geometry_antimeridian(data_modified["extras_spatial"])
         responsible_party = data_dict.get('extras_responsible-party')
