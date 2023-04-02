@@ -491,8 +491,8 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         data_modified = copy.deepcopy(data_dict)
         start_end_time = []
         if data_modified["extras_spatial"] is not None:
-            (data_modified["extras_spatial"] =
-                  split_geometry_antimeridian(data_modified["extras_modifier"]))
+            data_modified["extras_spatial"] = \
+                  split_geometry_antimeridian(data_modified["extras_modifier"])
         responsible_party = data_dict.get('extras_responsible-party')
         if responsible_party is not None:
             originators = get_originator_names(responsible_party)
