@@ -487,7 +487,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                                shapely.unary_union(spatial_joins)))
 
 
-    def before_dataset_index(self, data_dict):
+    def before_index(self, data_dict):
         data_modified = copy.deepcopy(data_dict)
         start_end_time = []
         if data_modified["extras_spatial"] is not None:
