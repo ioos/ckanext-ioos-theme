@@ -470,11 +470,11 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             spatial_joins.append(intersect_and_translate(geom,
                                                         shapely.box(-360, -90,
                                                                     -180, 90),
-                                                        180)
+                                                        180))
         if exceed_positive:
             spatial_joins.append(intersect_and_translate(shapely.box(180, -90,
-                                                                    360, 90)),
-                                                        -180)
+                                                                    360, 90),
+                                                        -180))
         if not spatial_joins:
             return json.dumps(geometry)
         else:
