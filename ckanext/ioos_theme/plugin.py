@@ -467,19 +467,21 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             return shapely.affinity.translate(geom_clipped, longitude_translate)
 
         if exceed_negative:
-            spatial_joins.append(intersect_and_translate(geom,
+            spatial_joins.append(self.intersect_and_translate(geometry,
                                                         shapely.box(-360, -90,
                                                                     -180, 90),
                                                         180))
         if exceed_positive:
-            spatial_joins.append(intersect_and_translate(shapely.box(180, -90,
+            spatial_joins.append(self.intersect_and_translate(geometry
+                                                        shapely.box(180, -90,
                                                                     360, 90),
                                                         -180))
         if not spatial_joins:
             return geom_json_str
         else:
-            spatial_joins.append(intersect_and_translate(shapely.box(-180, -90,
-                                                                    180, 90)),
+            spatial_joins.append(self.intersect_and_translate(geometry,
+                                                         shapely.box(-180, -90,
+                                                                     180, 90)),
                                                         0)
         logger.info("Geometry crossed antimeridian and was corrected to fit "
                     "+/- 180 degree latitude bounds")
