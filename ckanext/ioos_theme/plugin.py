@@ -453,6 +453,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                 exceed_positive = lon_max > 180
             except:
                 logger.exception("Could not split on antimeridian")
+                return geom_json_str
 
         lon_min, _, lon_max, _ = geometry.bounds
         exceed_negative = lon_min < -180
@@ -472,7 +473,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                                                                     -180, 90),
                                                         180))
         if exceed_positive:
-            spatial_joins.append(self.intersect_and_translate(geometry
+            spatial_joins.append(self.intersect_and_translate(geometry,
                                                         shapely.box(180, -90,
                                                                     360, 90),
                                                         -180))
