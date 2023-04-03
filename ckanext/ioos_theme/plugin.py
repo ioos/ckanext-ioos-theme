@@ -464,7 +464,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                                     bbox: shapely.box,
                                     longitude_translate: float) -> shapely.Geometry:
 
-            geom_clipped = geom.intersection(bbox)
+            geom_clipped = geometry.intersection(bbox)
             return shapely.affinity.translate(geom_clipped, longitude_translate)
 
         if exceed_negative:
