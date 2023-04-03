@@ -476,7 +476,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                                                                     360, 90),
                                                         -180))
         if not spatial_joins:
-            return json.dumps(geometry)
+            return geom_json_str
         else:
             spatial_joins.append(intersect_and_translate(shapely.box(-180, -90,
                                                                     180, 90)),
