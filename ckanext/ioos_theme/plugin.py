@@ -482,8 +482,8 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         else:
             spatial_joins.append(intersect_and_translate(geometry,
                                                          shapely.box(-180, -90,
-                                                                     180, 90)),
-                                                        0)
+                                                                     180, 90),
+                                                        0))
         logger.info("Geometry crossed antimeridian and was corrected to fit "
                     "+/- 180 degree latitude bounds")
         return json.dumps(shapely.geometry.mapping(
