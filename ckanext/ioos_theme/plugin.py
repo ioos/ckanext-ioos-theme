@@ -468,19 +468,19 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             return shapely.affinity.translate(geom_clipped, longitude_translate)
 
         if exceed_negative:
-            spatial_joins.append(self.intersect_and_translate(geometry,
+            spatial_joins.append(intersect_and_translate(geometry,
                                                         shapely.box(-360, -90,
                                                                     -180, 90),
                                                         180))
         if exceed_positive:
-            spatial_joins.append(self.intersect_and_translate(geometry,
+            spatial_joins.append(intersect_and_translate(geometry,
                                                         shapely.box(180, -90,
                                                                     360, 90),
                                                         -180))
         if not spatial_joins:
             return geom_json_str
         else:
-            spatial_joins.append(self.intersect_and_translate(geometry,
+            spatial_joins.append(intersect_and_translate(geometry,
                                                          shapely.box(-180, -90,
                                                                      180, 90)),
                                                         0)
