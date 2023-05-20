@@ -1,3 +1,4 @@
+import html
 import six
 from six.moves.urllib.parse import urljoin
 import logging
@@ -71,7 +72,9 @@ class IOOSWAFHarvester(IOOSHarvester, SingletonPlugin):
             return None
 
         content = response.content
-        scraper = _get_scraper(response.headers.get('server'))
+        # HACK: some ERDDAP is hosted through Apache reverse proxies, which will break the assumptions for Apache directory listings
+        override = "erddap/metadata/iso19115/xml" in source_url
+        scraper = _get_scraper(response.headers.get('server'), override)
 
         ######  Get current harvest object out of db ######
 
@@ -258,7 +261,9 @@ scrapers = {'apache': parse.OneOrMore(parse.Group(apache)),
             'other': parse.OneOrMore(parse.Group(other)),
             'iis': parse.OneOrMore(parse.Group(iis))}
 
-def _get_scraper(server):
+def _get_scraper(server, override=False):
+    if override:
+        return 'other'
     if not server or 'apache' in server.lower():
         return 'apache'
     if server == 'Microsoft-IIS/7.5':
@@ -282,6 +287,7 @@ def _extract_waf(content, base_url, scraper, results = None, depth=0):
         parsed = scrapers['other'].parseString(content)
 
     for record in parsed:
+        # have to do this due to ERDDAP mangling URLs with characters as simple as underscores or periods!
         url = html.unescape(record.url)
         if not url:
             continue
