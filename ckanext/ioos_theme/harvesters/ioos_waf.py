@@ -1,4 +1,3 @@
-import html
 import six
 from six.moves.urllib.parse import urljoin
 import logging
