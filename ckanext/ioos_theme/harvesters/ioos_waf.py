@@ -198,10 +198,12 @@ class IOOSWAFHarvester(IOOSHarvester, SingletonPlugin):
             return False
 
         # Get contents
+        # ERDDAP hack alert
+        decode_url = html.unescape(url)
         try:
-            content = self._get_content_as_unicode(url)
+            content = self._get_content_as_unicode(decode_url)
         except Exception as e:
-            msg = 'Could not harvest WAF link {0}: {1}'.format(url, e)
+            msg = 'Could not harvest WAF link {0}: {1}'.format(decode_url, e)
             self._save_object_error(msg, harvest_object)
             return False
 
