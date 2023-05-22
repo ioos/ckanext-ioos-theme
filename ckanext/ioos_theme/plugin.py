@@ -25,6 +25,10 @@ from lxml import etree
 from collections import OrderedDict
 from sortedcontainers import SortedDict
 from ckanext.ioos_theme import blueprint
+import json
+import shapely
+import shapely.geometry
+import shapely.affinity
 
 log = logging.getLogger(__name__)
 
@@ -431,10 +435,68 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         toolkit.add_resource('assets', 'ioos_theme')
 
     # IPackageController
+    def split_geometry_antimeridian(self, geom_json_str: str) -> str:
+        """
+        Attempt to split on the antimeridian, correcting and translating back
+        to +/- 180 degree longitude bounds if necessary
+
+        """
+
+        try:
+            geometry = shapely.from_geojson(geom_json_str)
+        except ValueError as e:
+            log.error('Geometry not valid GeoJSON, not indexing')
+        else:
+            try:
+                lon_min, _, lon_max, _ = geometry.bounds
+                exceed_negative = lon_min < -180
+                exceed_positive = lon_max > 180
+            except:
+                logger.exception("Could not split on antimeridian")
+                return geom_json_str
+
+        lon_min, _, lon_max, _ = geometry.bounds
+        exceed_negative = lon_min < -180
+        exceed_positive = lon_max > 180
+        spatial_joins = []
+
+        def intersect_and_translate(geometry: shapely.Geometry,
+                                    bbox: shapely.box,
+                                    longitude_translate: float) -> shapely.Geometry:
+
+            geom_clipped = geometry.intersection(bbox)
+            return shapely.affinity.translate(geom_clipped, longitude_translate)
+
+        if exceed_negative:
+            spatial_joins.append(intersect_and_translate(geometry,
+                                                        shapely.box(-360, -90,
+                                                                    -180, 90),
+                                                        180))
+        if exceed_positive:
+            spatial_joins.append(intersect_and_translate(geometry,
+                                                        shapely.box(180, -90,
+                                                                    360, 90),
+                                                        -180))
+        if not spatial_joins:
+            return geom_json_str
+        else:
+            spatial_joins.append(intersect_and_translate(geometry,
+                                                         shapely.box(-180, -90,
+                                                                     180, 90),
+                                                        0))
+        logger.info("Geometry crossed antimeridian and was corrected to fit "
+                    "+/- 180 degree latitude bounds")
+        return json.dumps(shapely.geometry.mapping(
+                               shapely.unary_union(spatial_joins)))
+
 
     def before_index(self, data_dict):
         data_modified = copy.deepcopy(data_dict)
         start_end_time = []
+        if ("extras_spatial" in data_modified and
+            data_modified["extras_spatial"] is not None):
+            data_modified["extras_spatial"] = \
+                  self.split_geometry_antimeridian(data_modified["extras_spatial"])
         responsible_party = data_dict.get('extras_responsible-party')
         if responsible_party is not None:
             originators = get_originator_names(responsible_party)

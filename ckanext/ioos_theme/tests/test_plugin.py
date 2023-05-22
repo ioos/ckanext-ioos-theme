@@ -1,9 +1,52 @@
 """Tests for plugin.py."""
 from unittest import TestCase
 import ckanext.ioos_theme.plugin as plugin
+import json
+import shapely
+import shapely.affinity
 
 
 class TestIOOSPlugin(TestCase):
+
+    def split_geom(self):
+        """Checks that splitting along antimeridian"""
+        # base case, test that things in bounds are kept the same
+        inbounds = """
+                  {"type": "Feature", "properties": {},
+                   "geometry": {"coordinates":
+                    [[
+                        [20, 20],
+                        [20, 30],
+                        [30, 30],
+                        [30, 20],
+                        [20, 20],
+                    ]]},
+                "type": "Polygon"
+                }"""
+
+        inbounds_split = plugin.split_geometry_antimeridian(None, inbounds)
+        assert json.loads(inbounds) == json.loads(inbounds_split)
+
+        over_triangle = """
+                         {"type": "Feature", "properties": {},
+                          "geometry": {"type": "Polygon",
+                          "coordinates": [[[-220.0, -40.0], [-180.0, 40.0],
+                                           [-140.0, -40.0], [-220.0, -40.0]],
+                                          [[-200.0, -30.0], [-160.0, -30.0],
+                                           [-180.0, 30.0], [-200.0, -30.0]]]}
+                        """
+        negative_oob_split = plugin.split_geometry_antimeridian(None,
+                                                                over_triangle)
+        min_lon, _, max_lon _ shapely.from_geojson(negative_oob_geom.bounds)
+        assert min_lon = -180 and max_lon = 180
+        # shift far eastward
+        positive_oob = json.dumps(shapely.geometry.mapping(
+                                 shapely.affinity.translate(shapely.from_geojson(over_triangle),
+                                                  360)))
+        positive_oob_split = plugin.split_geometry_antimeridian(None,
+                                                                positive_oob)
+        min_lon, _, max_lon _ = shapely.from_geojson(positive_oob_split)
+        assert min_lon = -180 and max_lon = 180
 
     def test_split_gcmd_tags(self):
         """
