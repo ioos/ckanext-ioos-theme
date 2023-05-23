@@ -20,7 +20,7 @@
     <ul class="dropdown-menu">
       {% block resource_item_explore_links %}
       <li>
-        <a href="{{ h.url_for('harvest_object_show', id=object_reference) }}" class="resource-url-analytics" target="_blank">
+        <a href="{{ h.url_for('harvester.object_show', id=object_reference) }}" class="resource-url-analytics" target="_blank">
           <i class="fa fa-external-link"></i>
           {{ _('View Content') }}
         </a>
