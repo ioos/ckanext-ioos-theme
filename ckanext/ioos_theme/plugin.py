@@ -452,7 +452,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                 exceed_negative = lon_min < -180
                 exceed_positive = lon_max > 180
             except:
-                logger.exception("Could not split on antimeridian")
+                log.exception("Could not split on antimeridian")
                 return geom_json_str
 
         lon_min, _, lon_max, _ = geometry.bounds
@@ -484,8 +484,8 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                                                          shapely.box(-180, -90,
                                                                      180, 90),
                                                         0))
-        logger.info("Geometry crossed antimeridian and was corrected to fit "
-                    "+/- 180 degree latitude bounds")
+        log.info("Geometry crossed antimeridian and was corrected to fit "
+                    "+/- 180 degree longitude bounds")
         return json.dumps(shapely.geometry.mapping(
                                shapely.unary_union(spatial_joins)))
 
