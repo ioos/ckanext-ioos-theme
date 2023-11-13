@@ -30,7 +30,7 @@ date_range_input_js:
       - base/main
   contents:
     - js/date_range_input.js
-    #- js/daterangepicker.js
+    - js/daterangepicker.js
     - js/jquery.validate.js
     - js/moment.js
 
@@ -39,6 +39,7 @@ date_range_input_css:
   output: ckanext-ioos-theme/%(version)s_daterangeinput.css
   contents:
     - css/bootstrap-treeview.css
+    - css/daterangepicker.css
 
 hier_expand_js:
   filter: rjsmin
