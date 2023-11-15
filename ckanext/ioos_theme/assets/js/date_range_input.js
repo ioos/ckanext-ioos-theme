@@ -4,6 +4,14 @@ function convert_date_string(date_time_str) {
   return moment(date_time_str, moment.ISO_8601, true).isValid() ? date_time_str : null;
 }
 
+function disableEmptyHiddenFields(form) {
+  form.find('input[type="hidden"]').each(function () {
+    if ($(this).val() === '') {
+      $(this).prop('disabled', true);
+    }
+  });
+}
+
 function make_daterange() {
   let date_form = $('form[name="datetime-selection"]');
   let form_btn = date_form.find(".btn.apply");
@@ -127,6 +135,7 @@ ckan.module('ioos_theme_daterange', function ($) {
 
       $(this.el).find('.btn.apply').off('click').click((event) => {
         event.preventDefault();
+        disableEmptyHiddenFields(form);
         form.submit();
       });
 
@@ -136,7 +145,6 @@ ckan.module('ioos_theme_daterange', function ($) {
           $(`input#${fieldId}`).val('');
         });
         make_daterange();
-        form.submit();
       });
     }
   };
