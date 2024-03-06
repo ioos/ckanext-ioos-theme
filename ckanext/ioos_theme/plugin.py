@@ -420,7 +420,6 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
     # IBlueprint
     def get_blueprint(self):
         blueprints = [blueprint.ioos_bp]
-        log.info(blueprints)
         return blueprints
     # IConfigurer
 

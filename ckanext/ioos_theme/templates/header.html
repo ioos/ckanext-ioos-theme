@@ -29,7 +29,7 @@
     <a class="logo" href="https://ioos.us"><img src="{{ h.url_for_static_or_external(g.site_logo) }}" alt="{{ g.site_title }}" title="{{ g.site_title }}" /></a>
   {% else %}
     <h1>
-      <a href="{{ h.url('home') }}">{{ g.site_title }}</a>
+      <a href="{{ h.url_for('home') }}">{{ g.site_title }}</a>
     </h1>
     {% if g.site_description %}<h2>{{ g.site_description }}</h2>{% endif %}
   {% endif %}
