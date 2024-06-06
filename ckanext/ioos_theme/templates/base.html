@@ -7,6 +7,6 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
 
   {# populate dataset name for feedback when we are on a dataset page #}
-  {% set opt_pkg = pkg.name if pkg is defined else "" %}
-  <a id="feedback" href="/feedback/{{opt_pkg}}"></a>
+  {% set opt_pkg = "/" ~ pkg.name if pkg is defined else "" %}
+  <a id="feedback" href="/feedback{{opt_pkg}}"></a>
 {% endblock %}
