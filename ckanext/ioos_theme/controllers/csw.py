@@ -8,6 +8,7 @@ catalog-ckan/ckanext/ioos_theme/controllers/csw.py
 from ckan.lib.base import BaseController, render, _
 from ckan.lib import helpers as h
 from pylons import config
+from ckan.plugins.toolkit import _
 import os
 
 
