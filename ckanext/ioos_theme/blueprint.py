@@ -29,7 +29,7 @@ def feedback(data=None, errors=None, error_summary=None,
     email = ""
     feedback = ""
 
-    recaptcha_response = toolkit.request.args.get('g-captcha-token')
+    recaptcha_response = toolkit.request.form.get('g-captcha-token')
     url = 'https://www.google.com/recaptcha/api/siteverify'
     values = {
         'secret': toolkit.config.get('feedback.site_secret', ''),
@@ -69,7 +69,7 @@ def feedback(data=None, errors=None, error_summary=None,
     token = toolkit.config.get('feedback.g-captcha-token', '')
 
     if not site_key:
-        logging.warning('Administrator must setup feedback.site_key')
+        logging.warning('Administrator must set up feedback.site_key')
 
     vars = {
         'package_name': package_name,
