@@ -44,8 +44,7 @@ def feedback(data=None, errors=None, error_summary=None,
     # If the HTTP request is POST
     if toolkit.request.method == "POST":
         try:
-            # Left for reference during refactor to captcha V3
-            #if request.params['g-recaptcha-response']:
+            logging.debug(result)
             if result['success']:
                 return _post_feedback()
             else:
