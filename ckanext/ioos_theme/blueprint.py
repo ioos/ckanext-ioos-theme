@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, make_response
 import logging
 import urllib.request, urllib.error, urllib.parse
+from ckanext.ioos_theme.lib.feedback import send_feedback
 
 import json
 
@@ -26,7 +27,7 @@ def feedback(data=None, errors=None, error_summary=None,
     email = ""
     feedback = ""
 
-    recaptcha_response = toolkit.request.params.get('g-captcha-token')
+    recaptcha_response = toolkit.request.args.get('g-captcha-token')
     url = 'https://www.google.com/recaptcha/api/siteverify'
     values = {
         'secret': toolkit.config.get('feedback.site_secret', ''),
@@ -40,21 +41,21 @@ def feedback(data=None, errors=None, error_summary=None,
     result = json.load(response)
 
     # If the HTTP request is POST
-    if toolkit.request.params:
+    if toolkit.request.method == "POST":
         try:
             # Left for reference during refactor to captcha V3
             #if request.params['g-recaptcha-response']:
             if result['success']:
-                return self._post_feedback()
+                return _post_feedback()
             else:
-                name = request.params['name']
-                email = request.params['email']
-                feedback = request.params['feedback']
+                name = toolkit.request.form['name']
+                email = toolkit.request.form['email']
+                feedback = toolkit.request.form['feedback']
                 h.flash_notice(_('Please fill out missing fields below.'))
         except KeyError:
-            name = request.params['name']
-            email = request.params['email']
-            feedback = request.params['feedback']
+            name = toolkit.request.args['name']
+            email = toolkit.request.args['email']
+            feedback = toolkit.request.args['feedback']
             h.flash_notice(_('Please fill out missing fields below.'))
 
     data = data or {"name": "", "email": "", "feedback": ""}
@@ -78,19 +79,19 @@ def feedback(data=None, errors=None, error_summary=None,
     }
     return render('feedback/form.html', extra_vars=vars)
 
-def _post_feedback(self):
+def _post_feedback():
     '''
     Redirects the user to the home page and flashes a message,
     acknowledging the feedback.
     '''
     context = {
-        'name': request.params['name'],
-        'email': request.params['email'],
-        'feedback': request.params['feedback'],
-        'package_name': request.params.get('package_name'),
-        'referrer': request.referrer
+        'name': toolkit.request.form['name'],
+        'email': toolkit.request.form['email'],
+        'feedback': toolkit.request.form['feedback'],
+        'package_name': toolkit.request.form.get('package_name'),
+        'referrer': toolkit.request.referrer
     }
-    feedback.send_feedback(context)
+    send_feedback(context)
     h.flash_notice(_('Thank you for your feedback'))
     if context['package_name'] is None:
         h.redirect_to(controller='home', action='index')

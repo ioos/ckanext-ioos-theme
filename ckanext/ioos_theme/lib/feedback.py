@@ -5,10 +5,10 @@ ckanext/ioos_theme/lib/feedback.py
 Send feedback email
 '''
 from ckan.lib.base import render
-from ckanext.ioos_theme.lib.mailer import Message, Mail
-from pylons import config
+from ckan.lib.mailer import mail_recipient
 
 import logging
+from ckan.plugins import toolkit
 
 log = logging.getLogger(__name__)
 
@@ -25,13 +25,9 @@ def send_feedback(context):
     body = render('emails/feedback.txt', context)
     subject = 'IOOS Catalog Feedback'
 
-    recipients = config.get('feedback.recipients')
-    if not recipients:
+    recipients_str = toolkit.config.get('feedback.recipients')
+    if not recipients_str:
         log.info("No recipients specified, feedback email not sent")
         return
-    recipients = recipients.split(' ')
-    mail = Mail()
-    msg = Message(subject, sender=config.get('smtp.mail_from'), recipients=recipients)
-    msg.extra_headers = {"referring_site": context['referrer']}
-    msg.body = body
-    mail.send(msg)
+    for recipient in recipients_str.split(' '):
+        mail_recipient('', recipient, subject, body)
