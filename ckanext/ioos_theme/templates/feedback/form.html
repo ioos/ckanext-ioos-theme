@@ -9,6 +9,13 @@
 {% block primary_content %}
 
 
+  <!-- Google Recaptcha V3 -->
+  <script src="https://www.google.com/recaptcha/api.js"></script>
+  <script>
+    function onSubmit(token) {
+      document.getElementById("submit-feedback-form").submit();
+    }
+  </script>
   <article class="module">
     <div class="module-content">
       {% block primary_content_inner %}
@@ -16,7 +23,7 @@
          be simplified? #}
       <h1 class="page-heading">{{ _('Submit Feedback')}}{% if c.package_name is not none and c.package_name != '' %} for Dataset ID {{c.package_name}}{% endif %}</h1>
       {% block form %}
-      <form id="user-register-form" class="form-horizontal" method="post"
+      <form id="submit-feedback-form" class="form-horizontal" method="post"
           action="">
         {{ form.errors(error_summary) }}
         {{ form.input("name", id="field-name", label=_("Name"), placeholder=_("Your name"), value=data.name, error=errors.name, classes=["control-medium"]) }}
@@ -33,26 +40,13 @@
         document.querySelector("#field-feedback").required = true;
         </script>
 
-        <!-- Google Recaptcha V3 -->
-        <script src="https://www.google.com/recaptcha/api.js?render={{feedback_site_key}}"></script>
-        <script>
-        grecaptcha.ready(function() {
-            grecaptcha.execute('{{feedback_site_key}}', {action: 'homepage'}).then(function(token) {
-              var input = document.createElement("input");
-              input.setAttribute("value", token);
-              input.setAttribute("type", "hidden");
-              input.setAttribute("name", "g-captcha-token");
-              document.querySelector("#user-register-form").appendChild(input);
-            });
-        });
-        </script>
 
         <div class="form-actions">
           {% block form_actions %}
-          <!-- Google Recaptcha V2 api  Left for reference -->
-          <!-- <div class="g-recaptcha" data-sitekey={{feedback_site_key}}></div> -->
-
-          <button class="btn btn-primary" type="submit" name="submit">{{ _("Submit") }}</button>
+	  <button class="btn btn-primary g-recaptcha" data-sitekey="{{feedback_site_key}}"
+		  data-callback='onSubmit' data-action='submit' name="submit">
+		  {{ _("Submit") }}
+	  </button>
           {% endblock %}
         </div>
       </form>

@@ -29,7 +29,7 @@ def feedback(data=None, errors=None, error_summary=None,
     email = ""
     feedback = ""
 
-    recaptcha_response = toolkit.request.form.get('g-captcha-token')
+    recaptcha_response = toolkit.request.form.get('g-recaptcha-response')
     url = 'https://www.google.com/recaptcha/api/siteverify'
     values = {
         'secret': toolkit.config.get('feedback.site_secret', ''),
