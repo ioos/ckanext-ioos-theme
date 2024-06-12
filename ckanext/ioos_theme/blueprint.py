@@ -29,24 +29,23 @@ def feedback(data=None, errors=None, error_summary=None,
     email = ""
     feedback = ""
 
-    recaptcha_response = toolkit.request.form.get('g-recaptcha-response')
-    url = 'https://www.google.com/recaptcha/api/siteverify'
-    values = {
-        'secret': toolkit.config.get('feedback.site_secret', ''),
-        'response': recaptcha_response
-    }
-
-    url_data = urllib.parse.urlencode(values)
-    #req = urllib.request.Request(url, url_data)
-    req = urllib.request.Request(f"{url}?{url_data}")
-    response = urllib.request.urlopen(req)
-    result = json.load(response)
 
     # If the HTTP request is POST
     if toolkit.request.method == "POST":
+        recaptcha_response = toolkit.request.form.get('g-recaptcha-response')
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        values = {
+            'secret': toolkit.config.get('feedback.site_secret', ''),
+            'response': recaptcha_response
+        }
+
+        url_data = urllib.parse.urlencode(values)
+        req = urllib.request.Request(f"{url}?{url_data}")
+        response = urllib.request.urlopen(req)
+        result = json.load(response)
         try:
-            logging.debug(result)
-            if result['success']:
+            logging.info(result)
+            if result.get['success']:
                 return _post_feedback()
             else:
                 name = toolkit.request.form['name']
@@ -163,68 +162,5 @@ def csw_sync(self):
     h.redirect_to(controller='ckanext.ioos_theme.controllers.csw:CswController', action='index')
     return
 
-    def feedback_form(errors=None, error_summary=None,
-                      package_name=None):
-        '''
-        Returns a render for the feedback form.
-
-        :param dict errors: Any validation errors that the user has entered
-                            will be passed to the controller
-        :param dict error_summary: Summary of any validation errors
-        '''
-        name = ""
-        email = ""
-        feedback = ""
-
-        recaptcha_response = request.params.get('g-captcha-token')
-        url = 'https://www.google.com/recaptcha/api/siteverify'
-        values = {
-            'secret': config.get('feedback.site_secret', ''),
-            'response': recaptcha_response
-        }
-
-        url_data = urllib.parse.urlencode(values)
-        req = urllib.request.Request(url, url_data)
-        response = urllib.request.urlopen(req)
-        result = json.load(response)
-
-        # If the HTTP request is POST
-        if request.params:
-            try:
-                # Left for reference during refactor to captcha V3
-                #if request.params['g-recaptcha-response']:
-                if result['success']:
-                    return _post_feedback()
-                else:
-                    name = request.params['name']
-                    email = request.params['email']
-                    feedback = request.params['feedback']
-                    h.flash_notice(_('Please fill out missing fields below.'))
-            except KeyError:
-                name = request.params['name']
-                email = request.params['email']
-                feedback = request.params['feedback']
-                h.flash_notice(_('Please fill out missing fields below.'))
-
-        data = data or {"name": "", "email": "", "feedback": ""}
-        data['name'] = name or ""
-        data['email'] = email or ""
-        data['feedback'] = feedback or ""
-        errors = errors or {}
-        error_summary = error_summary or {}
-        site_key = config.get('feedback.site_key', '')
-        token = config.get('feedback.g-captcha-token', '')
-
-        if not site_key:
-            logging.warning('Administrator must setup feedback.site_key')
-
-        vars = {
-            'package_name': package_name,
-            'data': data,
-            'errors': errors,
-            'error_summary': error_summary,
-            'feedback_site_key': site_key
-        }
-        return render('feedback/form.html', extra_vars=vars)
 
 
