@@ -14,6 +14,10 @@ ioos_bp = Blueprint("ioos_theme",
                     __name__,
                     url_defaults={})
 
+@ioos_bp.route("/feedback/<package_name>", methods=["GET", "POST"])
+def feedback_with_package(package_name=None):
+    return feedback(data=None, errors=None, error_summary=None, package_name=package_name)
+
 @ioos_bp.route("/feedback", methods=["GET", "POST"])
 def feedback(data=None, errors=None, error_summary=None,
              package_name=None):
@@ -29,15 +33,14 @@ def feedback(data=None, errors=None, error_summary=None,
     email = ""
     feedback = ""
 
-    recaptcha_response = toolkit.request.form.get('g-captcha-token')
+    recaptcha_response = toolkit.request.form.get('g-recaptcha-response')
     url = 'https://www.google.com/recaptcha/api/siteverify'
     values = {
-        'secret': toolkit.config.get('feedback.site_secret', ''),
+        'secret': toolkit.config.get('feedback.secret_key', ''),
         'response': recaptcha_response
     }
 
     url_data = urllib.parse.urlencode(values)
-    #req = urllib.request.Request(url, url_data)
     req = urllib.request.Request(f"{url}?{url_data}")
     response = urllib.request.urlopen(req)
     result = json.load(response)
@@ -45,18 +48,12 @@ def feedback(data=None, errors=None, error_summary=None,
     # If the HTTP request is POST
     if toolkit.request.method == "POST":
         try:
-            logging.debug(result)
             if result['success']:
-                return _post_feedback()
+                _post_feedback()
             else:
-                name = toolkit.request.form['name']
-                email = toolkit.request.form['email']
-                feedback = toolkit.request.form['feedback']
-                h.flash_notice(_('Please fill out missing fields below.'))
+                logging.error(f'recaptcha failed: ${result}')
+                h.flash_notice(_('An error occured during feedback submission.'))
         except KeyError:
-            name = toolkit.request.args['name']
-            email = toolkit.request.args['email']
-            feedback = toolkit.request.args['feedback']
             h.flash_notice(_('Please fill out missing fields below.'))
 
     data = data or {"name": "", "email": "", "feedback": ""}
@@ -89,16 +86,16 @@ def _post_feedback():
         'name': toolkit.request.form['name'],
         'email': toolkit.request.form['email'],
         'feedback': toolkit.request.form['feedback'],
-        'package_name': toolkit.request.form.get('package_name'),
+        'package_name': toolkit.request.form['package_name'],
         'referrer': toolkit.request.referrer
     }
-    send_feedback(context)
-    h.flash_notice(_('Thank you for your feedback'))
-    if context['package_name'] is None:
-        h.redirect_to(controller='home', action='index')
-    else:
-        h.redirect_to(controller='package', action='read', id=context['package_name'])
-    return
+
+    try:
+        send_feedback(context)
+        h.flash_notice(_('Thank you for your feedback'))
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        h.flash_notice(_('An error occured during feedback submission.'))
 
 def _clear_pycsw(config_path):
     '''
@@ -179,7 +176,7 @@ def csw_sync(self):
         recaptcha_response = request.params.get('g-captcha-token')
         url = 'https://www.google.com/recaptcha/api/siteverify'
         values = {
-            'secret': config.get('feedback.site_secret', ''),
+            'secret': toolkit.config.get('feedback.site_secret', ''),
             'response': recaptcha_response
         }
 
@@ -191,8 +188,6 @@ def csw_sync(self):
         # If the HTTP request is POST
         if request.params:
             try:
-                # Left for reference during refactor to captcha V3
-                #if request.params['g-recaptcha-response']:
                 if result['success']:
                     return _post_feedback()
                 else:
@@ -226,5 +221,4 @@ def csw_sync(self):
             'feedback_site_key': site_key
         }
         return render('feedback/form.html', extra_vars=vars)
-
 

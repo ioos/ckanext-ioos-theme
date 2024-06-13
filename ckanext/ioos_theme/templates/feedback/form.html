@@ -7,61 +7,51 @@
 {% endblock %}
 
 {% block primary_content %}
-
-
   <article class="module">
     <div class="module-content">
       {% block primary_content_inner %}
-      {# Appears to coerce to empty string? Can the check for package_name
-         be simplified? #}
-      <h1 class="page-heading">{{ _('Submit Feedback')}}{% if c.package_name is not none and c.package_name != '' %} for Dataset ID {{c.package_name}}{% endif %}</h1>
+      <h1 class="page-heading">{{ _('Submit Feedback') }}{% if package_name is not none and package_name != '' %} for Dataset ID {{ package_name }}{% endif %}</h1>
       {% block form %}
-      <form id="user-register-form" class="form-horizontal" method="post"
-          action="">
+      <form id="user-register-form" class="form-horizontal" method="post" action="">
         {{ form.errors(error_summary) }}
         {{ form.input("name", id="field-name", label=_("Name"), placeholder=_("Your name"), value=data.name, error=errors.name, classes=["control-medium"]) }}
         {{ form.input("email", id="field-email", label=_("Email"), type="email", placeholder=_("joe@example.com"), value=data.email, error=errors.email, classes=["control-medium"]) }}
         {{ form.textarea("feedback", id="field-feedback", label=_("Feedback"), placeholder=_("Your comments"), value=data.feedback, error=errors.feedback, classes=["control-medium"]) }}
-     {% if c.package_name is not none and c.package_name != '' %}
-        {{ form.hidden("package_name", value=c.package_name) }}
-     {% endif %}
+        {% if package_name is not none and package_name != '' %}
+          {{ form.hidden("package_name", value=package_name) }}
+        {% endif %}
 
         <!-- Make name, email and feedback required fields -->
         <script>
-        document.querySelector("#field-name").required = true;
-        document.querySelector("#field-email").required = true;
-        document.querySelector("#field-feedback").required = true;
+          document.querySelector("#field-name").required = true;
+          document.querySelector("#field-email").required = true;
+          document.querySelector("#field-feedback").required = true;
         </script>
 
-        <!-- Google Recaptcha V3 -->
-        <script src="https://www.google.com/recaptcha/api.js?render={{feedback_site_key}}"></script>
+        <!-- Google reCAPTCHA v3 -->
+        <script src="https://www.google.com/recaptcha/api.js?render={{ feedback_site_key }}"></script>
         <script>
-        grecaptcha.ready(function() {
-            grecaptcha.execute('{{feedback_site_key}}', {action: 'homepage'}).then(function(token) {
+          grecaptcha.ready(function() {
+            grecaptcha.execute('{{ feedback_site_key }}', { action: 'submit' }).then(function(token) {
               var input = document.createElement("input");
-              input.setAttribute("value", token);
               input.setAttribute("type", "hidden");
-              input.setAttribute("name", "g-captcha-token");
+              input.setAttribute("name", "g-recaptcha-response");
+              input.setAttribute("value", token);
               document.querySelector("#user-register-form").appendChild(input);
             });
-        });
+          });
         </script>
 
         <div class="form-actions">
           {% block form_actions %}
-          <!-- Google Recaptcha V2 api  Left for reference -->
-          <!-- <div class="g-recaptcha" data-sitekey={{feedback_site_key}}></div> -->
-
           <button class="btn btn-primary" type="submit" name="submit">{{ _("Submit") }}</button>
           {% endblock %}
         </div>
       </form>
-      
       {% endblock %}
       {% endblock %}
     </div>
   </article>
-
 {% endblock %}
 
 {% block secondary_content %}
@@ -71,10 +61,9 @@
     <h2 class="module-heading">{{ _('Submitting Feedback') }}</h2>
     <div class="module-content">
       <p>
-      {% trans %}
-      We appreciate any feedback that you can offer. We may try to reach out to
-      you for clarifications or follow ups.
-      {% endtrans %}
+        {% trans %}
+        We appreciate any feedback that you can offer. We may try to reach out to you for clarifications or follow ups.
+        {% endtrans %}
       </p>
     </div>
     {% endblock %}
