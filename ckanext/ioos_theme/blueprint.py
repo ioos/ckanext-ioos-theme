@@ -51,15 +51,15 @@ def feedback(data=None, errors=None, error_summary=None,
             if result['success']:
                 _post_feedback()
             else:
-                name = request.params['name']
-                email = request.params['email']
-                feedback = request.params['feedback']
+                name = toolkit.request.form['name']
+                email = toolkit.request.form['email']
+                feedback = toolkit.request.form['feedback']
                 logging.error(f'recaptcha failed: ${result}')
                 h.flash_notice(_('An error occured during feedback submission.'))
         except KeyError:
-            name = request.params['name']
-            email = request.params['email']
-            feedback = request.params['feedback']
+            name = toolkit.request.form['name']
+            email = toolkit.request.form['email']
+            feedback = toolkit.request.form['feedback']
             h.flash_notice(_('Please fill out missing fields below.'))
 
     data = data or {"name": "", "email": "", "feedback": ""}
