@@ -92,7 +92,7 @@ def _post_feedback():
         'name': toolkit.request.form['name'],
         'email': toolkit.request.form['email'],
         'feedback': toolkit.request.form['feedback'],
-        'package_name': toolkit.request.form['package_name'],
+        'package_name': toolkit.request.form.get('package_name'),
         'referrer': toolkit.request.referrer
     }
 
