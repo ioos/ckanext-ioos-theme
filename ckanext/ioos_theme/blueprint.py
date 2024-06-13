@@ -1,6 +1,9 @@
 from flask import Blueprint, jsonify, make_response
 import logging
 import urllib.request, urllib.error, urllib.parse
+from ckanext.ioos_theme.lib.feedback import send_feedback
+from ckan.lib import helpers as h
+from ckan.plugins.toolkit import _
 
 import json
 
@@ -10,6 +13,10 @@ from ckan.plugins import toolkit
 ioos_bp = Blueprint("ioos_theme",
                     __name__,
                     url_defaults={})
+
+@ioos_bp.route("/feedback/<package_name>", methods=["GET", "POST"])
+def feedback_with_package(package_name=None):
+    return feedback(data=None, errors=None, error_summary=None, package_name=package_name)
 
 @ioos_bp.route("/feedback", methods=["GET", "POST"])
 def feedback(data=None, errors=None, error_summary=None,
@@ -26,35 +33,33 @@ def feedback(data=None, errors=None, error_summary=None,
     email = ""
     feedback = ""
 
-    recaptcha_response = toolkit.request.params.get('g-captcha-token')
+    recaptcha_response = toolkit.request.form.get('g-recaptcha-response')
     url = 'https://www.google.com/recaptcha/api/siteverify'
     values = {
-        'secret': toolkit.config.get('feedback.site_secret', ''),
+        'secret': toolkit.config.get('feedback.secret_key', ''),
         'response': recaptcha_response
     }
 
     url_data = urllib.parse.urlencode(values)
-    #req = urllib.request.Request(url, url_data)
     req = urllib.request.Request(f"{url}?{url_data}")
     response = urllib.request.urlopen(req)
     result = json.load(response)
 
     # If the HTTP request is POST
-    if toolkit.request.params:
+    if toolkit.request.method == "POST":
         try:
-            # Left for reference during refactor to captcha V3
-            #if request.params['g-recaptcha-response']:
             if result['success']:
-                return self._post_feedback()
+                _post_feedback()
             else:
-                name = request.params['name']
-                email = request.params['email']
-                feedback = request.params['feedback']
-                h.flash_notice(_('Please fill out missing fields below.'))
+                name = toolkit.request.form['name']
+                email = toolkit.request.form['email']
+                feedback = toolkit.request.form['feedback']
+                logging.error(f'recaptcha failed: ${result}')
+                h.flash_notice(_('An error occured during feedback submission.'))
         except KeyError:
-            name = request.params['name']
-            email = request.params['email']
-            feedback = request.params['feedback']
+            name = toolkit.request.form['name']
+            email = toolkit.request.form['email']
+            feedback = toolkit.request.form['feedback']
             h.flash_notice(_('Please fill out missing fields below.'))
 
     data = data or {"name": "", "email": "", "feedback": ""}
@@ -67,7 +72,7 @@ def feedback(data=None, errors=None, error_summary=None,
     token = toolkit.config.get('feedback.g-captcha-token', '')
 
     if not site_key:
-        logging.warning('Administrator must setup feedback.site_key')
+        logging.warning('Administrator must set up feedback.site_key')
 
     vars = {
         'package_name': package_name,
@@ -78,25 +83,25 @@ def feedback(data=None, errors=None, error_summary=None,
     }
     return render('feedback/form.html', extra_vars=vars)
 
-def _post_feedback(self):
+def _post_feedback():
     '''
     Redirects the user to the home page and flashes a message,
     acknowledging the feedback.
     '''
     context = {
-        'name': request.params['name'],
-        'email': request.params['email'],
-        'feedback': request.params['feedback'],
-        'package_name': request.params.get('package_name'),
-        'referrer': request.referrer
+        'name': toolkit.request.form['name'],
+        'email': toolkit.request.form['email'],
+        'feedback': toolkit.request.form['feedback'],
+        'package_name': toolkit.request.form.get('package_name'),
+        'referrer': toolkit.request.referrer
     }
-    feedback.send_feedback(context)
-    h.flash_notice(_('Thank you for your feedback'))
-    if context['package_name'] is None:
-        h.redirect_to(controller='home', action='index')
-    else:
-        h.redirect_to(controller='package', action='read', id=context['package_name'])
-    return
+
+    try:
+        send_feedback(context)
+        h.flash_notice(_('Thank you for your feedback'))
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        h.flash_notice(_('An error occured during feedback submission.'))
 
 def _clear_pycsw(config_path):
     '''
@@ -177,7 +182,7 @@ def csw_sync(self):
         recaptcha_response = request.params.get('g-captcha-token')
         url = 'https://www.google.com/recaptcha/api/siteverify'
         values = {
-            'secret': config.get('feedback.site_secret', ''),
+            'secret': toolkit.config.get('feedback.site_secret', ''),
             'response': recaptcha_response
         }
 
@@ -189,8 +194,6 @@ def csw_sync(self):
         # If the HTTP request is POST
         if request.params:
             try:
-                # Left for reference during refactor to captcha V3
-                #if request.params['g-recaptcha-response']:
                 if result['success']:
                     return _post_feedback()
                 else:
@@ -224,5 +227,4 @@ def csw_sync(self):
             'feedback_site_key': site_key
         }
         return render('feedback/form.html', extra_vars=vars)
-
 

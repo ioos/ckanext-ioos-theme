@@ -28,7 +28,6 @@
   background: #003087 !important;
   color: #55D6F8 !important;
 }
-}
 
 .masthead .navbar-collapse{
   padding: 10px 0 0
@@ -478,6 +477,7 @@ html, body {
 .tree ul {
     margin-left: 20px;
     padding-top: 0;
+    border: none;
 }
 
 .tree li {

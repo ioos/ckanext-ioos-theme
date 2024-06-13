@@ -4,7 +4,8 @@ ckanext/ioos_theme/controllers/feedback.py
 
 IOOS Theme Feedback Controller
 '''
-from ckan.lib.base import BaseController, render, _
+from ckan.lib.base import BaseController, render
+from ckan.plugins.toolkit import _
 from ckan.lib import helpers as h
 from ckan.common import request
 from ckanext.ioos_theme.lib import feedback
