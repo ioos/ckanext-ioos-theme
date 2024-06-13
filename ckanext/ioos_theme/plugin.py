@@ -656,8 +656,8 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
             "ioos_theme_jsonpath": jsonpath,
             "ioos_theme_get_role_code": get_role_code,
             "filter_tag_names": filter_tag_names,
-            "gcmd_generate": gcmd_generate,
-            "gcmd_generate_facets": gcmd_generate_facets,
+            #"gcmd_generate": gcmd_generate,
+            #"gcmd_generate_facets": gcmd_generate_facets,
         }
 
 
