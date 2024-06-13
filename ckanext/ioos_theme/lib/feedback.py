@@ -29,5 +29,5 @@ def send_feedback(context):
     if not recipients_str:
         log.info("No recipients specified, feedback email not sent")
         return
-    for recipient in recipients_str.split(' '):
+    for recipient in recipients_str.split(';'):
         mail_recipient('', recipient, subject, body)
