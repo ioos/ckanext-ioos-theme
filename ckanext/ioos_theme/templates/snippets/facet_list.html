@@ -1,7 +1,6 @@
 {% ckan_extends %}
 
           {% block facet_list_items %}
-	  {#
           {% asset "ioos_theme/hier_expand_js" %}
               {% set items = items or h.get_facet_items_dict(name) %}
             {% with items = items %}
@@ -70,5 +69,4 @@
               <p class="module-content empty">{{ _('There are no {facet_type} that match this search').format(facet_type=title) }}</p>
             {% endif %}
             {% endwith %}
-	    #}
           {% endblock %}
