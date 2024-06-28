@@ -12,7 +12,8 @@
       {% block primary_content_inner %}
       <h1 class="page-heading">{{ _('Submit Feedback') }}{% if package_name is not none and package_name != '' %} for Dataset ID {{ package_name }}{% endif %}</h1>
       {% block form %}
-      <form id="user-register-form" class="form-horizontal" method="post" action="">
+      <form id="submit-feedback-form" class="form-horizontal" method="post" action="">
+	 {{ h.csrf_input() }}
         {{ form.errors(error_summary) }}
         {{ form.input("name", id="field-name", label=_("Name"), placeholder=_("Your name"), value=data.name, error=errors.name, classes=["control-medium"]) }}
         {{ form.input("email", id="field-email", label=_("Email"), type="email", placeholder=_("joe@example.com"), value=data.email, error=errors.email, classes=["control-medium"]) }}
@@ -21,11 +22,19 @@
           {{ form.hidden("package_name", value=package_name) }}
         {% endif %}
 
-        <!-- Make name, email and feedback required fields -->
+        <!-- Make name, email and feedback required fields, add CSRF check -->
         <script>
           document.querySelector("#field-name").required = true;
           document.querySelector("#field-email").required = true;
           document.querySelector("#field-feedback").required = true;
+	  // Get the csrf value from the page meta tag
+	  var csrf_value = $('meta[name=_csrf_token]').attr('content')
+
+	  // Create the hidden input
+	  var hidden_csrf_input = $('<input name="_csrf_token" type="hidden" value="'+csrf_value+'">')
+
+	  // Insert the hidden input at the beginning of the form
+	  hidden_csrf_input.prependTo($("submit-feedback-form")
         </script>
 
         <!-- Google reCAPTCHA v3 -->
@@ -37,7 +46,7 @@
               input.setAttribute("type", "hidden");
               input.setAttribute("name", "g-recaptcha-response");
               input.setAttribute("value", token);
-              document.querySelector("#user-register-form").appendChild(input);
+              document.querySelector("#submit-feedback-form").appendChild(input);
             });
           });
         </script>
