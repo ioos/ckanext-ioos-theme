@@ -1,4 +1,4 @@
-{% set tags = h.get_facet_items_dict('tags', limit=6) %}
+{% set tags = h.get_facet_items_dict('tags', search_facets, limit=6) %}
 {% set placeholder = _('E.g. environment') %}
 
 <div class="module module-search module-narrow module-shallow box">
