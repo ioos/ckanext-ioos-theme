@@ -9,7 +9,7 @@
   {% snippet "snippets/date_picker_search.html" %}
 
   {% for facet in c.facet_titles %}
-    {{ h.snippet('snippets/facet_list.html', title=c.facet_titles[facet],
+    {{ h.snippet('snippets/facet_list.html', search_facets=search_facets, title=c.facet_titles[facet],
                  name=facet) }}
   {% endfor %}
 
