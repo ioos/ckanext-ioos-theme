@@ -20,10 +20,6 @@ Example:
           {% endfor %}
         {% endblock %}
 
-        {% if h.ioos_theme_get_pkg_extra(pkg, 'object_reference') %}
-        {% set object_reference = h.ioos_theme_get_pkg_extra(pkg, 'object_reference') %}
-        {% snippet 'package/snippets/harvest_object_resource_item.html', pkg=pkg, object_reference=object_reference %}
-        {% endif %}
         {% if h.ioos_theme_get_pkg_extra(pkg, 'waf_location') %}
         {% set waf_location = h.ioos_theme_get_pkg_extra(pkg, 'waf_location') %}
         {% snippet 'package/snippets/waf_location_item.html', pkg=pkg, waf_location=waf_location %}
