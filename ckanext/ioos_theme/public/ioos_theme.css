@@ -573,3 +573,10 @@ a.tag.highlight-ancestor {
   -webkit-box-shadow: inset 0 1px 0 #3d97b3;
   box-shadow: inset 0 1px 0 #3d97b3;
 }
+
+.dropdown-menu > li > a {
+  padding: 3px 20px;
+  display: block;
+  line-height: 1.4;
+  white-space: nowrap;
+}
