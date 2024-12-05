@@ -489,7 +489,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
                                shapely.unary_union(spatial_joins)))
 
 
-    def before_index(self, data_dict):
+    def before_dataset_index(self, data_dict):
         data_modified = copy.deepcopy(data_dict)
         start_end_time = []
         if ("extras_spatial" in data_modified and
@@ -565,7 +565,7 @@ class Ioos_ThemePlugin(p.SingletonPlugin):
         log.debug(data_modified.get('temporal_extent'))
         return data_modified
 
-    def before_search(self, search_params):
+    def before_dataset_search(self, search_params):
         search_params_modified = copy.deepcopy(search_params)
 
 

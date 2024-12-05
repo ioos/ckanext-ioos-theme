@@ -31,8 +31,6 @@ class ErddapCSVMetadataReader(object):
 
                     self.metadata_mapping[row["Variable Name"]][row["Attribute Name"]] = \
                                     row["Value"]
-                    log.info("%s = %s", self.metadata_mapping[row["Variable Name"]][row["Attribute Name"]],
-                                        row["Value"])
             except Exception as e:
                 logger.exception("Exception occurred attempting to fetch "
                                  "ERDDAP dataset info: ")
