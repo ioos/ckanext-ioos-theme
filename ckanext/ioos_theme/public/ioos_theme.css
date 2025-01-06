@@ -94,6 +94,14 @@ ul#gcmd_tree li a {
   display: inline;
 }
 
+ul.nav.nav-simple.nested {
+  display: none;
+}
+
+ul.nav.nav-simple.nested.tree-active {
+  display: block;
+}
+
 ul#gcmd_tree.nav-facet .nav-item > a:hover::after, .nav-facet .nav-item.active > a::after {
     background-image: none;
 }
