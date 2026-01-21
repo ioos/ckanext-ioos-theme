@@ -1,12 +1,73 @@
 {% ckan_extends %}
 {% block styles %}
-  {{ super() }}
-  <link rel="stylesheet" href="/ioos_theme.css" />
-  <link rel="shortcut icon" href="/favicon.ico" />
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet"> 
-  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+{{ super() }}
+<link rel="stylesheet" href="/ioos_theme.css" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
-  {# populate dataset name for feedback when we are on a dataset page #}
-  {% set opt_pkg = "/" ~ pkg.name if pkg is defined else "" %}
-  <a id="feedback" href="/feedback{{opt_pkg}}"></a>
+{# populate dataset name for feedback when we are on a dataset page #}
+{% set opt_pkg = "/" ~ pkg.name if pkg is defined else "" %}
+<a id="feedback" href="/feedback{{opt_pkg}}" aria-label="Feedback"></a>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+  // Hide harvest form fields "Source Type" and "Update Frequency"
+  // and ensure their values are submitted as hidden inputs.
+  // Minimal, non-invasive UI change to keep backend behavior unchanged.
+  document.addEventListener('DOMContentLoaded', function () {
+    function hideAndSet(name, desiredValues) {
+      var el = document.querySelector('[name="' + name + '"]');
+      if (!el) return;
+      var form = el.closest('form') || document.querySelector('form');
+      var chosen = null;
+
+      if (el.tagName && el.tagName.toLowerCase() === 'select') {
+        var opts = el.options || [];
+        for (var i = 0; i < opts.length; i++) {
+          var opt = opts[i];
+          var v = (opt.value || opt.text || '').toString().toLowerCase();
+          for (var j = 0; j < desiredValues.length; j++) {
+            var dv = desiredValues[j].toString().toLowerCase();
+            if (v.indexOf(dv) !== -1) {
+              chosen = opt.value || opt.text;
+              break;
+            }
+          }
+          if (chosen) break;
+        }
+        if (chosen) {
+          try { el.value = chosen; } catch (e) { /* ignore */ }
+        }
+      } else if (el.type === 'text' || el.type === 'hidden' || el.tagName.toLowerCase() === 'input') {
+        chosen = desiredValues[0];
+        try { el.value = chosen; } catch (e) { /* ignore */ }
+      }
+
+      // hide visual controls
+      var toHide = el.closest('.form-group') || el.closest('.controls') || el.closest('tr') || el.parentElement;
+      if (toHide) toHide.style.display = 'none';
+
+      // ensure hidden input is present so backend receives the value
+      if (form) {
+        var existing = form.querySelector('input[name="' + name + '"][type="hidden"]');
+        var valueToSet = chosen || desiredValues[0];
+        if (!existing) {
+          var hid = document.createElement('input');
+          hid.type = 'hidden'; hid.name = name; hid.value = valueToSet;
+          form.appendChild(hid);
+        } else {
+          existing.value = valueToSet;
+        }
+      }
+    }
+
+    // Try to set to IOOS WAF and Weekly. The code will prefer matching select options
+    // if present (e.g. internal tokens like "ioos_waf" or "weekly").
+    hideAndSet('source_type', ['ioos_waf', 'waf', 'ioos waf', 'ioos-waf', 'IOOS WAF']);
+    hideAndSet('update_frequency', ['weekly', 'Weekly', 'WEEKLY']);
+  });
+</script>
 {% endblock %}
