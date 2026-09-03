@@ -1,6 +1,9 @@
-{% set tags = h.get_facet_items_dict('tags', search_facets, limit=6) %}
+{% set tags = h.get_facet_items_dict(
+    'tags',
+    c.search_facets | default({}, true),
+    limit=6
+) %}
 {% set placeholder = _('E.g. environment') %}
-
 <div class="module module-search module-narrow module-shallow box">
   <form class="module-content search-form" method="get" action="{% url_for controller='dataset', action='search' %}">
     <h3 class="heading">{{ _("Search data") }}</h3>
