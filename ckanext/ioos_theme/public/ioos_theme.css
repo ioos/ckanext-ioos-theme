@@ -172,29 +172,50 @@ form .popover .popover-content {
   word-break: normal;
 }
 
-.site-footer {
+.footer-utility {
   font-family: 'Roboto', sans-serif;
-  line-height: 16px;
-  padding: 56px 0;
-  color: #fff;
-  background-image:
-    linear-gradient(
-      to bottom,
-      rgba(0, 34, 102, 0.00) 0%,
-      rgba(0, 34, 102, 0.20) 35%,
-      rgba(0, 34, 102, 0.55) 70%,
-      rgba(0, 34, 102, 0.90) 100%
-    ),
-    url('img/footer.png');
-  background-repeat: no-repeat, repeat-x;
-  background-position: center top, center top;
-  background-size: cover, auto 100%;
+  padding: 8px 0 16px;
+  background: #fff;
+  color: #333;
 }
 
-.site-footer h1 {
-  font-size: 20px !important;
-  font-weight: 400 !important;
-  font-family: 'Roboto Slab',Times,serif !important;
+.footer-utility .container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.footer-utility .lang-select {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  gap: 8px;
+}
+
+.footer-utility .lang-select:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.footer-utility .lang-select label {
+  margin: 0;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* select2 writes an inline width from the full-width parent; keep the menu
+   wide enough for the longest locale name without spanning the page */
+.footer-utility .lang-select select,
+.footer-utility .select2-container.lang-container {
+  /* 100% collapses inside the shrink-wrapped form; cap with the viewport instead */
+  width: min(16rem, calc(100vw - 9rem)) !important;
+  max-width: 100%;
 }
 
 section.tags {
@@ -348,33 +369,6 @@ section.browse-graphic img.browse-graphic-img {
 .account-masthead .account ul li a:hover {
   background-color: #003087 !important;
   color: #ffffff !important;
-}
-
-.footer-title {
-  color: #ffffff;
-  padding-bottom: 2px;
-  font-size: 24px;
-  font-weight: 600;
-  font-family: 'Roboto Slab',Times,serif!important;
-}
-
-.footer-links a {
-  color: #55D6F8;
-  text-decoration: none;
-}
-
-.footer-links a:hover {
-  color: #ffffff;
-}
-
-.contact-us {
-  border: 1px solid #55D6F8;
-  border-radius: 0!important;
-  padding: 8px 23px!important;
-}
-
-.footer-links p {
-  color: #ffffff;
 }
 
 .main {
