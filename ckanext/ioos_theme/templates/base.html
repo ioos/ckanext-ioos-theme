@@ -10,3 +10,8 @@
   {% set opt_pkg = "/" ~ pkg.name if pkg is defined else "" %}
   <a id="feedback" href="/feedback{{opt_pkg}}"></a>
 {% endblock %}
+
+{% block head_extras %}
+  {{ super() }}
+  <script defer src="https://dgd6r9iiqa8y9.cloudfront.net/ioos-ui-components.min.js"></script>
+{% endblock %}

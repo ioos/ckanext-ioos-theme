@@ -1,41 +1,8 @@
-<footer class="site-footer">
-    <div class="container">
-      {% block footer_content %}
-      <div class="row">
-        <div class="footer-links">
-          {% block footer_nav %}
-            <div class="col-md-4">
-                <h1 class="footer-title">Useful Links</h1>
-                <ul class="unstyled">
-                    {% block footer_links %}
-                      <li><a href="{{ h.url_for(controller='home', action='about') }}">{{ _('About {0}').format(g.site_title) }}</a></li>
-                      <li><a href="https://ioos.noaa.gov">ioos.noaa.gov</a></li>
-                    {% endblock %}
-                </ul>
-            </div>
-            <div class="col-md-4">
-                <h1 class="footer-title">Our Social Ocean</h1>
-                <ul class="unstyled">
-                    <li><a href="https://www.facebook.com/usioosgov">facebook.com/usioosgov</a></li>
-                    <li><a href="https://twitter.com/usioosgov">twitter.com/usioosgov</a></li>
-                </ul>
-                {% block footer_lang %}
-                    {% snippet "snippets/language_selector.html" %}
-                {% endblock %}
-            </div>
-            <div class="col-md-4">
-                <img style="float: left;padding-right: 20px;padding-top: 5px;" src="https://data.ioos.us/img/footer-img.png" alt="footer logo">
-                <p>U.S. Integrated Ocean Observing System Program</p>
-                <p>1315 East-West Highway
-                    SSMC3, 2nd Floor <br>
-                    Silver Spring, MD 20910
-                    </p>
-                <a href="tel:+12405339444"> 240-533-9444</a><br><br>
-                <a class="contact-us" href="mailto:data.ioos@noaa.gov" itemprop="email">Contact Us</a>
-            </div>
-            
-          {% endblock %}
-      </div>
-      {% endblock %}
-    </div>
-</footer>
+<div class="footer-utility">
+  <div class="container">
+    {% block footer_lang %}
+      {% snippet "snippets/language_selector.html" %}
+    {% endblock %}
+  </div>
+</div>
+<ioos-footer></ioos-footer>

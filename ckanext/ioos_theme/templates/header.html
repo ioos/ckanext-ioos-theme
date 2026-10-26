@@ -1,13 +1,9 @@
 {% ckan_extends %}
-{% block header_account %}
-  <div id="center-logo">
-    <a href="https://ioos.us">
-       <img src="/img/top-ioos-logo.png" alt="IOOS Logo" id="header-logo" title="IOOS Logo">
-    </a>
-  </div>
-  {{super()}}
+{% block header_wrapper %}
+  <ioos-header variant="compact" hide-nav-logo="true"></ioos-header>
+  {{ super() }}
 {% endblock %}
-<a href="https://ioos.us"><img src="img/IOOS.png" alt="IOOS alt logo"></a>
+
 {% block header_site_navigation %}
   <nav class="section navigation">
     <ul class="nav nav-pills">
